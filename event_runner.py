@@ -88,9 +88,11 @@ class BaseExecutor:
         while target_coords is None and num_of_scroll > 0:
             print(f"完成: 未找到{self.target_name}位置, 向下滚动一次")
             scroll_length = -600 if direction == 'down' else 600
+            scroll_length = scroll_length * self.coords_manager.y_ratio
+            scroll_length = int(round(scroll_length))
             print(f"完成: 滚动距离{scroll_length}")
             print(f"滚动方向: {direction}")
-            scroll_specific_length(scroll_length)
+            scroll_specific_length(scroll_length, seconds=5)
             
             target_coords = get_region_coords(
                 self.target, 
@@ -135,7 +137,10 @@ class BaoMingExecutor(BaseExecutor):
                 if num_to_scroll == 0:
                     break
                 num_to_scroll -= 1
-                scroll_specific_length(600, seconds=4)
+                scroll_length = 600 * self.coords_manager.y_ratio
+                scroll_length = int(round(scroll_length))
+
+                scroll_specific_length(scroll_length, seconds=4)
                 continue
                 
             click_region(baoming_coords, seconds=2)

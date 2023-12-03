@@ -6,20 +6,27 @@ class BaseCoordsManager:
         self.width = main_region_coords[2]
         self.height = main_region_coords[3]
         self.resolution = resolution
+        self.x_ratio = self.resolution[0] / 1080
+        self.y_ratio = self.resolution[1] / 1920
     
     def calculate_relative_coords(self, diff, specific_region_coords=None):
         if specific_region_coords is None:
-            left_top_x = self.x + diff[0]
-            left_top_y = self.y + diff[1]
-            width = diff[2]
-            height = diff[3]
-            return (left_top_x, left_top_y, width, height)
+            left_top_x = self.x + diff[0] * self.x_ratio
+            left_top_y = self.y + diff[1] * self.y_ratio
+            width = diff[2] * self.x_ratio
+            height = diff[3] * self.y_ratio
         else:
-            left_top_x = specific_region_coords[0] + diff[0]
-            left_top_y = specific_region_coords[1] + diff[1]
-            width = diff[2]
-            height = diff[3]
-            return (left_top_x, left_top_y, width, height)
+            left_top_x = specific_region_coords[0] + diff[0] * self.x_ratio
+            left_top_y = specific_region_coords[1] + diff[1] * self.y_ratio
+            width = diff[2] * self.x_ratio
+            height = diff[3] * self.y_ratio
+        
+        left_top_x = round(left_top_x)
+        left_top_y = round(left_top_y)
+        width = round(width)
+        height = round(height)
+
+        return (left_top_x, left_top_y, width, height)
     
     # def world(self): # 修炼界面-世界地图图标
     #     diff = (30, 1695, 250, 214)
@@ -70,8 +77,8 @@ class BaseCoordsManager:
         return self.calculate_relative_coords(diff)
     
 class AssistantCoordsManager(BaseCoordsManager):
-    def __init__(self, main_region_coords: tuple):
-        super().__init__(main_region_coords)
+    def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
     
     def run_button(self, sub_main_coords: tuple):
         diff = (738, 39, 123, 129)
@@ -82,8 +89,8 @@ class AssistantCoordsManager(BaseCoordsManager):
         return self.calculate_relative_coords(diff)
 
 class BaoMingCoordsManager(BaseCoordsManager):
-    def __init__(self, main_region_coords: tuple):
-        super().__init__(main_region_coords)
+    def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
     
     def baoming_region(self):
         diff = (827, 239, 150, 1438)

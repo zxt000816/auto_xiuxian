@@ -6,20 +6,24 @@ import cv2
 import numpy as np
 from typing import Tuple
 import time
+from dotenv import load_dotenv
 
-def get_game_page_coords():
+load_dotenv()
+
+def get_game_page_coords(resolution=(1080, 1920)):
     # 在屏幕上定位登录页面的坐标
     game_page_coords = None
     for game_page in ['shouye', 'login_page', 'xiulian']:
+    # for game_page in ['login_page', 'xiulian']:
         if game_page == 'shouye':
             shouye_coords = get_region_coords('shouye', grayscale=True)
             left_bottom_x = shouye_coords[0]
             left_bottom_y = shouye_coords[1] + shouye_coords[3]
-            return (left_bottom_x, left_bottom_y, 1080, 1920)
+            return (left_bottom_x, left_bottom_y, resolution[0], resolution[1] )
         
         game_page_coords = pyautogui.locateOnScreen(
             './FanRenXiuXianIcon/{}.png'.format(game_page),
-            confidence=0.7
+            confidence=0.8
         )
         if game_page_coords is not None:
             return game_page_coords
@@ -31,7 +35,7 @@ def get_region_coords(
     main_region_coords=None, 
     confidence=0.7,
     grayscale=False,
-    root_dir='FanRenXiuXianIcon',
+    root_dir=os.getenv('ROOT_DIR'),
     cat_dir=None
 ):
     if cat_dir is not None:

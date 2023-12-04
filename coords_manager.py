@@ -147,3 +147,31 @@ class YouliCoordsManager(BaseCoordsManager):
     def current_lingshi(self):
         diff = (573, 1372, 166, 50)
         return self.calculate_relative_coords(diff)
+    
+class ShuangXiuCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
+        diff = (360, 131, 22, 27)
+        return self.calculate_relative_coords(diff, gongfashu_coords)
+    
+    def yaoqing_daoyou(self): # 双修界面-邀请道友按钮
+        diff = (478, 1447, 127, 127)
+        return self.calculate_relative_coords(diff)
+    
+    def yaoqing_region(self): # 仙缘邀请界面-邀请区域
+        diff = (772, 477, 193, 971)
+        return self.calculate_relative_coords(diff)
+    
+    def go_to_xiulian(self): # 双修界面-前往修炼按钮
+        diff = (287, 1644, 510, 101)
+        return self.calculate_relative_coords(diff)
+
+    def xianyuan_page(self): # 双修界面-仙缘界面
+        diff = (314, 398, 162, 76)
+        return self.calculate_relative_coords(diff)
+    
+    def remain_times(self):
+        diff = (702, 1585, 41, 45)
+        return self.calculate_relative_coords(diff)

@@ -8,15 +8,16 @@ from xiuxian_exception import *
 
 class BaseExecutor:
     def __init__(self, coords_manager: BaseCoordsManager, target: str):
+        # 初始化函数，接收坐标管理器和目标参数
         self.coords_manager = coords_manager
         self.main_region_coords = self.coords_manager.main_region_coords
         self.richang_coords = self.coords_manager.ri_chang()
         self.exit_coords = self.coords_manager.exit()
         self.cat_dirs = {
-            'youli': 'youli',
-            'shuangxiu': 'shuangxiu',
-            'assistant': 'assistant',
-            'huodong_baoming': 'huodong_baoming',
+            'youli': 'youli',  # 游历
+            'shuangxiu': 'shuangxiu',  # 双修
+            'assistant': 'assistant',  # 小助手
+            'huodong_baoming': 'huodong_baoming',  # 活动报名
         }
         self.taget_name_dict = {
             'youli': '游历',
@@ -29,6 +30,7 @@ class BaseExecutor:
         self.cat_dir = self.cat_dirs[self.target]
 
     def get_leave_coords(self):
+        # 获取离开按钮的坐标
         leave_imgs = [
             {'target_region_image': 'leave2', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'leave'},
             {'target_region_image': 'leave1', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'leave'},
@@ -39,6 +41,7 @@ class BaseExecutor:
         return leave_coords
 
     def get_leave_confirm_coords(self):
+        # 获取离开确认按钮的坐标
         leave_confirm_imgs = [
             {'target_region_image': 'leave_confirm1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': 'leave_confirm'},
             {'target_region_image': 'leave_confirm2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': 'leave_confirm'},
@@ -48,14 +51,16 @@ class BaseExecutor:
         return leave_confirm_coords
 
     def get_back_arrow_coords(self):
+        # 获取返回按钮的坐标
         back_arrow_imgs = [
-            {'target_region_image': 'back_arrow1', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'back_arrow'},
-            {'target_region_image': 'back_arrow2', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': False, 'cat_dir': 'back_arrow'},
+            {'target_region_image': 'back_arrow1', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': True, 'cat_dir': 'back_arrow'},
+            {'target_region_image': 'back_arrow2', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': False, 'cat_dir': 'back_arrow'},
         ]
         back_arrow_coords = get_region_coords_by_multi_imgs(back_arrow_imgs)
         return back_arrow_coords
     
     def get_world_coords(self, sub_main_coords: tuple=None):
+        # 获取世界图标的坐标
         _check_region_coords = self.main_region_coords if sub_main_coords is None else sub_main_coords
         world_coords = get_region_coords(
             'world_icon',
@@ -65,17 +70,15 @@ class BaseExecutor:
         return world_coords
 
     def _check_is_in_world(self):
+        # 判断是否处于世界地图界面
         check_region_coords = self.coords_manager.map_or_leave()
-        big_map_coords = None
-        for image_name in ['big_map', 'big_map2']:
-            big_map_coords = get_region_coords(
-                image_name,
-                main_region_coords=check_region_coords,
-                confidence=0.4,
-                grayscale=True,
-            )
-            if big_map_coords is not None:
-                return True
+        big_map_imgs = [
+            {'target_region_image': 'big_map1', 'main_region_coords': check_region_coords, 'confidence': 0.4, 'grayscale': True},
+            {'target_region_image': 'big_map2', 'main_region_coords': check_region_coords, 'confidence': 0.4, 'grayscale': True},
+        ]
+        big_map_coords = get_region_coords_by_multi_imgs(big_map_imgs)
+        if big_map_coords is not None:
+            return True
         
         return False
         
@@ -129,7 +132,7 @@ class BaseExecutor:
         )
         print(f"完成: 识别一次{self.target_name}位置")
 
-        num_of_scroll = 6
+        num_of_scroll = 12
         if target_coords is None:
             scoll_start_point_coords = self.coords_manager.scroll_start_point()
             scoll_start_point_coords = (scoll_start_point_coords[0], scoll_start_point_coords[1])
@@ -138,7 +141,7 @@ class BaseExecutor:
         
         while target_coords is None and num_of_scroll > 0:
             print(f"完成: 未找到{self.target_name}位置, 向下滚动一次")
-            scroll_length = -600 if direction == 'down' else 600
+            scroll_length = -300 if direction == 'down' else 300
             scroll_length = scroll_length * self.coords_manager.y_ratio
             scroll_length = int(round(scroll_length))
             print(f"完成: 滚动距离{scroll_length}")
@@ -432,5 +435,157 @@ class YouLiExecutor(BaseExecutor):
             print(e)
         except Exception as e:
             print(e)
+
+        self.go_to_world()
+
+class ShuangXiuExecutor(BaseExecutor):
+    def __init__(
+        self,
+        shuangxiu_coords_manager: ShuangXiuCoordsManager,
+    ):
+        super().__init__(shuangxiu_coords_manager, 'shuangxiu')
+
+        self.shuangxiu_coords_manager = shuangxiu_coords_manager
+        self.shuangxiu_name_dict = {
+            'dian_feng_pei_yuan': '颠凤培元',
+            'chi_qing_zhou': '痴情咒',
+            'liu_yu_lian_xin': '六欲练心'
+        }
+        self.gonfa_order = ['dian_feng_pei_yuan', 'liu_yu_lian_xin']
+        self.main_region_coords = self.shuangxiu_coords_manager.main_region_coords
+
+    def click_shuangxiu_gongfashu(self, gongfashu_name: str):
+        # 在日常界面中，点击双修图标
+        gongfashu_coords = get_region_coords(
+            gongfashu_name, 
+            main_region_coords=self.main_region_coords, 
+            confidence=0.9, 
+            cat_dir='shuangxiu'
+        )
+        print(f"完成: 识别一次{gongfashu_name}位置")
+
+        if gongfashu_coords is None:
+            raise Exception(f"未找到{gongfashu_name}位置.")
+
+        click_region(gongfashu_coords, seconds=3)
+        print(f"完成: 点击{gongfashu_name}按钮")
+
+    def confirm_yaoqing_daoyou_is_exist(self):
+        for yaoqing_daoyou in ['yaoqing_daoyou1', 'yaoqing_daoyou2']:
+            yaoqing_daoyou_coords = get_region_coords(
+                yaoqing_daoyou, 
+                main_region_coords=self.main_region_coords, 
+                confidence=0.8, 
+                cat_dir='shuangxiu'
+            )
+            if yaoqing_daoyou_coords is not None:
+                return True, yaoqing_daoyou_coords
+            
+        return False, None
+
+    def click_yaoqing_daoyou(self):
+        # 在双修界面中，点击邀请道友按钮
+        yaoqing_daoyou_is_exist, yaoqing_daoyou_coords = self.confirm_yaoqing_daoyou_is_exist()
+        
+        if yaoqing_daoyou_is_exist is False:
+            raise Exception("未找到邀请道友按钮")
+        
+        click_region(yaoqing_daoyou_coords, seconds=4)
+        print("完成: 点击邀请道友按钮")
+
+    def go_to_xianyuan_page(self):
+        # 前往仙缘界面
+        xianyuan_page_coords = self.shuangxiu_coords_manager.xianyuan_page()
+        click_region(xianyuan_page_coords, seconds=3)
+        print("完成: 前往仙缘界面")
+
+    def click_yaoqing(self):
+        # 在仙缘邀请界面中，点击邀请按钮
+        yaoqing_region_coords = self.shuangxiu_coords_manager.yaoqing_region()
+        args = {
+            'target_region_image':'yaoqing', 
+            'main_region_coords': yaoqing_region_coords, 
+            'confidence': 0.9, 
+            'grayscale': True,
+            'cat_dir': 'shuangxiu'
+        }
+
+        while get_region_coords(**args) is None:
+            scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
+            scroll_length = int(round(scroll_length))
+            scroll_specific_length(length=scroll_length)
+
+        yaoqing_coords = get_region_coords(**args)
+        click_region(yaoqing_coords, seconds=3)
+    
+    def confirm_go_to_xiulian_is_exist(self):
+        go_to_xiulian_coords = get_region_coords(
+            'go_to_xiulian',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir='shuangxiu'
+        )
+        if go_to_xiulian_coords is None:
+            return False
+        else:
+            return True
+
+    def confirm_shuangxiu_is_over(self):
+        shuangxiu_over_indicator_coords = get_region_coords(
+            'shuangxiu_over_indicator',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir='shuangxiu'
+        )
+
+        if shuangxiu_over_indicator_coords is None:
+            return False
+        else:
+            return True
+
+    def click_go_to_xiulian(self):
+        # 在双修界面中，点击前往修炼按钮
+        go_to_xiulian_coords = self.shuangxiu_coords_manager.go_to_xiulian()
+        click_region(go_to_xiulian_coords, seconds=3)
+        print("完成: 点击前往修炼按钮")
+
+    def speed_up_shuangxiu(self):
+        # 在双修界面中，点击屏幕中心, 可以快速跳过双修动画
+        while self.confirm_go_to_xiulian_is_exist() is False:
+            click_region(self.shuangxiu_coords_manager.main_region_coords, seconds=2)
+            print("完成: 点击屏幕中心")
+        
+        time.sleep(4)
+
+    def extract_remain_times(self):
+        remain_times_coords = self.shuangxiu_coords_manager.remain_times()
+        remain_times_image = pyautogui.screenshot(region=remain_times_coords)
+        remain_times_image_array = np.array(remain_times_image)
+        remain_times = extract_int_from_image(remain_times_image_array, 3)
+        self.remain_times = remain_times
+
+    def execute(self):
+        self.go_to_world()
+
+        self.click_ri_chang()
+        self.scoll_and_click(direction='down')
+        self.click_shuangxiu_gongfashu('liu_yu_lian_xin')
+        self.click_yaoqing_daoyou()
+        self.go_to_xianyuan_page()
+        self.click_yaoqing()
+        self.extract_remain_times()
+
+        while self.remain_times > 0:
+            self.click_go_to_xiulian()
+            if self.confirm_shuangxiu_is_over():
+                break
+
+            self.speed_up_shuangxiu()
+            self.remain_times -= 1
+            print(f"剩余双修次数: {self.remain_times}")
+            if self.remain_times > 0:
+                self.click_yaoqing_daoyou()
+
+        print("完成: 双修结束!")
 
         self.go_to_world()

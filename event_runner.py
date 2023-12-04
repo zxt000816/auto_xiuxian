@@ -546,7 +546,7 @@ class ShuangXiuExecutor(BaseExecutor):
     def click_go_to_xiulian(self):
         # 在双修界面中，点击前往修炼按钮
         go_to_xiulian_coords = self.shuangxiu_coords_manager.go_to_xiulian()
-        click_region(go_to_xiulian_coords, seconds=3)
+        click_region(go_to_xiulian_coords, seconds=4)
         print("完成: 点击前往修炼按钮")
 
     def speed_up_shuangxiu(self):

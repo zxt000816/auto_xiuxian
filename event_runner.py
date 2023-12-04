@@ -1,6 +1,6 @@
 from coords_manager import *
 from utils import get_region_coords, click_region, extract_int_from_image,\
-                  move_to_specific_coords, scroll_specific_length
+                  move_to_specific_coords, scroll_specific_length, get_region_coords_by_multi_imgs
 import pyautogui
 import time
 import numpy as np
@@ -28,6 +28,42 @@ class BaseExecutor:
         self.target_name = self.taget_name_dict[self.target]
         self.cat_dir = self.cat_dirs[self.target]
 
+    def get_leave_coords(self):
+        leave_imgs = [
+            {'target_region_image': 'leave2', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'leave'},
+            {'target_region_image': 'leave1', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'leave'},
+            {'target_region_image': 'leave3', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': True, 'cat_dir': 'leave'},
+        ]
+
+        leave_coords = get_region_coords_by_multi_imgs(leave_imgs)
+        return leave_coords
+
+    def get_leave_confirm_coords(self):
+        leave_confirm_imgs = [
+            {'target_region_image': 'leave_confirm1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': 'leave_confirm'},
+            {'target_region_image': 'leave_confirm2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': 'leave_confirm'},
+        ]
+
+        leave_confirm_coords = get_region_coords_by_multi_imgs(leave_confirm_imgs)
+        return leave_confirm_coords
+
+    def get_back_arrow_coords(self):
+        back_arrow_imgs = [
+            {'target_region_image': 'back_arrow1', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'back_arrow'},
+            {'target_region_image': 'back_arrow2', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': False, 'cat_dir': 'back_arrow'},
+        ]
+        back_arrow_coords = get_region_coords_by_multi_imgs(back_arrow_imgs)
+        return back_arrow_coords
+    
+    def get_world_coords(self, sub_main_coords: tuple=None):
+        _check_region_coords = self.main_region_coords if sub_main_coords is None else sub_main_coords
+        world_coords = get_region_coords(
+            'world_icon',
+            main_region_coords=_check_region_coords,
+            confidence=0.7,
+        )
+        return world_coords
+
     def _check_is_in_world(self):
         check_region_coords = self.coords_manager.map_or_leave()
         big_map_coords = None
@@ -43,29 +79,44 @@ class BaseExecutor:
         
         return False
         
+    def click_if_coords_exist(self, coords, message):
+        # 这个函数的作用是, 需要得到点击反馈的时候, 用这个函数. 
+        # (比如: 返回世界时, 如果找到了返回世界的图标, 点击之后, 返回True, 可以用来跳出循环, 进行下一个页面的操作)
+        if coords is not None:
+            click_region(coords, seconds=3)
+            print(f"完成: {message}")
+            return True
+        return False
+
     def go_to_world(self):
         print("="*25 + "进入世界地图" + "="*25)
-        while self._check_is_in_world() is False:
+        while not self._check_is_in_world():
+            # 判断的优先级: 返回按钮 > 离开按钮 > 世界图标 > 指定位置
+            # 后续需要添加条件判断点击指定位置, 画面是否发生变化, 如果没有发生变化, while会陷入死循环!!!
             print("当前是否在世界地图界面: ", False)
+            leave_coords = self.get_leave_coords()
+            if self.click_if_coords_exist(leave_coords, "点击离开按钮") is True:
+                # 当弹出离开提示框后, 点击确认离开按钮  
+                if self.get_leave_confirm_coords() is not None:
+                    click_region(self.coords_manager.confirm_button_in_leave_alert(), seconds=3)
+                    print("完成: 点击确认离开按钮")
 
-            region_for_check_world_coords = self.coords_manager.region_for_check_world()
-            world_coords = get_region_coords(
-                'world_icon',
-                main_region_coords=region_for_check_world_coords,
-                confidence=0.7,
-            )
-            if world_coords is not None:
-                click_region(world_coords, seconds=4)
-                print("完成: 点击世界地图图标")
                 continue
 
+            back_arrow_coords = self.get_back_arrow_coords()
+            if self.click_if_coords_exist(back_arrow_coords, "点击返回按钮") is True:
+                continue
+
+            world_coords = self.get_world_coords(self.coords_manager.region_for_check_world())
+            if self.click_if_coords_exist(world_coords, "点击世界图标"):
+                continue
+            
             click_region(self.coords_manager.exit(), seconds=3)
     
     def click_ri_chang(self):
         click_region(self.richang_coords, seconds=3)
         print("完成: 点击日常按钮")
 
-    # def scoll_and_click(self, target: str, direction='down'):
     def scoll_and_click(self, direction='down'):
         if direction not in ['up', 'down']:
             raise Exception("direction must be 'up' or 'down'")

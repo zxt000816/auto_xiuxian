@@ -4,7 +4,7 @@ import pytesseract
 import re
 import cv2
 import numpy as np
-from typing import Tuple
+from typing import Tuple, List, Dict
 import time
 from dotenv import load_dotenv
 
@@ -14,7 +14,6 @@ def get_game_page_coords(resolution=(1080, 1920)):
     # 在屏幕上定位登录页面的坐标
     game_page_coords = None
     for game_page in ['shouye', 'login_page', 'xiulian']:
-    # for game_page in ['login_page', 'xiulian']:
         if game_page == 'shouye':
             shouye_coords = get_region_coords('shouye', grayscale=True)
             left_bottom_x = shouye_coords[0]
@@ -59,6 +58,41 @@ def get_region_coords(
         )
 
     return region_coords
+
+def get_region_coords_by_multi_imgs(images: List[Dict]):
+    # images: list of dict, example: [{'target_region_image': 'shouye', 'main_region_coords': (0, 0, 100, 100)}, ...]
+    for image in images:
+        target_region_image = image['target_region_image']
+        main_region_coords = image.get('main_region_coords')
+        confidence = image.get('confidence', 0.7)
+        grayscale = image.get('grayscale', False)
+        root_dir = image.get('root_dir', os.getenv('ROOT_DIR'))
+        cat_dir = image.get('cat_dir')
+
+        if cat_dir is not None:
+            root_dir = os.path.join(root_dir, cat_dir)
+
+        image_path = os.path.join(root_dir, f'{target_region_image}.png')
+
+        # 在登录页面区域内定位指定区域的坐标
+        if main_region_coords is not None:
+            region_coords = pyautogui.locateOnScreen(
+                image_path,
+                region=main_region_coords,
+                confidence=confidence,
+                grayscale=grayscale
+            )
+        else:
+            region_coords = pyautogui.locateOnScreen(
+                image_path,
+                confidence=confidence,
+                grayscale=grayscale
+            )
+
+        if region_coords is not None:
+            return region_coords
+
+    return None
 
 def click_region(region_coords, button='left', seconds=2):
     x, y = pyautogui.center(region_coords)

@@ -43,6 +43,10 @@ class BaseCoordsManager:
     def exit(self): # 通用退出坐标点
         diff = (332, 1844, 0, 0)
         return self.calculate_relative_coords(diff)
+    
+    def confirm_button_in_leave_alert(self): # 离开提示框-确认按钮
+        diff = (584, 1224, 302, 99)
+        return self.calculate_relative_coords(diff)
 
     def ling_shi(self): # 世界地图界面-灵石
         diff = (842, 34, 139, 44)

@@ -7,7 +7,7 @@ from event_runner import AssistantExecutor, BaoMingExecutor, YouLiExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (554, 984)
+resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
 try:
     main_region_coords = get_game_page_coords(resolution = resolution)
@@ -21,7 +21,7 @@ try:
 
     assistant_executor = AssistantExecutor(assistant_corrds_manager)
     bao_ming_executor = BaoMingExecutor(bao_ming_corrds_manager)
-    youli_executor = YouLiExecutor(youli_corrds_manager, place_name='南疆', buy_times=2)
+    youli_executor = YouLiExecutor(youli_corrds_manager, place_name='南疆', buy_times=3)
 
     assistant_executor.execute()
     bao_ming_executor.execute()

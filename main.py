@@ -23,7 +23,7 @@ try:
     assistant_executor = AssistantExecutor(assistant_corrds_manager)
     bao_ming_executor = BaoMingExecutor(bao_ming_corrds_manager)
     youli_executor = YouLiExecutor(youli_corrds_manager, place_name='南疆', buy_times=3)
-    shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager)
+    shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name='六欲练心')
 
     assistant_executor.execute()
     bao_ming_executor.execute()
@@ -33,3 +33,6 @@ try:
 except Exception as e:
     print(e)
     print('程序异常，退出')
+
+
+assistant_executor.go_to_world()

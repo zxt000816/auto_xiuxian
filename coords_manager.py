@@ -80,6 +80,18 @@ class BaseCoordsManager:
         diff = (382, 756, 0, 0)
         return self.calculate_relative_coords(diff)
     
+    def price_in_store(self): # 在日常列表界面点击游历, 弹出购买界面时, 价格后面的数字的位置
+        diff = (574, 1318, 72, 45)
+        return self.calculate_relative_coords(diff)
+    
+    def current_lingshi(self):
+        diff = (573, 1372, 166, 50)
+        return self.calculate_relative_coords(diff)
+
+    def buy_button_in_store(self): # 在日常列表界面点击游历, 弹出购买界面时, `购买并使用`按钮的位置
+        diff = (376, 1426, 334, 123)
+        return self.calculate_relative_coords(diff)
+    
 class AssistantCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -104,17 +116,17 @@ class BaoMingCoordsManager(BaseCoordsManager):
         diff = (398, 1233, 303, 101)
         return self.calculate_relative_coords(diff)
 
-class ShuangXiuCoordsManager(BaseCoordsManager):
-    def __init__(self, main_region_coords, resolution=(1080, 1920)):
-        super().__init__(main_region_coords, resolution)
+# class ShuangXiuCoordsManager(BaseCoordsManager):
+#     def __init__(self, main_region_coords, resolution=(1080, 1920)):
+#         super().__init__(main_region_coords, resolution)
 
-    def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
-        diff = (360, 131, 22, 27)
-        return self.calculate_relative_coords(diff, gongfashu_coords)
+#     def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
+#         diff = (360, 131, 22, 27)
+#         return self.calculate_relative_coords(diff, gongfashu_coords)
     
-    def back(self):
-        diff = (60, 1792, 72, 71)
-        return self.calculate_relative_coords(diff)
+#     def back(self):
+#         diff = (60, 1792, 72, 71)
+#         return self.calculate_relative_coords(diff)
     
 class YouliCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -152,9 +164,9 @@ class ShuangXiuCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
 
-    def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
-        diff = (360, 131, 22, 27)
-        return self.calculate_relative_coords(diff, gongfashu_coords)
+    # def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
+    #     diff = (360, 131, 22, 27)
+    #     return self.calculate_relative_coords(diff, gongfashu_coords)
     
     def yaoqing_daoyou(self): # 双修界面-邀请道友按钮
         diff = (478, 1447, 127, 127)

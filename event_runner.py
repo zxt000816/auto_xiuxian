@@ -18,12 +18,15 @@ class BaseExecutor:
             'shuangxiu': 'shuangxiu',  # 双修
             'assistant': 'assistant',  # 小助手
             'huodong_baoming': 'huodong_baoming',  # 活动报名
+            'fuben': 'fuben',  # 副本
+        
         }
         self.taget_name_dict = {
             'youli': '游历',
             'shuangxiu': '双修',
             'assistant': '小助手',
             'huodong_baoming': '活动报名',
+            'fuben': '副本',
         }
         self.target = target
         self.target_name = self.taget_name_dict[self.target]
@@ -82,11 +85,11 @@ class BaseExecutor:
         
         return False
         
-    def click_if_coords_exist(self, coords, message):
+    def click_if_coords_exist(self, coords, message, seconds=3):
         # 这个函数的作用是, 需要得到点击反馈的时候, 用这个函数. 
         # (比如: 返回世界时, 如果找到了返回世界的图标, 点击之后, 返回True, 可以用来跳出循环, 进行下一个页面的操作)
         if coords is not None:
-            click_region(coords, seconds=3)
+            click_region(coords, seconds=seconds)
             print(f"完成: {message}")
             return True
         return False
@@ -120,36 +123,45 @@ class BaseExecutor:
         click_region(self.richang_coords, seconds=3)
         print("完成: 点击日常按钮")
 
-    def scoll_and_click(self, direction='down'):
+    def scoll_and_click(self, direction='down', other_target=None, other_target_name=None):
+        if other_target_name is not None:
+            if other_target_name is None:
+                raise Exception("other_target_name can not be None")
+            
+            target = other_target
+            target_name = other_target_name
+        else:
+            target = self.target
+            target_name = self.target_name
+
         if direction not in ['up', 'down']:
             raise Exception("direction must be 'up' or 'down'")
         
         target_coords = get_region_coords(
-            self.target, 
+            target, 
             main_region_coords=self.main_region_coords, 
             confidence=0.9, 
             cat_dir=self.cat_dir
         )
-        print(f"完成: 识别一次{self.target_name}位置")
+        print(f"完成: 识别一次{target_name}位置")
 
         num_of_scroll = 12
         if target_coords is None:
             scoll_start_point_coords = self.coords_manager.scroll_start_point()
             scoll_start_point_coords = (scoll_start_point_coords[0], scoll_start_point_coords[1])
             move_to_specific_coords(scoll_start_point_coords)
-            print(f"完成: 未找到{self.target_name}位置, 将鼠标移动到指定位置")
+            print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
         while target_coords is None and num_of_scroll > 0:
-            print(f"完成: 未找到{self.target_name}位置, 向下滚动一次")
+            print(f"完成: 未找到{target_name}位置, 向下滚动一次")
             scroll_length = -300 if direction == 'down' else 300
             scroll_length = scroll_length * self.coords_manager.y_ratio
             scroll_length = int(round(scroll_length))
-            print(f"完成: 滚动距离{scroll_length}")
-            print(f"滚动方向: {direction}")
+            print(f"完成: 滚动距离{scroll_length}, 滚动方向: {direction}")
             scroll_specific_length(scroll_length, seconds=5)
             
             target_coords = get_region_coords(
-                self.target, 
+                target, 
                 main_region_coords=self.main_region_coords, 
                 confidence=0.9, 
                 cat_dir=self.cat_dir
@@ -157,11 +169,72 @@ class BaseExecutor:
             num_of_scroll -= 1
         
         if target_coords is None:
-            raise ScrollException(f"未找到{self.target_name}位置.")
+            raise ScrollException(f"未找到{target_name}位置.")
 
-        self.target_coords = target_coords
         click_region(target_coords, seconds=3)
-        print(f"完成: 点击{self.target_name}按钮")
+        print(f"完成: 点击{target_name}按钮")
+
+    def if_buy_store_pop_up(self):
+        buy_store_coords_is_in_main_region = get_region_coords(
+            'buy_store', 
+            main_region_coords=self.main_region_coords, 
+            confidence=0.9, 
+        )
+        if buy_store_coords_is_in_main_region:
+            return True
+        else:
+            return False
+
+    def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str):
+        print("="*25 + f"购买{self.target_name}次数" + "="*25)
+        buy_times_not_enough_indicator_coords = get_region_coords(
+            buy_times_not_enough_indicator,
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir,
+        )
+        if buy_times_not_enough_indicator_coords is not None:
+            print("完成: 购买次数已用完")
+            click_region(self.exit_coords, seconds=2)
+            return
+
+        # 显示100灵石, 目前已购买0次; 显示150灵石, 目前已购买1次; 显示200灵石, 目前已购买2次; 显示250灵石, 目前已购买3次
+        price_to_times = {100: 0, 150: 1, 200: 2, 250: 3} 
+        current_lingshi_coords = self.coords_manager.current_lingshi()
+        current_lingshi_image = pyautogui.screenshot(region=current_lingshi_coords)
+        current_lingshi_arr = np.array(current_lingshi_image)
+        current_lingshi = extract_int_from_image(current_lingshi_arr, error_value=float('-inf'))
+
+        price_in_store_coords = self.coords_manager.price_in_store()
+        price_in_store_image = pyautogui.screenshot(region=price_in_store_coords)
+        price_in_store_arr = np.array(price_in_store_image)
+        price = extract_int_from_image(price_in_store_arr, error_value=float('inf')) #  从图片中提取失败时, 返回float('inf')
+        
+        times_already_bought = price_to_times[price]
+        if times_already_bought >= buy_times:
+            click_region(self.exit_coords, seconds=2)
+            # raise YouLiLingShiException("完成: 购买次数已用完, 将购买次数置为0")
+            print("完成: 购买次数已用完, 将购买次数置为0")
+            return
+        else:
+            buy_in_store_coords = self.coords_manager.buy_button_in_store()
+            buy_times = buy_times - times_already_bought
+            for _ in range(buy_times):
+                if current_lingshi < price:
+                    click_region(self.exit_coords, seconds=2)
+                    # raise YouLiLingShiException("灵石不足, 购买失败")
+                    print("灵石不足, 购买失败")
+                    return 
+                
+                click_region(buy_in_store_coords)
+                current_lingshi -= price
+                price += 50
+                buy_times -= 1
+                print("完成: 购买一次游历")
+            
+            if self.if_buy_store_pop_up(): # 如果购买完以后购买界面还在, 说明还可以购买
+                click_region(self.exit_coords)
+                print("完成: 还有剩余购买次数, 但是不买了, 退出商店界面")
 
 class BaoMingExecutor(BaseExecutor):
     def __init__(self, baoming_coords_manager: BaoMingCoordsManager):
@@ -265,21 +338,36 @@ class AssistantExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
         if task_image_coords is None:
-            raise Exception(f"未找到{task_name}图标")
+            raise Exception(f"未找到{task_name}位置")
 
         self.search_run_button_and_click(task_image_coords)
+        print(f"完成: 点击{task_name}运行按钮")
 
     def execute(self):
         self.go_to_world()
-        self.click_ri_chang()
-        self.click_assistant()
+        try:
+            self.click_ri_chang()
+            self.click_assistant()
+        except Exception as e:
+            print(e)
+            self.go_to_world()
+            return
+        
         for task in self.task_order:
-            self.search_task_region_and_click(task)
-            self.process_duihuan_alert()
-            if self._check_is_in_assistant() is False:
-                print(f"未进入{self.task_name_dict[task]}界面")
-                click_region(self.coords_manager.exit(), seconds=3)
-                print("完成: 点击返回按钮")
+            try:
+                if self.search_task_region_and_click(task) is False:
+                    print(f"未找到{self.task_name_dict[task]}位置")
+                    continue
+
+                self.process_duihuan_alert()
+                if self._check_is_in_assistant() is False:
+                    print(f"未进入{self.task_name_dict[task]}界面")
+                    click_region(self.coords_manager.exit(), seconds=3)
+                    print("完成: 点击返回按钮")
+            
+            except Exception as e:
+                print(e)
+
         self.go_to_world()
 
 class YouLiExecutor(BaseExecutor):
@@ -442,33 +530,38 @@ class ShuangXiuExecutor(BaseExecutor):
     def __init__(
         self,
         shuangxiu_coords_manager: ShuangXiuCoordsManager,
+        gongfashu_name: str
     ):
         super().__init__(shuangxiu_coords_manager, 'shuangxiu')
 
         self.shuangxiu_coords_manager = shuangxiu_coords_manager
+        self.gongfashu_name = gongfashu_name
         self.shuangxiu_name_dict = {
-            'dian_feng_pei_yuan': '颠凤培元',
-            'chi_qing_zhou': '痴情咒',
-            'liu_yu_lian_xin': '六欲练心'
+            '颠凤培元': 'dian_feng_pei_yuan',
+            '痴情咒': 'chi_qing_zhou',
+            '六欲练心': 'liu_yu_lian_xin',
+            '引龙诀': 'yin_long_jue',
         }
+        self.gonfashu = self.shuangxiu_name_dict[self.gongfashu_name]
+
         self.gonfa_order = ['dian_feng_pei_yuan', 'liu_yu_lian_xin']
         self.main_region_coords = self.shuangxiu_coords_manager.main_region_coords
 
-    def click_shuangxiu_gongfashu(self, gongfashu_name: str):
+    def click_shuangxiu_gongfashu(self):
         # 在日常界面中，点击双修图标
         gongfashu_coords = get_region_coords(
-            gongfashu_name, 
+            self.gonfashu,
             main_region_coords=self.main_region_coords, 
             confidence=0.9, 
             cat_dir='shuangxiu'
         )
-        print(f"完成: 识别一次{gongfashu_name}位置")
+        print(f"完成: 识别一次{self.gongfashu_name}位置")
 
         if gongfashu_coords is None:
-            raise Exception(f"未找到{gongfashu_name}位置.")
+            raise Exception(f"未找到{self.gongfashu_name}位置")
 
         click_region(gongfashu_coords, seconds=3)
-        print(f"完成: 点击{gongfashu_name}按钮")
+        print(f"完成: 点击{self.gongfashu_name}按钮")
 
     def confirm_yaoqing_daoyou_is_exist(self):
         for yaoqing_daoyou in ['yaoqing_daoyou1', 'yaoqing_daoyou2']:
@@ -567,25 +660,31 @@ class ShuangXiuExecutor(BaseExecutor):
     def execute(self):
         self.go_to_world()
 
-        self.click_ri_chang()
-        self.scoll_and_click(direction='down')
-        self.click_shuangxiu_gongfashu('liu_yu_lian_xin')
-        self.click_yaoqing_daoyou()
-        self.go_to_xianyuan_page()
-        self.click_yaoqing()
-        self.extract_remain_times()
+        try:
+            self.click_ri_chang()
+            self.scoll_and_click(direction='down')
+            self.click_shuangxiu_gongfashu()
+            self.click_yaoqing_daoyou()
+            self.go_to_xianyuan_page()
+            self.click_yaoqing()
+            self.extract_remain_times()
 
-        while self.remain_times > 0:
-            self.click_go_to_xiulian()
-            if self.confirm_shuangxiu_is_over():
-                break
+            while self.remain_times > 0:
+                self.click_go_to_xiulian()
+                if self.confirm_shuangxiu_is_over():
+                    break
 
-            self.speed_up_shuangxiu()
-            self.remain_times -= 1
-            print(f"剩余双修次数: {self.remain_times}")
-            if self.remain_times > 0:
-                self.click_yaoqing_daoyou()
+                self.speed_up_shuangxiu()
+                self.remain_times -= 1
+                print(f"剩余双修次数: {self.remain_times}")
+                if self.remain_times > 0:
+                    self.click_yaoqing_daoyou()
+                    self.go_to_xianyuan_page()
+                    self.click_yaoqing()
+            
+            print("完成: 双修结束!")
 
-        print("完成: 双修结束!")
+        except Exception as e:
+            print(e)
 
         self.go_to_world()

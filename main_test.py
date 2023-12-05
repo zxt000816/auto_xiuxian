@@ -13,8 +13,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
 main_region_coords = get_game_page_coords()
-print(main_region_coords)
-
 coor_manager = BaseCoordsManager(main_region_coords)
 
 def get_diff_quickly_2(
@@ -94,9 +92,9 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'remain_times',
+    'target_image_name': 'tiao_zhan_times',
     'main_region_coords': main_region_coords,
-    'target_image_cat_dir': 'shuangxiu',
+    'target_image_cat_dir': 'fuben',
 }
 
 get_diff_quickly = get_diff_quickly_2
@@ -110,7 +108,7 @@ pyautogui.screenshot(region=diffs['main_region_coords'])
 
 extract_int_from_image(np.array(
     pyautogui.screenshot(region=diffs['target_image_coords'])
-), 0)
+), 3)
 
 # diff_between_sub_main_and_main = diffs['diff_between_sub_main_and_main']
 # diff_between_target_and_sub_main = diffs['diff_between_target_and_sub_main']

@@ -92,28 +92,27 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'tiao_zhan_times',
+    'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'target_image_cat_dir': 'fuben',
+    'target_image_cat_dir': 'hong_bao',
 }
 
 get_diff_quickly = get_diff_quickly_2
 
 diffs = get_diff_quickly(**args2)
 
-# pyautogui.screenshot(region=diffs['sub_main_image_coords'])    
+# %% 
 pyautogui.screenshot(region=diffs['target_image_coords'])
-pyautogui.screenshot(region=diffs['main_region_coords'])
-# pyautogui.screenshot(region=coor_manager.world())
+# %% 
 
+pyautogui.screenshot(region=diffs['main_region_coords'])
+# %% 
 extract_int_from_image(np.array(
     pyautogui.screenshot(region=diffs['target_image_coords'])
 ), 3)
 
-# diff_between_sub_main_and_main = diffs['diff_between_sub_main_and_main']
-# diff_between_target_and_sub_main = diffs['diff_between_target_and_sub_main']
 diff_between_target_and_main = diffs['diff_between_target_and_main']
 
-# print(diff_between_sub_main_and_main)
-# print(diff_between_target_and_sub_main)
 print(diff_between_target_and_main)
+
+# %%

@@ -92,6 +92,10 @@ class BaseCoordsManager:
         diff = (376, 1426, 334, 123)
         return self.calculate_relative_coords(diff)
     
+    def chat(self): # 世界地图界面-聊天图标
+        diff = (33, 1458, 96, 62)
+        return self.calculate_relative_coords(diff)
+    
 class AssistantCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -187,3 +191,30 @@ class ShuangXiuCoordsManager(BaseCoordsManager):
     def remain_times(self):
         diff = (702, 1585, 41, 45)
         return self.calculate_relative_coords(diff)
+    
+class FuBenCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def buy_times_button(self):
+        diff = (695, 1525, 61, 58)
+        return self.calculate_relative_coords(diff)
+
+    def zu_dui_alert_confirm(self):
+        # 组队界面-确认按钮
+        diff = (405, 1261, 311, 111)
+        return self.calculate_relative_coords(diff)
+    
+    def fen_shen_page(self):
+        # 邀请界面-分身
+        diff = (322, 391, 136, 85)
+        return self.calculate_relative_coords(diff)
+    
+    def real_tiao_zhan_times(self):
+        # 副本界面-实际挑战次数
+        diff = (617, 1538, 22, 37)
+        return self.calculate_relative_coords(diff)
+    
+class HongBaoCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)

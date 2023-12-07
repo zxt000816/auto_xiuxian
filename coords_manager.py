@@ -96,6 +96,10 @@ class BaseCoordsManager:
         diff = (33, 1458, 96, 62)
         return self.calculate_relative_coords(diff)
     
+    def confirm_button_in_network_not_statble(self):
+        diff = (392, 1227, 301, 96)
+        return self.calculate_relative_coords(diff)
+    
 class AssistantCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -217,4 +221,8 @@ class FuBenCoordsManager(BaseCoordsManager):
     
 class HongBaoCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+class HunDunLingTaCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)

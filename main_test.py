@@ -23,7 +23,7 @@ def get_diff_quickly_2(
     target_image_coords = get_region_coords(
         target_image_name,
         main_region_coords=main_region_coords,
-        confidence=0.9,
+        confidence=0.8,
         cat_dir=target_image_cat_dir,
     )
 
@@ -92,9 +92,9 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'temp_test',
+    'target_image_name': 'confirm_button',
     'main_region_coords': main_region_coords,
-    'target_image_cat_dir': 'hong_bao',
+    'target_image_cat_dir': None,
 }
 
 get_diff_quickly = get_diff_quickly_2
@@ -107,9 +107,9 @@ pyautogui.screenshot(region=diffs['target_image_coords'])
 
 pyautogui.screenshot(region=diffs['main_region_coords'])
 # %% 
-extract_int_from_image(np.array(
-    pyautogui.screenshot(region=diffs['target_image_coords'])
-), 3)
+# extract_int_from_image(np.array(
+#     pyautogui.screenshot(region=diffs['target_image_coords'])
+# ), 3)
 
 diff_between_target_and_main = diffs['diff_between_target_and_main']
 

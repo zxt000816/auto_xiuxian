@@ -20,7 +20,8 @@ class BaseExecutor:
             'huodong_baoming': 'huodong_baoming',  # 活动报名
             'fuben': 'fuben',  # 副本,
             'xi_ling': 'xi_ling',  # 洗灵,
-            'hong_bao': 'hong_bao',  # 红包
+            'hong_bao': 'hong_bao',  # 红包,
+            'hun_dun_ling_ta': 'hun_dun_ling_ta',  # 混沌灵塔,
         
         }
         self.taget_name_dict = {
@@ -31,6 +32,7 @@ class BaseExecutor:
             'fuben': '副本',
             'xi_ling': '洗灵',
             'hong_bao': '红包',
+            'hun_dun_ling_ta': '混沌灵塔',
         }
         self.target = target
         self.target_name = self.taget_name_dict[self.target]
@@ -75,6 +77,15 @@ class BaseExecutor:
             confidence=0.7,
         )
         return world_coords
+    
+    def get_netword_not_stable_coords(self):
+        # 获取网络不稳定的坐标
+        netword_not_stable_coords = get_region_coords(
+            'network_not_stable',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+        )
+        return netword_not_stable_coords
 
     def _check_is_in_world(self):
         # 判断是否处于世界地图界面
@@ -89,7 +100,7 @@ class BaseExecutor:
         
         return False
         
-    def click_if_coords_exist(self, coords, message, seconds=3):
+    def click_if_coords_exist(self, coords, message, seconds=2):
         # 这个函数的作用是, 需要得到点击反馈的时候, 用这个函数. 
         # (比如: 返回世界时, 如果找到了返回世界的图标, 点击之后, 返回True, 可以用来跳出循环, 进行下一个页面的操作)
         if coords is not None:
@@ -101,14 +112,19 @@ class BaseExecutor:
     def go_to_world(self):
         print("="*25 + "进入世界地图" + "="*25)
         while not self._check_is_in_world():
-            # 判断的优先级: 返回按钮 > 离开按钮 > 世界图标 > 指定位置
+            # 判断的优先级: 网络不稳定 > 返回按钮 > 离开按钮 > 世界图标 > 指定位置 > 
             # 后续需要添加条件判断点击指定位置, 画面是否发生变化, 如果没有发生变化, while会陷入死循环!!!
             print("当前是否在世界地图界面: ", False)
+            netword_not_stable_coords = self.get_netword_not_stable_coords()
+            if netword_not_stable_coords is not None:
+                click_region(self.coords_manager.confirm_button_in_network_not_statble(), seconds=3)
+                print("点击确定按钮, 退出网络不稳定提示框")
+
             leave_coords = self.get_leave_coords()
             if self.click_if_coords_exist(leave_coords, "点击离开按钮") is True:
                 # 当弹出离开提示框后, 点击确认离开按钮  
                 if self.get_leave_confirm_coords() is not None:
-                    click_region(self.coords_manager.confirm_button_in_leave_alert(), seconds=3)
+                    click_region(self.coords_manager.confirm_button_in_leave_alert(), seconds=5)
                     print("完成: 点击确认离开按钮")
 
                 continue
@@ -120,7 +136,7 @@ class BaseExecutor:
             world_coords = self.get_world_coords(self.coords_manager.region_for_check_world())
             if self.click_if_coords_exist(world_coords, "点击世界图标"):
                 continue
-            
+
             click_region(self.coords_manager.exit(), seconds=3)
     
     def click_ri_chang(self):
@@ -267,7 +283,7 @@ class BaoMingExecutor(BaseExecutor):
                 if num_to_scroll == 0:
                     break
                 num_to_scroll -= 1
-                scroll_length = 600 * self.coords_manager.y_ratio
+                scroll_length = -300 * self.coords_manager.y_ratio
                 scroll_length = int(round(scroll_length))
 
                 scroll_specific_length(scroll_length, seconds=4)
@@ -282,9 +298,14 @@ class BaoMingExecutor(BaseExecutor):
 
     def execute(self):
         self.go_to_world()
-        self.click_ri_chang()
-        self.click_huo_dong_bao_ming()
-        self.start_baoming()
+
+        try:
+            self.click_ri_chang()
+            self.click_huo_dong_bao_ming()
+            self.start_baoming()
+        except Exception as e:
+            print(e)
+
         self.go_to_world()
 
 class AssistantExecutor(BaseExecutor):
@@ -515,15 +536,11 @@ class YouLiExecutor(BaseExecutor):
         self.go_to_world()
 
         try:
-            if self._check_is_in_world() is False:
-                raise Exception("当前不在世界地图界面")
             self.click_ri_chang()
             self.scroll_and_click_youli()
             self.scroll_to_youli_place()
             self.choose_youli_place()
             self.start_youli()
-        except (ScrollException, YouLiPlaceException, YouLiLingShiException) as e:
-            print(e)
         except Exception as e:
             print(e)
 
@@ -859,55 +876,58 @@ class FuBenExecutor(BaseExecutor):
 
     def execute(self):
         self.go_to_world()
-
-        self.click_ri_chang()
-        self.scoll_and_click(direction='down')
-        self.scoll_and_click(
-            direction='up', 
-            other_target=self.fuben,
-            other_target_name=self.fuben_name,
-        )
-        ### 这段代码需要改善 ###
-        time.sleep(5) # 可能会赶往副本界面, 需要等待
-        while self.finish_buying_times == False:
-            self.buy_fu_ben_times()
-        ### 这段代码需要改善 ###
-        
-        real_tiao_zhan_times = self.get_real_fuben_times()
-        print(f'实际挑战次数: {real_tiao_zhan_times}')
-        self.zu_dui()
-
-        for i in range(real_tiao_zhan_times):
-            print(f'开始第{i+1}次挑战!')
-            # 每次挑战都需要重新拉分身
-            if i != 0:
-                self.zu_dui()
-
-            # 点击挑战, 进入副本
-            tiao_zhan_coords = self.get_tiao_zhan_coords()
-            click_region(tiao_zhan_coords, seconds=2)
+        try:
+            self.click_ri_chang()
+            self.scoll_and_click(direction='down')
+            self.scoll_and_click(
+                direction='up', 
+                other_target=self.fuben,
+                other_target_name=self.fuben_name,
+            )
+            ### 这段代码需要改善 ###
+            time.sleep(30) # 可能会赶往副本界面, 需要等待
+            while self.finish_buying_times == False:
+                self.buy_fu_ben_times()
+            ### 这段代码需要改善 ###
             
-            # 如果弹出购买次数不足提示框, 则挑战结束
-            if self.get_buy_times_not_enough():
-                break
+            real_tiao_zhan_times = self.get_real_fuben_times()
+            print(f'实际挑战次数: {real_tiao_zhan_times}')
+            self.zu_dui()
 
-            # 首先等待40秒, 然后每隔3秒检查是否在世界
-            time.sleep(40)
-            while True:
-                if self._check_is_in_world():
+            for i in range(real_tiao_zhan_times):
+                print(f'开始第{i+1}次挑战!')
+                # 每次挑战都需要重新拉分身
+                if i != 0:
+                    self.zu_dui()
+
+                # 点击挑战, 进入副本
+                tiao_zhan_coords = self.get_tiao_zhan_coords()
+                click_region(tiao_zhan_coords, seconds=2)
+                
+                # 如果弹出购买次数不足提示框, 则挑战结束
+                if self.get_buy_times_not_enough():
                     break
-                else:
-                    time.sleep(3)
 
-            # 如果是最后一次挑战, 则不需要再次进入副本
-            if i == real_tiao_zhan_times - 1:
-                break
+                # 首先等待40秒, 然后每隔3秒检查是否在世界
+                time.sleep(40)
+                while True:
+                    if self._check_is_in_world():
+                        break
+                    else:
+                        time.sleep(3)
+
+                # 如果是最后一次挑战, 则不需要再次进入副本
+                if i == real_tiao_zhan_times - 1:
+                    break
+                
+                # 获取进入副本的坐标点, 点击进入
+                fu_ben_go_in_coords = self.get_fu_ben_go_in_coords()
+                click_region(fu_ben_go_in_coords, seconds=3)
             
-            # 获取进入副本的坐标点, 点击进入
-            fu_ben_go_in_coords = self.get_fu_ben_go_in_coords()
-            click_region(fu_ben_go_in_coords, seconds=3)
-        
-        print('挑战结束!')
+            print('挑战结束!')
+
+        except Exception as e:
+            print(e)
 
         self.go_to_world()
 
@@ -994,4 +1014,79 @@ class HongBaoExecutor(BaseExecutor):
                 print(e)
                 break
 
+        self.go_to_world()
+
+class HunDunLingTaExecutor(BaseExecutor):
+    def __init__(self, hun_dun_ling_ta_coords_manager: HunDunLingTaCoordsManager, ling_ta_name: str):
+        super().__init__(hun_dun_ling_ta_coords_manager, 'hun_dun_ling_ta')
+        self.hun_dun_ling_ta_coords_manager = hun_dun_ling_ta_coords_manager
+        self.ling_ta_name_dict = {
+            '弥罗之塔': 'mi_luo_zhi_ta',
+            '天月之塔': 'tian_yue_zhi_ta',
+            '摩诃之塔': 'mo_he_zhi_ta',
+        }
+        self.ling_ta = self.ling_ta_name_dict[ling_ta_name]
+
+    def get_open_indicator_coords(self):
+        ling_ta_open_indicator_coords = get_region_coords(
+            'open_indicator',
+            main_region_coords=self.hun_dun_ling_ta_coords_manager.main_region_coords,
+            confidence=0.8,
+            cat_dir='hun_dun_ling_ta',
+        )
+        return ling_ta_open_indicator_coords
+    
+    def get_sweep_coords(self):
+        sweep_coords = get_region_coords(
+            'sweep',
+            main_region_coords=self.hun_dun_ling_ta_coords_manager.main_region_coords,
+            confidence=0.8,
+            cat_dir='hun_dun_ling_ta',
+        )
+        return sweep_coords
+    
+    def get_start_sweep_coords(self):
+        start_sweep_coords = get_region_coords(
+            'start_sweep',
+            main_region_coords=self.hun_dun_ling_ta_coords_manager.main_region_coords,
+            confidence=0.8,
+            cat_dir='hun_dun_ling_ta',
+        )
+        return start_sweep_coords
+    
+    def get_sweep_over_coords(self):
+        sweep_over_coords = get_region_coords(
+            'sweep_over',
+            main_region_coords=self.hun_dun_ling_ta_coords_manager.main_region_coords,
+            confidence=0.8,
+            cat_dir='hun_dun_ling_ta',
+        )
+        return sweep_over_coords
+
+    def execute(self):
+        self.go_to_world()
+        
+        try:
+            self.click_ri_chang()
+            self.scoll_and_click(direction='down')
+
+            while True:
+                ling_ta_open_indicator_coords = self.get_open_indicator_coords()
+                if ling_ta_open_indicator_coords:
+                    break
+                time.sleep(2)
+
+            sweep_coords = self.get_sweep_coords()
+            if sweep_coords:
+                click_region(sweep_coords)
+
+            start_sweep_coords = self.get_start_sweep_coords()
+            if start_sweep_coords:
+                sweep_over_coords = self.get_sweep_over_coords()
+                if sweep_over_coords is not None:
+                    click_region(start_sweep_coords)
+        
+        except Exception as e:
+            print(e)
+            
         self.go_to_world()

@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple
 from utils import get_game_page_coords, get_region_coords, get_region_coords_by_multi_imgs, click_region
 from coords_manager import HongBaoCoordsManager
-from event_runner import HongBaoExecutor
+from event_executor import HongBaoExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

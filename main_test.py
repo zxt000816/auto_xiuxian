@@ -4,7 +4,7 @@ from typing import Tuple
 import time
 from utils import get_region_coords, click_region, get_game_page_coords, cal_diff_between_regions, extract_int_from_image
 from coords_manager import *
-from event_runner import YouLiExecutor
+from event_executor import YouLiExecutor
 import pytesseract
 import cv2
 import re
@@ -92,9 +92,9 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'confirm_button',
+    'target_image_name': 'qian_wang',
     'main_region_coords': main_region_coords,
-    'target_image_cat_dir': None,
+    'target_image_cat_dir': 'tiao_zhan_xian_yuan',
 }
 
 get_diff_quickly = get_diff_quickly_2
@@ -103,8 +103,8 @@ diffs = get_diff_quickly(**args2)
 
 # %% 
 pyautogui.screenshot(region=diffs['target_image_coords'])
-# %% 
 
+# %% 
 pyautogui.screenshot(region=diffs['main_region_coords'])
 # %% 
 # extract_int_from_image(np.array(

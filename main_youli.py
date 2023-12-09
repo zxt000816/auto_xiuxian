@@ -4,7 +4,7 @@ from typing import Tuple
 import time
 from utils import get_game_page_coords
 from coords_manager import YouliCoordsManager
-from event_runner import YouLiExecutor
+from event_executor import YouLiExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

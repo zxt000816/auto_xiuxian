@@ -226,3 +226,15 @@ class HongBaoCoordsManager(BaseCoordsManager):
 class HunDunLingTaCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
+
+class TiaoZhanXianYuanCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def all_xian_yuan(self):
+        diff=(324, 280, 160, 80)
+        return self.calculate_relative_coords(diff)
+    
+    def qian_wang(self):
+        diff=(430, 1527, 255, 96)
+        return self.calculate_relative_coords(diff)

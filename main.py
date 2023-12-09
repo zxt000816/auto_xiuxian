@@ -4,9 +4,9 @@ from typing import Tuple
 from utils import get_game_page_coords, get_region_coords, get_region_coords_by_multi_imgs
 from coords_manager import AssistantCoordsManager, BaoMingCoordsManager, YouliCoordsManager,\
                            ShuangXiuCoordsManager, FuBenCoordsManager, HongBaoCoordsManager,\
-                           HunDunLingTaCoordsManager
-from event_runner import AssistantExecutor, BaoMingExecutor, YouLiExecutor, ShuangXiuExecutor,\
-                         FuBenExecutor, HongBaoExecutor, HunDunLingTaExecutor
+                           HunDunLingTaCoordsManager, TiaoZhanXianYuanCoordsManager
+from event_executor import AssistantExecutor, BaoMingExecutor, YouLiExecutor, ShuangXiuExecutor,\
+                         FuBenExecutor, HongBaoExecutor, HunDunLingTaExecutor, TiaoZhanXianYuanExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -25,6 +25,7 @@ try:
     youli_corrds_manager = YouliCoordsManager(main_region_coords, resolution=resolution)
     shuangxiu_corrds_manager = ShuangXiuCoordsManager(main_region_coords, resolution=resolution)
     fu_ben_coords_manager = FuBenCoordsManager(main_region_coords)
+    tiao_zhan_xian_yuan_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
     
     hun_dun_ling_ta_executor = HunDunLingTaExecutor(hun_dun_ling_ta_coords_manager, ling_ta_name='弥罗之塔')
     assistant_executor = AssistantExecutor(assistant_corrds_manager)
@@ -32,7 +33,8 @@ try:
     hong_bao_executor = HongBaoExecutor(hong_bao_coords_manager)
     youli_executor = YouLiExecutor(youli_corrds_manager, place_name='南疆', buy_times=3)
     shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name='六欲练心')
-    fuben_executor = FuBenExecutor(fu_ben_coords_manager, '昆吾山', buy_times=3)
+    fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name='昆吾山', buy_times=3)
+    tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name='尸魈')
 
     hun_dun_ling_ta_executor.execute()
     assistant_executor.execute()
@@ -41,6 +43,7 @@ try:
     youli_executor.execute()
     shuangxiu_executor.execute()
     fuben_executor.execute()
+    tiao_zhan_xian_yuan_executor.execute()
 
 except Exception as e:
     print(e)

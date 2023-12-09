@@ -4,7 +4,7 @@ from typing import Tuple
 import time
 from utils import *
 from coords_manager import ShuangXiuCoordsManager
-from event_runner import ShuangXiuExecutor
+from event_executor import ShuangXiuExecutor
 from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01

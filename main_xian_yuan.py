@@ -1,13 +1,11 @@
+import time
 import pyautogui
 import numpy as np
 from typing import Tuple
 from utils import get_game_page_coords, get_region_coords, click_region, move_to_specific_coords, scroll_specific_length
-from coords_manager import HunDunLingTaCoordsManager
-from event_executor import HunDunLingTaExecutor
-import time
-
-pyautogui.PAUSE = 0.01
-pyautogui.FAILSAFE = True
+from coords_manager import BaseCoordsManager, TiaoZhanXianYuanCoordsManager
+from event_executor import BaseExecutor, TiaoZhanXianYuanExecutor
+from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -18,7 +16,6 @@ try:
 except Exception as e:
     print(f"未定位到游戏界面!")
 
-corrds_manager = HunDunLingTaCoordsManager(main_region_coords)
-executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='弥罗之塔')
-
+tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
+executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='王婵')
 executor.execute()

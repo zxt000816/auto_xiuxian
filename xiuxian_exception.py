@@ -9,3 +9,7 @@ class YouLiPlaceException(Exception):
 class YouLiLingShiException(Exception):
     def __init__(self, message):
         super().__init__(message)
+
+class TargetRegionNotFoundException(Exception):
+    def __init__(self, message):
+        super().__init__(message)

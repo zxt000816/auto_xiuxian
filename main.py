@@ -32,7 +32,7 @@ try:
     bao_ming_executor = BaoMingExecutor(bao_ming_corrds_manager)
     hong_bao_executor = HongBaoExecutor(hong_bao_coords_manager)
     youli_executor = YouLiExecutor(youli_corrds_manager, place_name='南疆', buy_times=3)
-    shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name='六欲练心')
+    shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name='百花烟雨')
     fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name='昆吾山', buy_times=3)
     tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name='尸魈')
 
@@ -48,5 +48,3 @@ try:
 except Exception as e:
     print(e)
     print('程序异常，退出')
-
-assistant_executor.go_to_world()

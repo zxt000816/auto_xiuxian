@@ -583,21 +583,22 @@ class ShuangXiuExecutor(BaseExecutor):
 
         self.shuangxiu_coords_manager = shuangxiu_coords_manager
         self.gongfashu_name = gongfashu_name
-        self.shuangxiu_name_dict = {
+        self.gongfashu_name_dict = {
             '颠凤培元': 'dian_feng_pei_yuan',
             '痴情咒': 'chi_qing_zhou',
             '六欲练心': 'liu_yu_lian_xin',
             '引龙诀': 'yin_long_jue',
+            '百花烟雨': 'bai_hua_yan_yu',
         }
-        self.gonfashu = self.shuangxiu_name_dict[self.gongfashu_name]
+        self.gongfashu = self.gongfashu_name_dict[self.gongfashu_name]
 
-        self.gonfa_order = ['dian_feng_pei_yuan', 'liu_yu_lian_xin']
+        # self.gonfa_order = ['dian_feng_pei_yuan', 'liu_yu_lian_xin']
         self.main_region_coords = self.shuangxiu_coords_manager.main_region_coords
 
     def click_shuangxiu_gongfashu(self):
         # 在日常界面中，点击双修图标
         gongfashu_coords = get_region_coords(
-            self.gonfashu,
+            self.gongfashu,
             main_region_coords=self.main_region_coords, 
             confidence=0.9, 
             cat_dir='shuangxiu'
@@ -710,7 +711,14 @@ class ShuangXiuExecutor(BaseExecutor):
         try:
             self.click_ri_chang()
             self.scoll_and_click(direction='down')
-            self.click_shuangxiu_gongfashu()
+            # self.click_shuangxiu_gongfashu()
+            self.scoll_and_click(
+                direction='down', 
+                other_target=self.gongfashu, 
+                other_target_name=self.gongfashu_name,
+                scroll_length=400,
+                scroll_seconds=3
+            )
             self.click_yaoqing_daoyou()
             self.go_to_xianyuan_page()
             self.click_yaoqing()

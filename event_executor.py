@@ -6,11 +6,23 @@ import time
 import numpy as np
 from xiuxian_exception import *
 
+def click_if_coords_exist(func):
+    def wrapper(self, *args, **kwargs):
+        target_region = kwargs.get('target_region', None)
+        target_region_coords = func(self, *args, **kwargs)
+        if target_region_coords is not None:
+            click_region(target_region_coords)
+            print(f"完成: 点击{target_region}!")
+        else:
+            raise TargetRegionNotFoundException(f"未定位到{target_region}!")
+    return wrapper
+
 def wait_region(func):
     def wrapper(self, *args, **kwargs):
         start_time = time.time()
         wait_time = kwargs.get('wait_time', 3)
         target_region = kwargs.get('target_region', None)
+        is_to_click = kwargs.get('is_to_click', False)
         print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
         while True:
             if time.time() - start_time > wait_time:
@@ -18,8 +30,12 @@ def wait_region(func):
             
             result_coords = func(self, *args, **kwargs)
             if result_coords:
-                print(f"`完成: {target_region}`出现!")
+                print(f"完成: `{target_region}`出现!")
+                if is_to_click:
+                    click_region(result_coords)
+                    print(f"完成: 点击{target_region}!")
                 return result_coords
+
     return wrapper
 
 class BaseExecutor:
@@ -39,6 +55,7 @@ class BaseExecutor:
             'hong_bao': 'hong_bao',  # 红包,
             'hun_dun_ling_ta': 'hun_dun_ling_ta',  # 混沌灵塔,
             'tiao_zhan_xian_yuan': 'tiao_zhan_xian_yuan',  # 挑战仙缘,
+            'ling_shou': 'ling_shou',  # 灵兽
         
         }
         self.taget_name_dict = {
@@ -51,6 +68,7 @@ class BaseExecutor:
             'hong_bao': '红包',
             'hun_dun_ling_ta': '混沌灵塔',
             'tiao_zhan_xian_yuan': '挑战仙缘',
+            'ling_shou': '灵兽',
         }
         self.target = target
         self.target_name = self.taget_name_dict[self.target]
@@ -233,6 +251,8 @@ class BaseExecutor:
 
     def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str):
         print("="*25 + f"购买{self.target_name}次数" + "="*25)
+        actual_buy_times = 0
+
         buy_times_not_enough_indicator_coords = get_region_coords(
             buy_times_not_enough_indicator,
             main_region_coords=self.main_region_coords,
@@ -260,8 +280,8 @@ class BaseExecutor:
         if times_already_bought >= buy_times:
             click_region(self.exit_coords, seconds=2)
             # raise YouLiLingShiException("完成: 购买次数已用完, 将购买次数置为0")
-            print("完成: 购买次数已用完, 将购买次数置为0")
-            return
+            print("完成: 已经购买过了, 不需要购买!")
+            actual_buy_times = buy_times
         else:
             buy_in_store_coords = self.coords_manager.buy_button_in_store()
             buy_times = buy_times - times_already_bought
@@ -270,17 +290,44 @@ class BaseExecutor:
                     click_region(self.exit_coords, seconds=2)
                     # raise YouLiLingShiException("灵石不足, 购买失败")
                     print("灵石不足, 购买失败")
-                    return 
+                    return actual_buy_times
                 
                 click_region(buy_in_store_coords)
                 current_lingshi -= price
                 price += 50
                 buy_times -= 1
+                actual_buy_times += 1
                 print("完成: 购买一次游历")
             
             if self.if_buy_store_pop_up(): # 如果购买完以后购买界面还在, 说明还可以购买
                 click_region(self.exit_coords)
                 print("完成: 还有剩余购买次数, 但是不买了, 退出商店界面")
+
+        return actual_buy_times
+
+    def open_or_close_checkbox(self, operation, target_region):
+        if operation not in ['open', 'close']:
+            raise InvalidOperation(f"操作`{operation}`不合法!")
+        
+        check_box_coords = get_region_coords(
+            'check_box',
+            main_region_coords=target_region,
+            confidence=0.9,
+        ) # 如果checkbox已经被勾选, 那么check_box_state就是一个坐标, 否则就是None
+
+        if operation == 'open':
+            if check_box_coords is None:
+                click_region(check_box_coords)
+                print(f"完成: checkbox已经被勾选!")
+            else:
+                print(f"完成: 勾选checkbox!")
+
+        if operation == 'close':
+            if check_box_coords is None:
+                print(f"完成: checkbox已经被取消勾选!")
+            else:
+                click_region(check_box_coords)
+                print(f"完成: 取消勾选checkbox!")
 
 class BaoMingExecutor(BaseExecutor):
     def __init__(self, baoming_coords_manager: BaoMingCoordsManager):
@@ -1121,25 +1168,6 @@ class HunDunLingTaExecutor(BaseExecutor):
                 # 如果没有弹出扫荡完成界面, 则点击开始扫荡
                 start_sweep_coords = self.get_start_sweep_coords(wait_time=10, target_region='开始扫荡')
                 click_region(start_sweep_coords)
-
-            # while True:
-            #     ling_ta_open_indicator_coords = self.get_open_indicator_coords()
-            #     if ling_ta_open_indicator_coords:
-            #         break
-            #     time.sleep(2)
-
-            # 点击混沌灵塔界面的扫荡按钮
-            # sweep_coords = self.get_sweep_coords()
-            # if sweep_coords:
-            #     click_region(sweep_coords)
-
-            # 如果弹出扫荡完成界面, 则返回世界
-            # sweep_over_coords = self.get_sweep_over_coords()
-            # if sweep_over_coords is None:
-            #     # 如果没有弹出扫荡完成界面, 则点击开始扫荡
-            #     start_sweep_coords = self.get_start_sweep_coords()
-            #     if start_sweep_coords:
-            #         click_region(start_sweep_coords)
         
         except Exception as e:
             print(e)
@@ -1159,7 +1187,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.xian_yuan_role = self.role_name_dict[xian_yuan_role_name]
 
     @wait_region
-    def get_open_tiao_zhan_xian_yuan_coords(self, wait_time, target_region):
+    def get_open_tiao_zhan_xian_yuan_coords(self, wait_time, target_region, is_to_click=False):
         tiao_zhan_xian_yuan_coords = get_region_coords(
             'open_tiao_zhan_xian_yuan',
             main_region_coords=self.main_region_coords,
@@ -1169,7 +1197,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         return tiao_zhan_xian_yuan_coords
     
     @wait_region
-    def get_jiao_ta_zuo_ren_coords(self, wait_time, target_region):
+    def get_jiao_ta_zuo_ren_coords(self, wait_time, target_region, is_to_click=False):
         jiao_ta_zuo_ren_coords = get_region_coords(
             'jiao_ta_zuo_ren',
             main_region_coords=self.main_region_coords,
@@ -1179,7 +1207,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         return jiao_ta_zuo_ren_coords
 
     @wait_region
-    def get_kan_zhao_ba_coords(self, wait_time, target_region):
+    def get_kan_zhao_ba_coords(self, wait_time, target_region, is_to_click=False):
         kan_zhao_ba_coords = get_region_coords(
             'kan_zhao_ba',
             main_region_coords=self.main_region_coords,
@@ -1189,7 +1217,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         return kan_zhao_ba_coords
     
     @wait_region
-    def get_battle_over_coords(self, wait_time, target_region):
+    def get_battle_over_coords(self, wait_time, target_region, is_to_click=False):
         battle_over_coords = get_region_coords(
             'battle_over',
             main_region_coords=self.main_region_coords,
@@ -1199,7 +1227,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         return battle_over_coords
     
     @wait_region
-    def get_battle_over2_coords(self, wait_time, target_region):
+    def get_battle_over2_coords(self, wait_time, target_region, is_to_click=False):
         battle_over2_coords = get_region_coords(
             'battle_over2',
             main_region_coords=self.main_region_coords,
@@ -1217,7 +1245,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
             self.scoll_and_click(direction='down')
 
             # 确认`仙缘页面`是否打开
-            self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面')
+            self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False)
             click_region(self.tzxy_coords_manager.all_xian_yuan())
                     
             self.scoll_and_click(
@@ -1232,22 +1260,152 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
             click_region(self.tzxy_coords_manager.qian_wang())
 
             # 确认`教他做人`是否出现
-            jiao_ta_zuo_ren_coords = self.get_jiao_ta_zuo_ren_coords(wait_time=120, target_region='教他做人')
-            click_region(jiao_ta_zuo_ren_coords)
+            self.get_jiao_ta_zuo_ren_coords(wait_time=120, target_region='教他做人',is_to_click=True)
 
             # 确认`看招吧`是否出现
-            kan_zhao_ba_coords = self.get_kan_zhao_ba_coords(wait_time=10, target_region='看招吧')
-            click_region(kan_zhao_ba_coords)
+            self.get_kan_zhao_ba_coords(wait_time=10, target_region='看招吧', is_to_click=True)
 
             # 确认`战斗结束`是否出现
-            battle_over_coords = self.get_battle_over_coords(wait_time=60, target_region='战斗结束')
-            click_region(battle_over_coords)
+            self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True)
 
             # 确认`战斗结束2`是否出现
-            self.get_battle_over2_coords(wait_time=20, target_region='战斗结束2')
+            self.get_battle_over2_coords(wait_time=20, target_region='战斗结束2', is_to_click=False)
             click_region(self.tzxy_coords_manager.exit())
 
         except Exception as e:
             print(e)
+
+        self.go_to_world()
+
+class LingShouExecutor(BaseExecutor):
+    def __init__(self, ls_coords_manager: LingShouCoordsManager, buy_times: int, to_save_times: bool = True):
+        super().__init__(ls_coords_manager, 'ling_shou')
+        self.ls_coords_manager = ls_coords_manager
+        self.buy_times = buy_times
+        self.to_save_times = to_save_times
+        self.challenge_times = 2
+
+    @wait_region
+    def get_open_ling_shou_coords(self, wait_time, target_region, is_to_click):
+        open_ling_shou_coords = get_region_coords(
+            'open_ling_shou',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return open_ling_shou_coords
+    
+    @wait_region
+    def get_tui_jian_coords(self, wait_time, target_region, is_to_click):
+        tui_jian_coords = get_region_coords(
+            'tui_jian',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return tui_jian_coords
+
+    def get_multi_challenge_auth_coords(self):
+        multi_challenge_auth_coords = get_region_coords(
+            'multi_challenge_auth',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return multi_challenge_auth_coords
+    
+    @click_if_coords_exist
+    def get_buy_times_icon_coords(self, target_region):
+        buy_times_icon_coords = get_region_coords(
+            'buy_times_icon',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return buy_times_icon_coords
+    
+    @wait_region
+    def get_qian_wang_jiao_mie_coords(self, wait_time, target_region, is_to_click):
+        qian_wang_jiao_mie_coords = get_region_coords(
+            'qian_wang_jiao_mie',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return qian_wang_jiao_mie_coords
+
+    @wait_region
+    def get_jiao_mie_over_coords(self, wait_time, target_region, is_to_click):
+        jiao_mie_over_coords = get_region_coords(
+            'jiao_mie_over',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+        return jiao_mie_over_coords
+    
+    @wait_region
+    def get_ling_shou_fu_ben_enter_coords(self, wait_time, target_region, is_to_click):
+        ling_shou_fu_ben_enter_coords = get_region_coords(
+            'ling_shou_fu_ben_enter',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+        return ling_shou_fu_ben_enter_coords
+
+    def get_buy_times_not_enough_indicator_coords(self):
+        buy_times_not_enough_indicator_coords = get_region_coords(
+            'buy_times_not_enough_indicator',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return buy_times_not_enough_indicator_coords
+
+    def execute(self):
+        self.go_to_world()
+
+        self.click_ri_chang()
+        self.scoll_and_click(direction='down')
+
+        self.get_open_ling_shou_coords(wait_time=120, target_region='灵兽界面', is_to_click=False)
+        self.get_tui_jian_coords(wait_time=10, target_region='推荐剿灭', is_to_click=True)
+
+        # 如果要存储次数, 那么就要关掉多人挑战, 否则就打开
+        multi_challenge_auth_coords = self.get_multi_challenge_auth_coords()
+        if self.to_save_times:
+            if multi_challenge_auth_coords is not None:
+                self.open_or_close_checkbox(
+                    operation='close', 
+                    target_region=self.ls_coords_manager.region_for_check_mutli_challenge()
+                )
+            else:
+                print("完成: 该账号没有多人挑战的权限!")
+
+        self.get_buy_times_icon_coords(target_region='购买次数图标')
+        actual_buy_times = self.buy_times_in_store(self.buy_times, 'buy_times_not_enough_indicator')
+
+        # 如果不存储次数, 那么将购买的次数加到挑战次数上
+        if self.to_save_times is False:
+            self.challenge_times = self.challenge_times + actual_buy_times
+
+        print(f"完成: 总共挑战次数为{self.challenge_times}次!")
+        for i in range(self.challenge_times):
+            print(f"完成: 开始第{i + 1}次剿灭!")
+            self.get_qian_wang_jiao_mie_coords(wait_time=10, target_region='前往剿灭', is_to_click=True)
+            if self.get_buy_times_not_enough_indicator_coords() is not None:
+                print("完成: 挑战次数不足!")
+                break
+
+            self.get_jiao_mie_over_coords(wait_time=120, target_region='剿灭结束', is_to_click=True)
+
+            if i == self.challenge_times - 1:
+                print("完成: 所有次数已用完!")
+                break
+
+            self.get_ling_shou_fu_ben_enter_coords(wait_time=120, target_region='灵兽副本进入', is_to_click=True)
+            self.get_open_ling_shou_coords(wait_time=120, target_region='灵兽界面', is_to_click=False)
+            self.get_tui_jian_coords(wait_time=10, target_region='推荐剿灭', is_to_click=True)
 
         self.go_to_world()

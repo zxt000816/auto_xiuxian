@@ -92,9 +92,9 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'qian_wang',
+    'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'target_image_cat_dir': 'tiao_zhan_xian_yuan',
+    'target_image_cat_dir': 'ling_shou',
 }
 
 get_diff_quickly = get_diff_quickly_2

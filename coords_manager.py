@@ -238,3 +238,12 @@ class TiaoZhanXianYuanCoordsManager(BaseCoordsManager):
     def qian_wang(self):
         diff=(430, 1527, 255, 96)
         return self.calculate_relative_coords(diff)
+    
+
+class LingShouCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def region_for_check_mutli_challenge(self):
+        diff = (449, 1705, 77, 69)
+        return self.calculate_relative_coords(diff)

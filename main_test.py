@@ -18,12 +18,13 @@ coor_manager = BaseCoordsManager(main_region_coords)
 def get_diff_quickly_2(
     target_image_name: str,
     main_region_coords: tuple,
+    confidence: float = 0.9,
     target_image_cat_dir: str = None,
 ) -> tuple:
     target_image_coords = get_region_coords(
         target_image_name,
         main_region_coords=main_region_coords,
-        confidence=0.8,
+        confidence=confidence,
         cat_dir=target_image_cat_dir,
     )
 
@@ -92,9 +93,10 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'temp_test',
+    'target_image_name': 'ri_chang_task',
     'main_region_coords': main_region_coords,
-    'target_image_cat_dir': 'ling_shou',
+    'confidence': 0.8,
+    # 'target_image_cat_dir': 'fuben',
 }
 
 get_diff_quickly = get_diff_quickly_2
@@ -105,12 +107,8 @@ diffs = get_diff_quickly(**args2)
 pyautogui.screenshot(region=diffs['target_image_coords'])
 
 # %% 
-pyautogui.screenshot(region=diffs['main_region_coords'])
+# pyautogui.screenshot(region=diffs['main_region_coords'])
 # %% 
-# extract_int_from_image(np.array(
-#     pyautogui.screenshot(region=diffs['target_image_coords'])
-# ), 3)
-
 diff_between_target_and_main = diffs['diff_between_target_and_main']
 
 print(diff_between_target_and_main)

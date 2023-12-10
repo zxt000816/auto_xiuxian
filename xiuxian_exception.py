@@ -17,3 +17,19 @@ class TargetRegionNotFoundException(Exception):
 class InvalidOperation(Exception):
     def __init__(self, message):
         super().__init__(message)
+
+class CiShuNotEnoughException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+class BaiYeOverException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+class BossNotDefeatedException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+class FinishedTaskException(Exception):
+    def __init__(self, message):
+        super().__init__(message)

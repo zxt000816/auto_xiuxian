@@ -219,6 +219,11 @@ class FuBenCoordsManager(BaseCoordsManager):
         diff = (617, 1538, 22, 37)
         return self.calculate_relative_coords(diff)
     
+    def region_for_check_multi_challenge(self):
+        # 副本界面-检查多人挑战图标是否存在的区域
+        diff = (503, 1702, 65, 61)
+        return self.calculate_relative_coords(diff)
+    
 class HongBaoCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -239,11 +244,22 @@ class TiaoZhanXianYuanCoordsManager(BaseCoordsManager):
         diff=(430, 1527, 255, 96)
         return self.calculate_relative_coords(diff)
     
-
 class LingShouCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
 
     def region_for_check_mutli_challenge(self):
         diff = (449, 1705, 77, 69)
+        return self.calculate_relative_coords(diff)
+
+class BaiYeCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def drag_from(self):
+        diff = (804, 1312, 0, 0)
+        return self.calculate_relative_coords(diff)
+    
+    def drag_to(self):
+        diff = (504, 1312, 0, 0)
         return self.calculate_relative_coords(diff)

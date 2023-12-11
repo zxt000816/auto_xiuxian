@@ -193,24 +193,29 @@ if __name__ == '__main__':
     }
 
     for account_name in account_name_ls:
-        print(f'开始执行{account_name}的日常任务')
-        print(f'账号信息：{account_task_info[account_name]}')
-        game_executor = GameControlExecutor(game_coords_manager, account_name=account_name)
-        game_executor.execute()
-        
-        daily_task(
-            account_name = account_name, 
-            account_task_info = account_task_info[account_name], 
-            hun_dun_ling_ta = False,
-            assistant = False,
-            bao_ming = False,
-            hong_bao = False,
-            bai_ye = False,
-            youli = True,
-            shuangxiu = False,
-            tiao_zhan_xian_yuan = False,
-            ling_shou = False,
-            fuben = False,
-            zhui_mo_gu = False,
-        )
-
+        try:
+            print(f'开始执行{account_name}的日常任务')
+            print(f'账号信息：{account_task_info[account_name]}')
+            game_executor = GameControlExecutor(game_coords_manager, account_name=account_name)
+            game_executor.execute()
+            
+            daily_task(
+                account_name = account_name, 
+                account_task_info = account_task_info[account_name], 
+                # hun_dun_ling_ta = False,
+                # assistant = False,
+                # bao_ming = False,
+                # hong_bao = False,
+                # bai_ye = False,
+                # youli = True,
+                # shuangxiu = False,
+                # tiao_zhan_xian_yuan = False,
+                # ling_shou = False,
+                # fuben = False,
+                # zhui_mo_gu = False,
+            )
+        except Exception as e:
+            with open('error.txt', 'a') as f:
+                f.write(
+                    f'\n-------------------------------------\n{e}\n-------------------------------------\n'
+                )

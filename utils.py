@@ -149,13 +149,41 @@ def extract_int_from_image(image: np.ndarray, error_value: float = 3) -> int:
 def click_if_coords_exist(func):
     def wrapper(self, *args, **kwargs):
         target_region = kwargs.get('target_region', None)
+        to_raise_exception = kwargs.get('to_raise_exception', True)
         target_region_coords = func(self, *args, **kwargs)
         if target_region_coords is not None:
             click_region(target_region_coords)
             print(f"完成: 点击{target_region}!")
         else:
-            raise TargetRegionNotFoundException(f"未定位到{target_region}!")
+            if to_raise_exception:
+                raise TargetRegionNotFoundException(f"未定位到{target_region}!")
+            else:
+                print(f"未定位到{target_region}!")
+                return None
+            
     return wrapper
+
+# def wait_region(func):
+#     def wrapper(self, *args, **kwargs):
+#         start_time = time.time()
+#         wait_time = kwargs.get('wait_time', 3)
+#         target_region = kwargs.get('target_region', None)
+#         is_to_click = kwargs.get('is_to_click', False)
+#         click_wait_time = kwargs.get('click_wait_time', 2)
+#         print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
+#         while True:
+#             if time.time() - start_time > wait_time:
+#                 raise TargetRegionNotFoundException(f"完成: 等待超时, `{target_region}`未出现!")
+            
+#             result_coords = func(self, *args, **kwargs)
+#             if result_coords:
+#                 print(f"完成: `{target_region}`出现!")
+#                 if is_to_click:
+#                     click_region(result_coords, seconds=click_wait_time)
+#                     print(f"完成: 点击{target_region}!")
+#                 return result_coords
+
+#     return wrapper
 
 def wait_region(func):
     def wrapper(self, *args, **kwargs):
@@ -163,6 +191,8 @@ def wait_region(func):
         wait_time = kwargs.get('wait_time', 3)
         target_region = kwargs.get('target_region', None)
         is_to_click = kwargs.get('is_to_click', False)
+        click_wait_time = kwargs.get('click_wait_time', 2)
+        other_region_coords = kwargs.get('other_region_coords', None)
         print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
         while True:
             if time.time() - start_time > wait_time:
@@ -172,8 +202,12 @@ def wait_region(func):
             if result_coords:
                 print(f"完成: `{target_region}`出现!")
                 if is_to_click:
-                    click_region(result_coords)
-                    print(f"完成: 点击{target_region}!")
+                    if other_region_coords:
+                        click_region(other_region_coords, seconds=click_wait_time)
+                    else:
+                        click_region(result_coords, seconds=click_wait_time)
+                        print(f"完成: 点击{target_region}!")
+                    
                 return result_coords
 
     return wrapper
@@ -228,5 +262,26 @@ def drag_region(func):
                 break
             else:
                 drag_to_specific_coords(drag_from_coords, drag_to_coords, duration=2)
+
+    return wrapper
+
+def wait_region_not_raise_exception(func):
+    def wrapper(self, *args, **kwargs):
+        start_time = time.time()
+        wait_time = kwargs.get('wait_time', 3)
+        target_region = kwargs.get('target_region', None)
+        is_to_click = kwargs.get('is_to_click', False)
+        print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
+        while True:
+            if time.time() - start_time > wait_time:
+                return None
+            
+            result_coords = func(self, *args, **kwargs)
+            if result_coords:
+                print(f"完成: `{target_region}`出现!")
+                if is_to_click:
+                    click_region(result_coords)
+                    print(f"完成: 点击{target_region}!")
+                return result_coords
 
     return wrapper

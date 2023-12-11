@@ -3,6 +3,7 @@ from utils import *
 import pyautogui
 import time
 import numpy as np
+import pandas as pd
 from xiuxian_exception import *
 
 class BaseExecutor:
@@ -25,6 +26,8 @@ class BaseExecutor:
             'ling_shou': 'ling_shou',  # 灵兽
             'zhui_mo_gu': 'zhui_mo_gu',  # 坠魔谷
             'bai_ye': 'bai_ye',  # 拜谒
+            'xiu_lian': 'xiu_lian',  # 修炼
+            'game_control': 'game_control',  # 游戏控制
         }
         self.taget_name_dict = {
             'youli': '游历',
@@ -39,10 +42,21 @@ class BaseExecutor:
             'ling_shou': '灵兽',
             'zhui_mo_gu': '坠魔谷',
             'bai_ye': '拜谒',
+            'xiu_lian': '修炼',
+            'game_control': '游戏控制',
         }
         self.target = target
         self.target_name = self.taget_name_dict[self.target]
         self.cat_dir = self.cat_dirs[self.target]
+
+        self.account_name_dict = {
+            '野菜花': '13679283735',
+            '白起(仙山)': '17633025505',
+            '白起(黄河)': '18034447843',
+            '晴雪': '18116516860',
+            '初心': '37zd1300qpqnpp5',
+            '小七': '15157717132',
+        }
 
     def get_leave_coords(self):
         # 获取离开按钮的坐标
@@ -84,7 +98,7 @@ class BaseExecutor:
         )
         return world_coords
     
-    def get_netword_not_stable_coords(self):
+    def get_network_not_stable_coords(self):
         # 获取网络不稳定的坐标
         netword_not_stable_coords = get_region_coords(
             'network_not_stable',
@@ -121,7 +135,7 @@ class BaseExecutor:
             # 判断的优先级: 网络不稳定 > 返回按钮 > 离开按钮 > 世界图标 > 指定位置 > 
             # 后续需要添加条件判断点击指定位置, 画面是否发生变化, 如果没有发生变化, while会陷入死循环!!!
             print("当前是否在世界地图界面: ", False)
-            netword_not_stable_coords = self.get_netword_not_stable_coords()
+            netword_not_stable_coords = self.get_network_not_stable_coords()
             if netword_not_stable_coords is not None:
                 click_region(self.coords_manager.confirm_button_in_network_not_statble(), seconds=3)
                 print("点击确定按钮, 退出网络不稳定提示框")
@@ -159,6 +173,10 @@ class BaseExecutor:
         scroll_length=300,
         scroll_seconds=5,
         grayscale=False,
+        scroll_start_point_coords=None,
+        cat_dir=None,
+        in_ri_chang_page=True,
+        is_to_click=True,
     ):
         if other_target_name is not None:
             if other_target_name is None:
@@ -173,19 +191,24 @@ class BaseExecutor:
         if direction not in ['up', 'down']:
             raise Exception("direction must be 'up' or 'down'")
         
+        if cat_dir is None:
+            cat_dir = self.cat_dir
+
         target_coords = get_region_coords(
             target, 
             main_region_coords=self.main_region_coords, 
             confidence=confidence, 
-            cat_dir=self.cat_dir,
+            cat_dir=cat_dir,
             grayscale=grayscale,
         )
         print(f"完成: 识别一次{target_name}位置")
 
         if target_coords is None:
-            scoll_start_point_coords = self.coords_manager.scroll_start_point()
-            scoll_start_point_coords = (scoll_start_point_coords[0], scoll_start_point_coords[1])
-            move_to_specific_coords(scoll_start_point_coords)
+            if scroll_start_point_coords is None:
+                scroll_start_point_coords = self.coords_manager.scroll_start_point()
+                scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
+            
+            move_to_specific_coords(scroll_start_point_coords)
             print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
         scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
@@ -200,7 +223,7 @@ class BaseExecutor:
                 target, 
                 main_region_coords=self.main_region_coords, 
                 confidence=confidence, 
-                cat_dir=self.cat_dir,
+                cat_dir=cat_dir,
                 grayscale=grayscale,
             )
             num_of_scroll -= 1
@@ -208,26 +231,27 @@ class BaseExecutor:
         if target_coords is None:
             raise ScrollException(f"未找到{target_name}位置.")
 
+        if in_ri_chang_page:
+            # 计算出日常列表中的, 任务的宽度和高度
+            task_height, task_width = 223, 933
+            task_height = task_height * self.coords_manager.y_ratio
+            task_height = int(round(task_height))
+            task_width = task_width * self.coords_manager.x_ratio
+            task_width = int(round(task_width))
+            full_target_coords = (target_coords[0], target_coords[1], task_width, task_height)
 
-        # 计算出日常列表中的, 任务的宽度和高度
-        task_height, task_width = 223, 933
-        task_height = task_height * self.coords_manager.y_ratio
-        task_height = int(round(task_height))
-        task_width = task_width * self.coords_manager.x_ratio
-        task_width = int(round(task_width))
-        full_target_coords = (target_coords[0], target_coords[1], task_width, task_height)
+            # 在full_target_coords中, 查看是否有`已完成`的标识
+            finished_task_coords = get_region_coords(
+                'finished_task',
+                main_region_coords=full_target_coords,
+                confidence=0.7,
+            )
+            if finished_task_coords is not None:
+                raise FinishedTaskException(f"{target_name}任务已经完成, 无需点击")
 
-        # 在full_target_coords中, 查看是否有`已完成`的标识
-        finished_task_coords = get_region_coords(
-            'finished_task',
-            main_region_coords=full_target_coords,
-            confidence=0.7,
-        )
-        if finished_task_coords is not None:
-            raise FinishedTaskException(f"{target_name}任务已经完成, 无需点击")
-
-        click_region(target_coords, seconds=3)
-        print(f"完成: 点击{target_name}按钮")
+        if is_to_click:
+            click_region(target_coords, seconds=3)
+            print(f"完成: 点击{target_name}按钮")
 
     def if_buy_store_pop_up(self):
         buy_store_coords_is_in_main_region = get_region_coords(
@@ -578,7 +602,7 @@ class YouLiExecutor(BaseExecutor):
             youli_end_indicator_coords = get_region_coords(
                 'youli_end_indicator', 
                 main_region_coords=self.main_region_coords, 
-                confidence=0.9, 
+                confidence=0.7, 
                 cat_dir='youli'
             )
 
@@ -1209,6 +1233,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
             '尸魈': 'shi_xiao',
             '乌丑': 'wu_chou',
             '王婵': 'wang_chan',
+            '势不两立': 'shi_bu_liang_li'
         }
         self.xian_yuan_role_name = xian_yuan_role_name
         self.xian_yuan_role = self.role_name_dict[xian_yuan_role_name]
@@ -1522,3 +1547,288 @@ class BaiYeExecutor(BaseExecutor):
             print(e)
 
         self.go_to_world()
+
+class ZhuiMoGuExecutor(BaseExecutor):
+    def __init__(self, zmg_coords_manager: ZhuiMoGuCoordsManager, profession_name: str, max_level='炼虚-后期-五层'):
+        super().__init__(zmg_coords_manager, 'zhui_mo_gu')
+        self.zmg_coords_manager = zmg_coords_manager
+        self.profession_name = profession_name
+        self.boss_info = pd.read_excel('boss_info.xlsx')
+        
+        self.max_level_1, self.max_level_2, self.max_level_3 = max_level.split('-')
+        self.level_1_numbering = { '练气': 1, '筑基': 2, '结丹': 3, '元婴': 4, '化神': 5, '炼虚': 6 }
+        self.level_2_numbering = { '前期': 1, '中期': 2, '后期': 3 }
+        self.level_3_numbering = { '一层': 0, '二层': 1, '三层': 2, '四层': 3, '五层': 4, '六层': 5, '七层': 6, '八层': 7, '九层': 8, '十层': 9 }
+        self.max_level_numbering = self.level_1_numbering[self.max_level_1] * 100 + self.level_2_numbering[self.max_level_2] * 10 + self.level_3_numbering[self.max_level_3]
+
+        self.profession_boss_info = self.boss_info[(self.boss_info['职业'].str.contains(profession_name)) & (self.boss_info['等级编码'] <= self.max_level_numbering)]
+
+    @wait_region
+    def scroll_to_end_indicator_coords(self, wait_time, target_region, is_to_click):
+        scroll_end_indicator_coords = get_region_coords(
+            'scroll_end_indicator',
+            main_region_coords=self.main_region_coords,
+            confidence=0.9,
+            cat_dir=self.cat_dir,
+        )
+
+        move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
+        scroll_specific_length(-1000, seconds=3)
+
+        return scroll_end_indicator_coords
+    
+    @wait_region
+    def get_qian_wang_tiao_zhan_coords(self, wait_time, target_region, is_to_click):
+        qian_wang_tiao_zhan_coords = get_region_coords(
+            'qian_wang_tiao_zhan',
+            main_region_coords=self.main_region_coords,
+            confidence=0.9,
+            cat_dir=self.cat_dir,
+        )
+        return qian_wang_tiao_zhan_coords
+
+    @search_region    
+    def search_boss(self, boss, wait_time, target_region, region_to_click, region_to_click_name):
+        boss_coords = get_region_coords(
+            boss,
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+        return boss_coords
+    
+    @wait_region_not_raise_exception
+    def get_shou_ling_leng_que_coords(self, wait_time, target_region, is_to_click):
+        shou_ling_leng_que_coords = get_region_coords(
+            'shou_ling_leng_que',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+        return shou_ling_leng_que_coords
+    
+    @wait_region_not_raise_exception
+    def get_ci_shu_not_enough_coords(self, wait_time, target_region, is_to_click):
+        ci_shu_not_enough_coords = get_region_coords(
+            'ci_shu_not_enough',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+        return ci_shu_not_enough_coords
+    
+    @wait_region
+    def get_shou_ling_icon_coords(self, wait_time, target_region, is_to_click):
+        shou_ling_icon_coords = get_region_coords(
+            'shou_ling_icon',
+            main_region_coords=self.main_region_coords,
+            confidence=0.6,
+            cat_dir=self.cat_dir,
+        )
+        return shou_ling_icon_coords
+
+    def go_to_shou_ling_page(self, boss, boss_name, method):
+        if method not in ['日常图标', '首领图标']:
+            raise ValueError(f"method参数错误, 应为`日常图标`或`首领图标`")
+        
+        if method == '日常图标':
+            self.click_ri_chang()
+            self.scoll_and_click(direction='down')
+        else:
+            # 检查是否有首领图标, 如果有, 点击首领图标, 没有则报错
+            self.get_shou_ling_icon_coords(wait_time=120, target_region='首领图标', is_to_click=True)
+
+        # 滚动到首领列表底端, 然后点击最后一个首领打开首领页面     
+        self.scroll_to_end_indicator_coords(wait_time=60, target_region='炼虚后期-霜晶云凤', is_to_click=True)
+        # 点击左箭头, 直到匹配到当前正在挑战的首领
+        self.search_boss(boss, wait_time=60, target_region=boss_name, region_to_click=self.zmg_coords_manager.left_arrow(), region_to_click_name='左箭头')
+
+    def check_boss_state(self, boss, boss_name, method='首领图标'):
+        self.go_to_shou_ling_page(boss, boss_name, method)
+        # 如果匹配到当前正在挑战的首领, 则停留在当前页面, 直到观察到首领冷却, 代表首领挑战结束
+        shou_ling_leng_que_coords = self.get_shou_ling_leng_que_coords(wait_time=360, target_region='首领冷却', is_to_click=False)
+        if shou_ling_leng_que_coords is not None:
+            print(f"首领被击败, 等待冷却中...")
+            return True
+        else:
+            print(f"首领未被击败, 重新挑战...")
+            return False
+
+    def execute(self):
+        self.go_to_world()
+
+        try:
+            for i, row in self.profession_boss_info.iterrows():
+                boss_name = row['首领名称']
+                boss = row['英文名']
+
+                self.go_to_shou_ling_page(boss, boss_name, method='日常图标')
+
+                shou_ling_leng_que_coords = self.get_shou_ling_leng_que_coords(wait_time=2, target_region='首领冷却', is_to_click=False)
+                if shou_ling_leng_que_coords is not None:
+                    print(f"首领冷却中，跳过{boss_name}")
+                    self.go_to_world()
+                    continue
+
+                self.get_qian_wang_tiao_zhan_coords(wait_time=2, target_region='前往挑战', is_to_click=True)
+                ci_shu_not_enough_coords = self.get_ci_shu_not_enough_coords(wait_time=2, target_region='次数不足', is_to_click=False)
+                if ci_shu_not_enough_coords is not None:
+                    click_region(self.zmg_coords_manager.exit())
+                    raise CiShuNotEnoughException(f"次数不足，结束坠魔谷挑战!")
+                
+                boss_state = self.check_boss_state(boss, boss_name, method='首领图标')
+                if boss_state:
+                    print(f"首领被击败, 寻找下一个首领...")
+                    self.go_to_world()
+                    continue
+                else:
+                    raise BossNotDefeatedException(f"首领未被击败, 重新挑战...")
+
+        except Exception as e:
+            print(e)
+
+        self.go_to_world()
+
+class GameControlExecutor(BaseExecutor):
+    def __init__(self, cc_coords_manager: GameControlCoordsManager, account_name: str):
+        super().__init__(cc_coords_manager, 'game_control')
+        self.cc_coords_manager = cc_coords_manager
+        self.account_name = account_name
+        self.account = self.account_name_dict[account_name]
+
+    @wait_region
+    def get_menu_expansion_coords(self, wait_time, target_region, is_to_click, click_wait_time):
+        menu_expansion_imgs = [
+            {'target_region_image': 'menu_expansion1', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'game_control'},
+            {'target_region_image': 'menu_expansion2', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'game_control'},
+            {'target_region_image': 'menu_expansion3', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'game_control'},
+        ]
+        return get_region_coords_by_multi_imgs(menu_expansion_imgs)
+    
+    @wait_region
+    def get_setting_coords(self, wait_time, target_region, is_to_click, click_wait_time):
+        return get_region_coords(
+            'setting',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_exit_login_coords(self, wait_time, target_region, is_to_click, click_wait_time):
+        return get_region_coords(
+            'exit_login',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_exit_login_alert_coords(self, wait_time, target_region, is_to_click, click_wait_time, other_region_coords):
+        return get_region_coords(
+            'exit_login_alert',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_login_button_coords(self, wait_time, target_region, is_to_click, click_wait_time, other_region_coords):
+        return get_region_coords(
+            'login_button',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+
+    def scroll_to_top(self, scroll_start_point_coords, scroll_length, scroll_seconds, scroll_times=5):
+        pyautogui.moveTo(scroll_start_point_coords)
+        for _ in range(scroll_times):
+            scroll_specific_length(scroll_length, scroll_seconds)
+
+    @wait_region
+    def get_login_successfully_coords(self, wait_time, target_region, is_to_click, other_region_coords):
+        return get_region_coords(
+            'login_successfully',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_start_game_coords(self, wait_time, target_region, is_to_click):
+        return get_region_coords(
+            'start_game',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_start_game_successfully_coords(self, wait_time, target_region):
+        start_game_successfully_imgs = [
+            {'target_region_image': 'start_game_successfully1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+            {'target_region_image': 'start_game_successfully2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+            {'target_region_image': 'start_game_successfully3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+            {'target_region_image': 'start_game_successfully4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+            {'target_region_image': 'start_game_successfully5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+        ]
+        return get_region_coords_by_multi_imgs(start_game_successfully_imgs)
+
+    def execute(self):
+        self.go_to_world()
+
+        # 点击展开菜单
+        click_region(self.cc_coords_manager.menu_expansion(), seconds=1)
+        # 点击设置
+        self.get_setting_coords(wait_time=5, target_region="设置", is_to_click=True, click_wait_time=1)
+        # 点击退出登录
+        self.get_exit_login_coords(wait_time=5, target_region="退出登录", is_to_click=True, click_wait_time=1)
+        # 确认是否弹出退出登录确认框, 如果弹出, 则点击确认
+        self.get_exit_login_alert_coords(
+            wait_time=5, target_region="退出登录确认框", is_to_click=True, click_wait_time=1, 
+            other_region_coords=self.cc_coords_manager.confirm_in_exit_login_alert()
+        )
+
+        # 如果检测到登录按钮, 则点击账户区域
+        self.get_login_button_coords(
+            wait_time=5, target_region="登录按钮", is_to_click=True, click_wait_time=1, 
+            other_region_coords=self.cc_coords_manager.account_region()
+        )
+        # 滚动到顶部
+        self.scroll_to_top(
+            scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
+            scroll_length=1000,
+            scroll_seconds=1,
+        )
+        # 滚动账户列表, 点击指定账户
+        self.scoll_and_click(
+            direction='down',
+            other_target=self.account,
+            other_target_name=self.account_name,
+            confidence=0.7,
+            cat_dir='users',
+            scroll_length=300,
+            scroll_seconds=3,
+            scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
+            is_to_click=True,
+            in_ri_chang_page=False,
+        )
+
+        # 点击登录按钮
+        self.get_login_button_coords(
+            wait_time=5, target_region="登录按钮", is_to_click=True, click_wait_time=1,
+            other_region_coords=None 
+        )
+
+        # 等待登录成功
+        self.get_login_successfully_coords(
+            wait_time=15, target_region="登录成功", is_to_click=True, 
+            other_region_coords=self.cc_coords_manager.exit()
+        )
+
+        # 点击开始游戏
+        self.get_start_game_coords(wait_time=15, target_region="开始游戏", is_to_click=True)
+
+        # 等待开始游戏成功
+        self.get_start_game_successfully_coords(wait_time=30, target_region="开始游戏成功")

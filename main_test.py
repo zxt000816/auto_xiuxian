@@ -93,10 +93,10 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'ri_chang_task',
+    'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.8,
-    # 'target_image_cat_dir': 'fuben',
+    'target_image_cat_dir': 'users',
 }
 
 get_diff_quickly = get_diff_quickly_2

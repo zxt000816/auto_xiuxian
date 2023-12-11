@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from typing import Tuple
 from utils import *
-from coords_manager import BaseCoordsManager, ZhuiMoGuCoordsManager
-from event_executor import BaseExecutor, ZhuiMoGuExecutor
+from coords_manager import BaseCoordsManager, GameControlCoordsManager
+from event_executor import BaseExecutor, GameControlExecutor
 from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
@@ -17,7 +17,9 @@ try:
 except Exception as e:
     print(f"未定位到游戏界面!")
 
-coords_manager = ZhuiMoGuCoordsManager(main_region_coords)
-executor = ZhuiMoGuExecutor(coords_manager, '法', max_level='化神-前期-十层')
+coords_manager = GameControlCoordsManager(main_region_coords)
+account_name_ls = ['野菜花', '白起(仙山)', '白起(黄河)', '晴雪']
 
-executor.execute()
+for account_name in account_name_ls:
+    executor = GameControlExecutor(coords_manager, account_name=account_name)
+    executor.execute()

@@ -263,3 +263,47 @@ class BaiYeCoordsManager(BaseCoordsManager):
     def drag_to(self):
         diff = (504, 1312, 0, 0)
         return self.calculate_relative_coords(diff)
+    
+class ZhuiMoGuCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def extract_challenge_times(self):
+        diff = (449, 1705, 77, 69)
+        return self.calculate_relative_coords(diff)
+    
+    def boss_icon(self):
+        diff = (36, 774, 107, 136)
+        return self.calculate_relative_coords(diff)
+    
+    def left_arrow(self):
+        diff = (33, 526, 66, 138)
+        return self.calculate_relative_coords(diff)
+    
+    def right_arrow(self):
+        diff = (991, 526, 66, 138)
+        return self.calculate_relative_coords(diff)
+    
+    def shou_ling_scroll_start_point(self):
+        diff = (540, 960, 0, 0)
+        return self.calculate_relative_coords(diff)
+    
+class GameControlCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+    
+    def menu_expansion(self):
+        diff = (976, 1743, 52, 54)
+        return self.calculate_relative_coords(diff)
+
+    def confirm_in_exit_login_alert(self):
+        diff = (582, 1223, 305, 103)
+        return self.calculate_relative_coords(diff)
+    
+    def account_region(self):
+        diff = (92, 802, 901, 148)
+        return self.calculate_relative_coords(diff)
+    
+    def scroll_account_ls(self):
+        diff = (534, 1044, 0, 0)
+        return self.calculate_relative_coords(diff)

@@ -99,6 +99,10 @@ class BaseCoordsManager:
     def confirm_button_in_network_not_statble(self):
         diff = (392, 1227, 301, 96)
         return self.calculate_relative_coords(diff)
+
+    def yang_chong_tou_hidden(self):
+        diff = (537, 1702, 0, 0)
+        return self.calculate_relative_coords(diff)
     
 class AssistantCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):

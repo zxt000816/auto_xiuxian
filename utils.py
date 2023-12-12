@@ -11,6 +11,33 @@ from xiuxian_exception import TargetRegionNotFoundException
 
 load_dotenv()
 
+def calculate_center_coords(coords: Tuple[int, int, int, int]) -> Tuple[int, int]:
+        return (coords[0] + int(coords[2] / 2), coords[1] + int(coords[3] / 2))
+
+def hide_yang_chong_tou(main_region_coords: Tuple[int, int, int, int], hidden_region_coords: Tuple[int, int]):
+        yang_chong_tou_coords = get_region_coords(
+            'yang_chong_tou',
+            main_region_coords,
+            confidence=0.7,
+        )
+        
+        if yang_chong_tou_coords is None:
+            return
+        
+        yang_chong_tou_center_coords = calculate_center_coords(yang_chong_tou_coords)
+
+        pyautogui.moveTo(yang_chong_tou_center_coords[0], yang_chong_tou_center_coords[1])
+        pyautogui.dragTo(hidden_region_coords, duration=3) 
+
+        time.sleep(2)
+
+        confirm_hide_yang_chong_tou_coords = get_region_coords(
+            'confirm_hide_yang_chong_tou',
+            main_region_coords,
+            confidence=0.7,
+        )
+        click_region(confirm_hide_yang_chong_tou_coords, seconds=1)
+
 def get_game_page_coords(resolution=(1080, 1920)):
     # 在屏幕上定位登录页面的坐标
     game_page_coords = None

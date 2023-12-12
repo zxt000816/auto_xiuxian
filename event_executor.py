@@ -154,7 +154,7 @@ class BaseExecutor:
                 continue
 
             world_coords = self.get_world_coords(self.coords_manager.region_for_check_world())
-            if self.click_if_coords_exist(world_coords, "点击世界图标"):
+            if self.click_if_coords_exist(world_coords, "点击世界图标", seconds=5):
                 continue
 
             click_region(self.coords_manager.exit(), seconds=3)
@@ -1553,7 +1553,7 @@ class ZhuiMoGuExecutor(BaseExecutor):
         super().__init__(zmg_coords_manager, 'zhui_mo_gu')
         self.zmg_coords_manager = zmg_coords_manager
         self.profession_name = profession_name
-        self.boss_info = pd.read_excel('boss_info.xlsx')
+        self.boss_info: pd.DataFrame = pd.read_excel('boss_info.xlsx')
         
         self.max_level_1, self.max_level_2, self.max_level_3 = max_level.split('-')
         self.level_1_numbering = { '练气': 1, '筑基': 2, '结丹': 3, '元婴': 4, '化神': 5, '炼虚': 6 }
@@ -1561,7 +1561,7 @@ class ZhuiMoGuExecutor(BaseExecutor):
         self.level_3_numbering = { '一层': 0, '二层': 1, '三层': 2, '四层': 3, '五层': 4, '六层': 5, '七层': 6, '八层': 7, '九层': 8, '十层': 9 }
         self.max_level_numbering = self.level_1_numbering[self.max_level_1] * 100 + self.level_2_numbering[self.max_level_2] * 10 + self.level_3_numbering[self.max_level_3]
 
-        self.profession_boss_info = self.boss_info[(self.boss_info['职业'].str.contains(profession_name)) & (self.boss_info['等级编码'] <= self.max_level_numbering)]
+        self.profession_boss_info: pd.DataFrame = self.boss_info[(self.boss_info['职业'].str.contains(profession_name)) & (self.boss_info['等级编码'] <= self.max_level_numbering)]
 
     @wait_region
     def scroll_to_end_indicator_coords(self, wait_time, target_region, is_to_click):
@@ -1576,6 +1576,41 @@ class ZhuiMoGuExecutor(BaseExecutor):
         scroll_specific_length(-1000, seconds=3)
 
         return scroll_end_indicator_coords
+    
+    @wait_region
+    def scroll_to_any_available_coords(self, wait_time, target_region, is_to_click):
+        any_available_imgs = [
+            {'target_region_image': 'indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator7', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator8', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+        ]
+        any_available_coords = get_region_coords_by_multi_imgs(any_available_imgs)
+        if any_available_coords is None:
+            move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
+            scroll_specific_length(500, seconds=3)
+        
+        return any_available_coords
+    
+    def determine_order_of_current_boss(self):
+        # 进入副本页面和, 根据首领名称, 确定当前首领的顺序
+        for i, row in self.boss_info.iterrows():
+            _boss = row['英文名']
+            _boss_coords = get_region_coords(
+                _boss,
+                main_region_coords=self.main_region_coords,
+                confidence=0.7,
+                cat_dir=self.cat_dir,
+            )
+            if _boss_coords is not None:
+                print(f"当前首领为: {row['首领名称']}")
+                return row['等级编码']
+            
+        raise Exception('没有检测到当前首领是哪个!')
     
     @wait_region
     def get_qian_wang_tiao_zhan_coords(self, wait_time, target_region, is_to_click):
@@ -1639,9 +1674,26 @@ class ZhuiMoGuExecutor(BaseExecutor):
             self.get_shou_ling_icon_coords(wait_time=120, target_region='首领图标', is_to_click=True)
 
         # 滚动到首领列表底端, 然后点击最后一个首领打开首领页面     
-        self.scroll_to_end_indicator_coords(wait_time=60, target_region='炼虚后期-霜晶云凤', is_to_click=True)
-        # 点击左箭头, 直到匹配到当前正在挑战的首领
-        self.search_boss(boss, wait_time=60, target_region=boss_name, region_to_click=self.zmg_coords_manager.left_arrow(), region_to_click_name='左箭头')
+        # self.scroll_to_end_indicator_coords(wait_time=60, target_region='炼虚后期-霜晶云凤', is_to_click=True)
+        self.scroll_to_any_available_coords(wait_time=60, target_region='任何可以进入副本的区域', is_to_click=True)
+
+        # 判断当前是哪个首领, 获取该首领的等级编码
+        current_boss_order = self.determine_order_of_current_boss()
+        print(f"当前首领的等级编码为: {current_boss_order}")
+        
+        # 获取目标首领的等级编码,根据等级编码, 确定点击左箭头还是右箭头
+        target_boss_order = self.boss_info[self.boss_info['英文名'] == boss]['等级编码'].item()
+        print(f"目标首领的等级编码为: {target_boss_order}")
+
+        if target_boss_order == current_boss_order:
+            print(f"当前首领为目标首领, 不需要切换首领!")
+            return
+        elif target_boss_order > current_boss_order:
+            to_click_region = self.zmg_coords_manager.right_arrow()
+        else:
+            to_click_region = self.zmg_coords_manager.left_arrow()
+
+        self.search_boss(boss, wait_time=60, target_region=boss_name, region_to_click=to_click_region, region_to_click_name='左箭头')
 
     def check_boss_state(self, boss, boss_name, method='首领图标'):
         self.go_to_shou_ling_page(boss, boss_name, method)

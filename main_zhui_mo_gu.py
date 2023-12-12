@@ -19,5 +19,4 @@ except Exception as e:
 
 coords_manager = ZhuiMoGuCoordsManager(main_region_coords)
 executor = ZhuiMoGuExecutor(coords_manager, '法', max_level='化神-前期-十层')
-
 executor.execute()

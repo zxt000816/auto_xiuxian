@@ -2,7 +2,7 @@ import pyautogui
 import numpy as np
 from typing import Tuple
 import time
-from utils import get_region_coords, click_region, get_game_page_coords, cal_diff_between_regions, extract_int_from_image
+from utils import *
 from coords_manager import *
 from event_executor import YouLiExecutor
 import pytesseract
@@ -95,8 +95,8 @@ args3 = {
 args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'confidence': 0.8,
-    'target_image_cat_dir': 'qi_xi_mo_jie',
+    'confidence': 0.95,
+    'target_image_cat_dir': 'shou_yuan_tan_mi',
 }
 
 get_diff_quickly = get_diff_quickly_2
@@ -111,6 +111,7 @@ pyautogui.screenshot(region=diffs['target_image_coords'])
 # %% 
 diff_between_target_and_main = diffs['diff_between_target_and_main']
 
-print(diff_between_target_and_main)
+print("区域坐标为: ", diff_between_target_and_main)
+print('中心坐标为: ',  calculate_center_coords(diff_between_target_and_main))
 
 # %%

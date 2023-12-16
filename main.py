@@ -5,6 +5,8 @@ from typing import Tuple
 from utils import get_game_page_coords, hide_yang_chong_tou
 from coords_manager import *
 from event_executor import *
+from swy_coords_manager import *
+from swy_event_executor import *
 
 from main_xiu_lian import XiuLianCoordsManager, XiuLianExecutor
 
@@ -18,6 +20,7 @@ except Exception as e:
     print(f"未定位到游戏界面!")
 
 def daily_task(
+    account_name: str,
     account_task_info: dict,
     xiu_lian: bool = True,
     qi_xi_mo_jie: bool = True,
@@ -32,6 +35,7 @@ def daily_task(
     ling_shou: bool = True,
     fuben: bool = True,
     zhui_mo_gu: bool = True,
+    shou_yuan_tan_mi: bool = True,
 ):
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
@@ -48,6 +52,7 @@ def daily_task(
     profession_name = account_task_info['profession_name']
     zhui_mo_gu_max_level = account_task_info['zhui_mo_gu_max_level']
 
+    shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords)
     xiu_lian_coords_manager = XiuLianCoordsManager(main_region_coords)
     qi_xi_mo_jie_coords_manager = QiXiMoJieCoordsManager(main_region_coords)
     hun_dun_ling_ta_coords_manager = HunDunLingTaCoordsManager(main_region_coords)
@@ -63,6 +68,7 @@ def daily_task(
     ling_shou_coords_manager = LingShouCoordsManager(main_region_coords)
     zhui_mo_gu_coords_manager = ZhuiMoGuCoordsManager(main_region_coords)
 
+    shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=2, only_use_free_times=True)
     xiu_lian_executor = XiuLianExecutor(xiu_lian_coords_manager, buy_times=xiu_lian_buy_times)
     qi_xi_mo_jie_executor = QiXiMoJieExecutor(qi_xi_mo_jie_coords_manager)
     hun_dun_ling_ta_executor = HunDunLingTaExecutor(hun_dun_ling_ta_coords_manager, ling_ta_name=ling_ta_name) # 弥罗之塔
@@ -75,24 +81,25 @@ def daily_task(
     tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name)
     youli_executor = YouLiExecutor(youli_corrds_manager, place_name=youli_place_name, buy_times=youli_buy_times)
     ling_shou_executor = LingShouExecutor(ling_shou_coords_manager, buy_times=ling_shou_buy_times, to_save_times=ling_shou_to_save_times)
-    fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name=fuben_name, buy_times=fuben_buy_times)
     zhui_mo_gu_executor = ZhuiMoGuExecutor(zhui_mo_gu_coords_manager, profession_name=profession_name, max_level=zhui_mo_gu_max_level)
+    fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name=fuben_name, buy_times=fuben_buy_times)
 
     all_executor = {
-        'youli_executor': (youli_executor, youli),
-        'xiu_lian_executor': (xiu_lian_executor, xiu_lian),
-        'qi_xi_mo_jie_executor': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
-        'hun_dun_ling_ta_executor': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
-        'assistant_executor': (assistant_executor, assistant),
-        'bao_ming_executor': (bao_ming_executor, bao_ming),
-        'hong_bao_executor': (hong_bao_executor, hong_bao),
-        'bai_ye_executor': (bai_ye_executor, bai_ye),
-        'youli_executor': (youli_executor, youli),
-        'shuangxiu_executor': (shuangxiu_executor, shuangxiu),
-        'tiao_zhan_xian_yuan_executor': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
-        'ling_shou_executor': (ling_shou_executor, ling_shou),
-        'fuben_executor': (fuben_executor, fuben),
-        'zhui_mo_gu_executor': (zhui_mo_gu_executor, zhui_mo_gu),
+        '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
+        '游历': (youli_executor, youli),
+        '修炼': (xiu_lian_executor, xiu_lian),
+        '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
+        '混沌灵塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
+        '小助手': (assistant_executor, assistant),
+        '报名': (bao_ming_executor, bao_ming),
+        '红包': (hong_bao_executor, hong_bao),
+        '拜谒': (bai_ye_executor, bai_ye),
+        '游历': (youli_executor, youli),
+        '双修': (shuangxiu_executor, shuangxiu),
+        '挑战仙缘': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
+        '灵兽': (ling_shou_executor, ling_shou),
+        '副本': (fuben_executor, fuben),
+        '坠魔谷': (zhui_mo_gu_executor, zhui_mo_gu),
     }
 
     hide_yang_chong_tou(
@@ -103,39 +110,40 @@ def daily_task(
     for executor_name, if_execute in all_executor.items():
         executor, if_execute = if_execute
         if if_execute:
-            executor.execute()
-            print(f'{executor_name}执行完毕')
+            try:
+                executor.execute()
+                print(f'{executor_name}执行完毕')
+            except Exception as e:
+                executor.go_to_world()
+                print(f'{executor_name}执行失败: {e}')
+                with open('error.txt', 'a', encoding='utf-8') as f:
+                    f.write(
+                        f'\n-------------------------------------\n{account_name}-{executor_name}:{e}\n-------------------------------------\n'
+                    )
 
 if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
-    account_name_ls = ['若雨', '云中鹤', '小七', '初心', '白起(仙山)', '白起(黄河)', '野菜花', '晴雪']
-    # account_name_ls = ['白起(仙山)', '白起(黄河)', '野菜花', '晴雪']
+    # account_name_ls = ['若雨', '云中鹤', '小七', '初心', '白起(仙山)', '白起(黄河)', '野菜花', '晴雪']
+    account_name_ls = ['白起(仙山)']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 
-    # task_execute_df = pd.read_excel("C:/Users/zyf13/My Drive/task_execute.xlsx")
-    # execute_info = task_execute_df['if_execute'].to_dict()
     task_execute_df = pd.read_excel("C:/Users/zyf13/My Drive/task_execute_2.xlsx")
     task_execute_df.set_index('users_name', inplace=True)
 
     for account_name in account_name_ls:
-        try:
-            
-            print(f'开始执行{account_name}的日常任务')
-            account_task_info = account_task_info_df.loc[account_name].to_dict()
-            account = account_task_info['users']
+        # try:
+        print(f'开始执行{account_name}的日常任务')
+        account_task_info = account_task_info_df.loc[account_name].to_dict()
+        account = account_task_info['users']
 
-            execute_info = task_execute_df.loc[account_name].to_dict()
+        execute_info = task_execute_df.loc[account_name].to_dict()
 
-            game_executor = GameControlExecutor(game_coords_manager, account_name=account_name, account=account)
-            game_executor.execute()
+        # game_executor = GameControlExecutor(game_coords_manager, account_name=account_name, account=account)
+        # game_executor.execute()
 
-            daily_task(account_task_info=account_task_info, **execute_info)
-
-        except Exception as e:
-            with open('error.txt', 'a', encoding='utf-8') as f:
-                f.write(
-                    f'\n-------------------------------------\n{account_name}:{e}\n-------------------------------------\n'
-                )
-
+        daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
+        
+        # except Exception:
+        #     continue

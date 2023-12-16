@@ -221,6 +221,7 @@ def wait_region(func):
         click_wait_time = kwargs.get('click_wait_time', 2)
         other_region_coords = kwargs.get('other_region_coords', None)
         to_raise_exception = kwargs.get('to_raise_exception', True)
+        wait_time_before_click = kwargs.get('wait_time_before_click', 0)
         print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
         while True:
             if time.time() - start_time > wait_time:
@@ -235,8 +236,10 @@ def wait_region(func):
                 print(f"完成: `{target_region}`出现!")
                 if is_to_click:
                     if other_region_coords:
+                        time.sleep(wait_time_before_click)
                         click_region(other_region_coords, seconds=click_wait_time)
                     else:
+                        time.sleep(wait_time_before_click)
                         click_region(result_coords, seconds=click_wait_time)
                         print(f"完成: 点击{target_region}!")
                     

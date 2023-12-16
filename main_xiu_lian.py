@@ -355,14 +355,14 @@ class XiuLianExecutor(BaseExecutor):
             pyautogui.mouseDown()
 
             start_time = time.time()
-            total_time = 10
+            total_time = 5
             while True:
                 # 检查是否到达20秒
                 if time.time() - start_time > total_time:
                     pyautogui.mouseUp()
                     pyautogui.moveTo(self.xl_coords_manager.wait_detect_mouse_pos()[:2])
                     if self.gong_fa_shu_level_up() is None:
-                        print("到达20秒，退出!")
+                        print("到达5秒，退出!")
                         break
                     else:
                         pyautogui.mouseDown()

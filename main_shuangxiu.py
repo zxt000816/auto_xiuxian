@@ -14,6 +14,6 @@ main_region_coords = get_game_page_coords()
 coords_manager = ShuangXiuCoordsManager(main_region_coords)
 main_region_coords = coords_manager.main_region_coords
 
-sx_executor = ShuangXiuExecutor(coords_manager)
+sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='百花烟雨')
 
-sx_executor.go_to_world()
+sx_executor.execute()

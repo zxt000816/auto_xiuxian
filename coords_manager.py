@@ -104,6 +104,18 @@ class BaseCoordsManager:
         diff = (537, 1702, 0, 0)
         return self.calculate_relative_coords(diff)
     
+    def close_specifical_event(self): # 砸蛋
+        diff = (1026, 28, 51, 72)
+        return self.calculate_relative_coords(diff)
+    
+    def close_vip_fu_li(self): # vip福利
+        diff = (453, 1297, 238, 65)
+        return self.calculate_relative_coords(diff)
+    
+    def confirm_button_in_restart_game(self): # 重启游戏
+        diff = (402, 1220, 302, 107)
+        return self.calculate_relative_coords(diff)
+    
 class AssistantCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords: tuple, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -310,4 +322,16 @@ class GameControlCoordsManager(BaseCoordsManager):
     
     def scroll_account_ls(self):
         diff = (534, 1044, 0, 0)
+        return self.calculate_relative_coords(diff)
+
+class QiXiMoJieCoordsManager(BaseCoordsManager):
+    def __init__(self, main_region_coords, resolution=(1080, 1920)):
+        super().__init__(main_region_coords, resolution)
+
+    def confirm_button_in_last_qi_xi_alert(self):
+        diff = (391, 1252, 303, 97)
+        return self.calculate_relative_coords(diff)
+    
+    def confirm_button_in_chuang_jian_dui_wu(self):
+        diff = (607, 1188, 303, 94)
         return self.calculate_relative_coords(diff)

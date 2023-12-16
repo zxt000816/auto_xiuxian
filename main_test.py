@@ -93,10 +93,10 @@ args3 = {
 }
 
 args2 = {
-    'target_image_name': 'right_arrow',
+    'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.8,
-    'target_image_cat_dir': 'zhui_mo_gu',
+    'target_image_cat_dir': 'qi_xi_mo_jie',
 }
 
 get_diff_quickly = get_diff_quickly_2

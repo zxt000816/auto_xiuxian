@@ -27,6 +27,7 @@ class BaseExecutor:
             'zhui_mo_gu': 'zhui_mo_gu',  # 坠魔谷
             'bai_ye': 'bai_ye',  # 拜谒
             'xiu_lian': 'xiu_lian',  # 修炼
+            'qi_xi_mo_jie': 'qi_xi_mo_jie',  # 奇袭魔界
             'game_control': 'game_control',  # 游戏控制
         }
         self.taget_name_dict = {
@@ -44,19 +45,11 @@ class BaseExecutor:
             'bai_ye': '拜谒',
             'xiu_lian': '修炼',
             'game_control': '游戏控制',
+            'qi_xi_mo_jie': '奇袭魔界',
         }
         self.target = target
         self.target_name = self.taget_name_dict[self.target]
         self.cat_dir = self.cat_dirs[self.target]
-
-        self.account_name_dict = {
-            '野菜花': '13679283735',
-            '白起(仙山)': '17633025505',
-            '白起(黄河)': '18034447843',
-            '晴雪': '18116516860',
-            '初心': '37zd1300qpqnpp5',
-            '小七': '15157717132',
-        }
 
     def get_leave_coords(self):
         # 获取离开按钮的坐标
@@ -160,7 +153,8 @@ class BaseExecutor:
             click_region(self.coords_manager.exit(), seconds=3)
     
     def click_ri_chang(self):
-        click_region(self.richang_coords, seconds=3)
+        time.sleep(1)
+        click_region(self.richang_coords, seconds=2)
         print("完成: 点击日常按钮")
 
     def scoll_and_click(
@@ -264,20 +258,21 @@ class BaseExecutor:
         else:
             return False
 
-    def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str):
+    def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str = None):
         print("="*25 + f"购买{self.target_name}次数" + "="*25)
         actual_buy_times = 0
 
-        buy_times_not_enough_indicator_coords = get_region_coords(
-            buy_times_not_enough_indicator,
-            main_region_coords=self.main_region_coords,
-            confidence=0.8,
-            cat_dir=self.cat_dir,
-        )
-        if buy_times_not_enough_indicator_coords is not None:
-            print("完成: 购买次数已用完")
-            click_region(self.exit_coords, seconds=2)
-            return actual_buy_times
+        if buy_times_not_enough_indicator is not None:
+            buy_times_not_enough_indicator_coords = get_region_coords(
+                buy_times_not_enough_indicator,
+                main_region_coords=self.main_region_coords,
+                confidence=0.8,
+                cat_dir=self.cat_dir,
+            )
+            if buy_times_not_enough_indicator_coords is not None:
+                print("完成: 购买次数已用完")
+                click_region(self.exit_coords, seconds=2)
+                return actual_buy_times
 
         # 显示100灵石, 目前已购买0次; 显示150灵石, 目前已购买1次; 显示200灵石, 目前已购买2次; 显示250灵石, 目前已购买3次
         price_to_times = {100: 0, 150: 1, 200: 2, 250: 3} 
@@ -343,6 +338,15 @@ class BaseExecutor:
             else:
                 click_region(check_box_coords)
                 print(f"完成: 取消勾选checkbox!")
+
+    @wait_region
+    def check_if_specifical_event(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'specifical_event',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir='game_control',
+        )
 
 class BaoMingExecutor(BaseExecutor):
     def __init__(self, baoming_coords_manager: BaoMingCoordsManager):
@@ -1742,11 +1746,11 @@ class ZhuiMoGuExecutor(BaseExecutor):
         self.go_to_world()
 
 class GameControlExecutor(BaseExecutor):
-    def __init__(self, cc_coords_manager: GameControlCoordsManager, account_name: str):
+    def __init__(self, cc_coords_manager: GameControlCoordsManager, account_name: str, account: str):
         super().__init__(cc_coords_manager, 'game_control')
         self.cc_coords_manager = cc_coords_manager
         self.account_name = account_name
-        self.account = self.account_name_dict[account_name]
+        self.account = account
 
     @wait_region
     def get_menu_expansion_coords(self, wait_time, target_region, is_to_click, click_wait_time):
@@ -1824,12 +1828,30 @@ class GameControlExecutor(BaseExecutor):
             {'target_region_image': 'start_game_successfully3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
             {'target_region_image': 'start_game_successfully4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
             {'target_region_image': 'start_game_successfully5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+            {'target_region_image': 'start_game_successfully6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
         ]
         return get_region_coords_by_multi_imgs(start_game_successfully_imgs)
 
-    def execute(self):
+    @wait_region
+    def get_vip_fu_li_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'vip_fu_li',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_restart_game_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'restart_game',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    def exit_current_account(self):
         self.go_to_world()
-
         # 点击展开菜单
         click_region(self.cc_coords_manager.menu_expansion(), seconds=1)
         # 点击设置
@@ -1842,35 +1864,46 @@ class GameControlExecutor(BaseExecutor):
             other_region_coords=self.cc_coords_manager.confirm_in_exit_login_alert()
         )
 
-        # 如果检测到登录按钮, 则点击账户区域
-        self.get_login_button_coords(
-            wait_time=5, target_region="登录按钮", is_to_click=True, click_wait_time=1, 
-            other_region_coords=self.cc_coords_manager.account_region()
-        )
-        # 滚动到顶部
-        self.scroll_to_top(
-            scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
-            scroll_length=1000,
-            scroll_seconds=1,
-        )
-        # 滚动账户列表, 点击指定账户
-        self.scoll_and_click(
-            direction='down',
-            other_target=self.account,
-            other_target_name=self.account_name,
-            confidence=0.7,
-            cat_dir='users',
-            scroll_length=300,
-            scroll_seconds=3,
-            scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
-            is_to_click=True,
-            in_ri_chang_page=False,
-        )
+    def execute(self, restart_game=False):
+        if restart_game is False:
+            
+            self.exit_current_account()
 
-        # 点击登录按钮
-        self.get_login_button_coords(
-            wait_time=5, target_region="登录按钮", is_to_click=True, click_wait_time=1,
-            other_region_coords=None 
+            # 如果检测到登录按钮, 则点击账户区域
+            self.get_login_button_coords(
+                wait_time=5, target_region="登录按钮", is_to_click=True, click_wait_time=1, 
+                other_region_coords=self.cc_coords_manager.account_region()
+            )
+            # 滚动到顶部
+            self.scroll_to_top(
+                scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
+                scroll_length=1000,
+                scroll_seconds=1,
+            )
+            # 滚动账户列表, 点击指定账户
+            self.scoll_and_click(
+                direction='down',
+                other_target=self.account,
+                other_target_name=self.account_name,
+                confidence=0.7,
+                cat_dir='users',
+                scroll_length=300,
+                scroll_seconds=3,
+                scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
+                is_to_click=True,
+                in_ri_chang_page=False,
+            )
+
+            # 点击登录按钮
+            self.get_login_button_coords(
+                wait_time=5, target_region="登录按钮", is_to_click=True, click_wait_time=1,
+                other_region_coords=None 
+            )
+
+        # 判断是否弹出vip福利, 如果弹出, 则点击关闭
+        self.get_vip_fu_li_coords(
+            wait_time=3, target_region="vip福利", is_to_click=True, 
+            other_region_coords=self.cc_coords_manager.close_vip_fu_li(), to_raise_exception=False
         )
 
         # 等待登录成功
@@ -1882,5 +1915,123 @@ class GameControlExecutor(BaseExecutor):
         # 点击开始游戏
         self.get_start_game_coords(wait_time=15, target_region="开始游戏", is_to_click=True)
 
+        restart_game_coords = self.get_restart_game_coords(
+            wait_time=2, target_region="重新开始游戏", is_to_click=True, 
+            other_region_coords=self.cc_coords_manager.confirm_button_in_restart_game(), to_raise_exception=False
+        )
+        if restart_game_coords is not None:
+            # 如果弹出重新开始游戏, 则点击确认, 然后重新执行
+            print("等待游戏重新开始...")
+            time.sleep(60)
+            return self.execute(restart_game=True)
+
+        self.check_if_specifical_event(
+            wait_time=5,
+            target_region="是否弹出特殊活动",
+            is_to_click=True,
+            other_region_coords=self.cc_coords_manager.close_specifical_event(),
+            to_raise_exception=False
+        )
+
         # 等待开始游戏成功
         self.get_start_game_successfully_coords(wait_time=30, target_region="开始游戏成功")
+
+class QiXiMoJieExecutor(BaseExecutor):
+    def __init__(self, qxmj_coords_manager: QiXiMoJieCoordsManager):
+        super().__init__(qxmj_coords_manager, 'qi_xi_mo_jie')
+        self.qxmj_coords_manager = qxmj_coords_manager
+
+    @wait_region
+    def get_last_qi_xi_alert(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'last_qi_xi_alert',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+    
+    @wait_region
+    def get_can_yu_jin_gong(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'can_yu_jin_gong',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+    
+    @wait_region
+    def get_kun_nan(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        kun_nan_imgs = [
+            {'target_region_image': 'kun_nan1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'kun_nan2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+        ]
+        return get_region_coords_by_multi_imgs(kun_nan_imgs)
+    
+    @wait_region
+    def get_chuang_jian_dui_wu_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'chuang_jian_dui_wu',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+    
+    @wait_region
+    def get_chuang_jian_dui_wu_alert(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+        return get_region_coords(
+            'chuang_jian_dui_wu_alert',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+
+    def execute(self):
+        self.go_to_world()
+        try:
+            self.click_ri_chang()
+            self.scoll_and_click(direction='down')
+
+            self.get_last_qi_xi_alert(
+                wait_time=3,
+                target_region='上次奇袭魔界提示框',
+                is_to_click=True,
+                other_region_coords=self.qxmj_coords_manager.confirm_button_in_last_qi_xi_alert(),
+                to_raise_exception=False,
+            )
+
+            self.get_can_yu_jin_gong(
+                wait_time=5,
+                target_region='参与进攻',
+                is_to_click=True,
+                other_region_coords=None,
+                to_raise_exception=True,
+            )
+
+            self.get_kun_nan(
+                wait_time=3,
+                target_region='困难',
+                is_to_click=True,
+                other_region_coords=None,
+                to_raise_exception=True,
+            )
+
+            self.get_chuang_jian_dui_wu_coords(
+                wait_time=3,
+                target_region='创建队伍',
+                is_to_click=True,
+                other_region_coords=None,
+                to_raise_exception=True,
+            )
+
+            self.get_chuang_jian_dui_wu_alert(
+                wait_time=3,
+                target_region='创建队伍提示框',
+                is_to_click=True,
+                other_region_coords=self.qxmj_coords_manager.confirm_button_in_chuang_jian_dui_wu(),
+                to_raise_exception=True,
+            )
+
+        except Exception as e:
+            print(e)
+
+        self.go_to_world()

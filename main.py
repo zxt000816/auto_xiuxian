@@ -13,6 +13,11 @@ from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
 from you_li import YouliCoordsManager, YouLiExecutor
 from fu_ben import FuBenCoordsManager, FuBenExecutor
 from ling_shou import LingShouCoordsManager, LingShouExecutor
+from lun_dao import LunDaoCoordsManager, LunDaoExecutor
+from datetime import datetime
+
+# 就算当前时间是否小于11点(具体到分)
+# 如果小于11点, 则不执行兽渊探秘和论道
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -40,6 +45,7 @@ def daily_task(
     fuben: bool = True,
     zhui_mo_gu: bool = True,
     shou_yuan_tan_mi: bool = True,
+    lun_dao: bool = True,
 ):
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
@@ -55,6 +61,7 @@ def daily_task(
     fuben_buy_times = account_task_info['fuben_buy_times']
     profession_name = account_task_info['profession_name']
     zhui_mo_gu_max_level = account_task_info['zhui_mo_gu_max_level']
+    dao_chang_level = account_task_info['dao_chang_level']
 
     shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords)
     xiu_lian_coords_manager = XiuLianCoordsManager(main_region_coords)
@@ -71,6 +78,7 @@ def daily_task(
     tiao_zhan_xian_yuan_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
     ling_shou_coords_manager = LingShouCoordsManager(main_region_coords)
     zhui_mo_gu_coords_manager = ZhuiMoGuCoordsManager(main_region_coords)
+    lun_dao_coords_manager = LunDaoCoordsManager(main_region_coords)
 
     shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=2, only_use_free_times=True)
     xiu_lian_executor = XiuLianExecutor(xiu_lian_coords_manager, buy_times=xiu_lian_buy_times)
@@ -87,6 +95,7 @@ def daily_task(
     ling_shou_executor = LingShouExecutor(ling_shou_coords_manager, buy_times=ling_shou_buy_times, to_save_times=ling_shou_to_save_times)
     zhui_mo_gu_executor = ZhuiMoGuExecutor(zhui_mo_gu_coords_manager, profession_name=profession_name, max_level=zhui_mo_gu_max_level)
     fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name=fuben_name, buy_times=fuben_buy_times)
+    lun_dao_executor = LunDaoExecutor(lun_dao_coords_manager, dao_chang_level=dao_chang_level)
 
     all_executor = {
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
@@ -104,6 +113,7 @@ def daily_task(
         '灵兽': (ling_shou_executor, ling_shou),
         '副本': (fuben_executor, fuben),
         '坠魔谷': (zhui_mo_gu_executor, zhui_mo_gu),
+        '论道': (lun_dao_executor, lun_dao),
     }
 
     hide_yang_chong_tou(
@@ -115,6 +125,10 @@ def daily_task(
         executor, if_execute = if_execute
         if if_execute:
             try:
+                if executor_name in ['论道', '兽渊探秘']:
+                    if datetime.now().hour < 11: #  11点之前不执行兽渊探秘和论道
+                        raise Exception(f'没有到11点, {executor_name}尚未开启!')
+
                 executor.execute()
                 print(f'{executor_name}执行完毕')
             except Exception as e:
@@ -128,8 +142,8 @@ def daily_task(
 if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
-    account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
-    # account_name_ls = ['白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
+    # account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
+    account_name_ls = ['白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 

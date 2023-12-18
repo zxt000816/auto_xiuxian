@@ -1518,7 +1518,6 @@ class LingShouExecutor(BaseExecutor):
             self.get_ling_shou_fu_ben_enter_coords(wait_time=120, target_region='灵兽副本进入', is_to_click=True)
             self.get_open_ling_shou_coords(wait_time=120, target_region='灵兽界面', is_to_click=False)
             self.get_tui_jian_coords(wait_time=10, target_region='推荐剿灭', is_to_click=True)
-        
 
 class BaiYeExecutor(BaseExecutor):
     def __init__(self, by_coords_manager: BaiYeCoordsManager, event_name: str, fa_ze_level=1):

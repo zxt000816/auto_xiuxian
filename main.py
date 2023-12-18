@@ -12,7 +12,7 @@ from assistant import AssistantCoordsManager, AssistantExecutor
 from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
 from you_li import YouliCoordsManager, YouLiExecutor
 from fu_ben import FuBenCoordsManager, FuBenExecutor
-
+from ling_shou import LingShouCoordsManager, LingShouExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

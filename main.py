@@ -8,7 +8,11 @@ from event_executor import *
 from swy_coords_manager import *
 from swy_event_executor import *
 
-from main_xiu_lian import XiuLianCoordsManager, XiuLianExecutor
+from assistant import AssistantCoordsManager, AssistantExecutor
+from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
+from you_li import YouliCoordsManager, YouLiExecutor
+from fu_ben import FuBenCoordsManager, FuBenExecutor
+
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -124,8 +128,8 @@ def daily_task(
 if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
-    # account_name_ls = ['若雨', '云中鹤', '小七', '初心', '白起(仙山)', '白起(黄河)', '野菜花', '晴雪']
-    account_name_ls = ['白起(仙山)']
+    account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
+    # account_name_ls = ['白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 
@@ -133,17 +137,19 @@ if __name__ == '__main__':
     task_execute_df.set_index('users_name', inplace=True)
 
     for account_name in account_name_ls:
-        # try:
         print(f'开始执行{account_name}的日常任务')
         account_task_info = account_task_info_df.loc[account_name].to_dict()
         account = account_task_info['users']
 
         execute_info = task_execute_df.loc[account_name].to_dict()
-
-        # game_executor = GameControlExecutor(game_coords_manager, account_name=account_name, account=account)
-        # game_executor.execute()
+        
+        try:
+            game_executor = GameControlExecutor(game_coords_manager, account_name=account_name, account=account)
+            game_executor.execute()
+        except Exception as e:
+            print(f'{account_name}执行失败: {e}')
 
         daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
-        
-        # except Exception:
-        #     continue
+    
+    
+

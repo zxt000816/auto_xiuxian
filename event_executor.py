@@ -29,6 +29,7 @@ class BaseExecutor:
             'xiu_lian': 'xiu_lian',  # 修炼
             'qi_xi_mo_jie': 'qi_xi_mo_jie',  # 奇袭魔界
             'game_control': 'game_control',  # 游戏控制
+            'lun_dao': 'lun_dao',  # 论道
         }
         self.taget_name_dict = {
             'youli': '游历',
@@ -46,6 +47,7 @@ class BaseExecutor:
             'xiu_lian': '修炼',
             'game_control': '游戏控制',
             'qi_xi_mo_jie': '奇袭魔界',
+            'lun_dao': '论道',
         }
         self.target = target
         self.target_name = self.taget_name_dict.get(self.target, None)
@@ -258,7 +260,7 @@ class BaseExecutor:
         else:
             return False
 
-    def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str = None):
+    def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str = None, to_raise_exception=False):
         print("="*25 + f"购买{self.target_name}次数" + "="*25)
         actual_buy_times = 0
 
@@ -289,16 +291,22 @@ class BaseExecutor:
         times_already_bought = price_to_times.get(price)
         if times_already_bought >= buy_times:
             click_region(self.exit_coords, seconds=2)
-            print("完成: 已经购买过了, 不需要购买!")
             actual_buy_times = buy_times
+            if to_raise_exception is True:
+                raise ValueError(f"完成: 购买次数已用完, 将购买次数置为0")
+            else:
+                print("完成: 已经购买过了, 不需要购买!")
         else:
             buy_in_store_coords = self.coords_manager.buy_button_in_store()
             buy_times = buy_times - times_already_bought
             for _ in range(buy_times):
                 if current_lingshi < price:
                     click_region(self.exit_coords, seconds=2)
-                    print("灵石不足, 购买失败")
-                    return actual_buy_times
+                    if to_raise_exception is True:
+                        raise ValueError("灵石不足, 购买失败")
+                    else:
+                        print("灵石不足, 购买失败")
+                        return actual_buy_times
                 
                 click_region(buy_in_store_coords)
                 current_lingshi -= price
@@ -537,45 +545,42 @@ class YouLiExecutor(BaseExecutor):
             self.buy_times_in_store(self.buy_times)
             self.scoll_and_click(direction='up')
 
-    # def buy_youli(self):
-    #     print("="*25 + "购买游历" + "="*25)
-    #     # 显示100灵石, 目前已购买0次; 显示150灵石, 目前已购买1次; 显示200灵石, 目前已购买2次; 显示250灵石, 目前已购买3次
-    #     price_to_times = {100: 0, 150: 1, 200: 2, 250: 3} 
-    #     current_lingshi_coords = self.youli_coords_manager.current_lingshi()
-    #     current_lingshi_image = pyautogui.screenshot(region=current_lingshi_coords)
-    #     current_lingshi_arr = np.array(current_lingshi_image)
-    #     current_lingshi = extract_int_from_image(current_lingshi_arr, error_value=0)
+    def buy_youli(self):
+        print("="*25 + "购买游历" + "="*25)
+        # 显示100灵石, 目前已购买0次; 显示150灵石, 目前已购买1次; 显示200灵石, 目前已购买2次; 显示250灵石, 目前已购买3次
+        price_to_times = {100: 0, 150: 1, 200: 2, 250: 3} 
+        current_lingshi_coords = self.youli_coords_manager.current_lingshi()
+        current_lingshi_image = pyautogui.screenshot(region=current_lingshi_coords)
+        current_lingshi_arr = np.array(current_lingshi_image)
+        current_lingshi = extract_int_from_image(current_lingshi_arr, error_value=0)
 
-    #     price_in_store_coords = self.youli_coords_manager.price_in_store()
-    #     price_in_store_image = pyautogui.screenshot(region=price_in_store_coords)
-    #     price_in_store_arr = np.array(price_in_store_image)
-    #     price = extract_int_from_image(price_in_store_arr, error_value=3) #  从图片中提取失败时, 返回float('inf')
+        price_in_store_coords = self.youli_coords_manager.price_in_store()
+        price_in_store_image = pyautogui.screenshot(region=price_in_store_coords)
+        price_in_store_arr = np.array(price_in_store_image)
+        price = extract_int_from_image(price_in_store_arr, error_value=3) #  从图片中提取失败时, 返回float('inf')
         
-    #     times_already_bought = price_to_times.get(price, 0)
-    #     if times_already_bought >= self.buy_times:
-    #         self.buy_times = 0
-    #         click_region(self.exit_coords, seconds=2)
-    #         raise YouLiLingShiException("完成: 购买次数已用完, 将购买次数置为0")
-    #     else:
-    #         buy_in_store_coords = self.youli_coords_manager.buy_button_in_store()
-    #         buy_times = self.buy_times - times_already_bought
-    #         for _ in range(buy_times):
-    #             if current_lingshi < price:
-    #                 click_region(self.exit_coords, seconds=2)
-    #                 raise YouLiLingShiException("灵石不足, 购买失败")
+        times_already_bought = price_to_times.get(price, 0)
+        if times_already_bought >= self.buy_times:
+            self.buy_times = 0
+            click_region(self.exit_coords, seconds=2)
+            raise YouLiLingShiException("完成: 购买次数已用完, 将购买次数置为0")
+        else:
+            buy_in_store_coords = self.youli_coords_manager.buy_button_in_store()
+            buy_times = self.buy_times - times_already_bought
+            for _ in range(buy_times):
+                if current_lingshi < price:
+                    click_region(self.exit_coords, seconds=2)
+                    raise YouLiLingShiException("灵石不足, 购买失败")
                 
-    #             click_region(buy_in_store_coords)
-    #             current_lingshi -= price
-    #             price += 50
-    #             self.buy_times -= 1
-    #             print("完成: 购买一次游历")
+                click_region(buy_in_store_coords)
+                current_lingshi -= price
+                price += 50
+                self.buy_times -= 1
+                print("完成: 购买一次游历")
             
-    #         if self.if_buy_store_pop_up(): # 如果购买完以后购买界面还在, 说明还可以购买
-    #             click_region(self.exit_coords)
-    #             print("完成: 还有剩余购买次数, 但是不买了, 退出商店界面")
-
-    # def scroll_to_youli_place(self):
-    #     pass
+            if self.if_buy_store_pop_up(): # 如果购买完以后购买界面还在, 说明还可以购买
+                click_region(self.exit_coords)
+                print("完成: 还有剩余购买次数, 但是不买了, 退出商店界面")
 
     def choose_youli_place(self):
         print("="*25 + "选择游历地点" + "="*25)
@@ -608,7 +613,6 @@ class YouLiExecutor(BaseExecutor):
                 confidence=0.7, 
                 cat_dir=self.cat_dir
             )
-
             print("完成: 查看是否匹配到游历结束的界面")
 
             if youli_end_indicator_coords is not None:
@@ -618,12 +622,7 @@ class YouLiExecutor(BaseExecutor):
                 print("完成: 未匹配到游历结束的界面")
                 buy_store_coords_is_in_main_region = self.if_buy_store_pop_up()
                 if buy_store_coords_is_in_main_region:
-                    if self.finished_buying is True:
-                        print("完成: 游历结束!")
-                        break
-
-                    self.buy_times_in_store(self.buy_times)
-                    self.finished_buying = True
+                    self.buy_times_in_store(self.buy_times, to_raise_exception=True)
 
                 youli_end_one_time_coords = self.youli_coords_manager.youli_end_one_time()
                 click_region(youli_end_one_time_coords, seconds=2)
@@ -1460,13 +1459,20 @@ class LingShouExecutor(BaseExecutor):
         return ling_shou_fu_ben_enter_coords
 
     def get_buy_times_not_enough_indicator_coords(self):
-        buy_times_not_enough_indicator_coords = get_region_coords(
-            'buy_times_not_enough_indicator',
-            main_region_coords=self.main_region_coords,
-            confidence=0.8,
-            cat_dir=self.cat_dir
-        )
-        return buy_times_not_enough_indicator_coords
+
+        buy_times_not_enough_indicator_imgs = [
+            {'target_region_image': 'buy_times_not_enough1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'buy_times_not_enough2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+        ]
+        return get_region_coords_by_multi_imgs(buy_times_not_enough_indicator_imgs)
+
+        # buy_times_not_enough_indicator_coords = get_region_coords(
+        #     'buy_times_not_enough_indicator',
+        #     main_region_coords=self.main_region_coords,
+        #     confidence=0.8,
+        #     cat_dir=self.cat_dir
+        # )
+        # return buy_times_not_enough_indicator_coords
 
     def execute(self):
         self.go_to_world()

@@ -139,18 +139,6 @@ class BaoMingCoordsManager(BaseCoordsManager):
     def baoming_lingshi(self):
         diff = (398, 1233, 303, 101)
         return self.calculate_relative_coords(diff)
-
-# class ShuangXiuCoordsManager(BaseCoordsManager):
-#     def __init__(self, main_region_coords, resolution=(1080, 1920)):
-#         super().__init__(main_region_coords, resolution)
-
-#     def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
-#         diff = (360, 131, 22, 27)
-#         return self.calculate_relative_coords(diff, gongfashu_coords)
-    
-#     def back(self):
-#         diff = (60, 1792, 72, 71)
-#         return self.calculate_relative_coords(diff)
     
 class YouliCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):

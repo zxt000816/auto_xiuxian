@@ -99,17 +99,17 @@ def daily_task(
 
     all_executor = {
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
-        '游历': (youli_executor, youli),
-        '修炼': (xiu_lian_executor, xiu_lian),
-        '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
-        '混沌灵塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
-        '小助手': (assistant_executor, assistant),
         '报名': (bao_ming_executor, bao_ming),
         '红包': (hong_bao_executor, hong_bao),
+        '修炼': (xiu_lian_executor, xiu_lian),
+        '小助手': (assistant_executor, assistant),
+        '混沌灵塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
+        '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
+        '挑战仙缘': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
         '拜谒': (bai_ye_executor, bai_ye),
+        
         '游历': (youli_executor, youli),
         '双修': (shuangxiu_executor, shuangxiu),
-        '挑战仙缘': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
         '灵兽': (ling_shou_executor, ling_shou),
         '副本': (fuben_executor, fuben),
         '坠魔谷': (zhui_mo_gu_executor, zhui_mo_gu),
@@ -142,8 +142,8 @@ def daily_task(
 if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
-    # account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
-    account_name_ls = ['白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
+    account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
+    # account_name_ls = ['白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 

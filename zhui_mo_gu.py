@@ -223,6 +223,7 @@ class ZhuiMoGuExecutor(BaseExecutor):
             return False
 
     def execute(self):
+        
         self.go_to_world()
 
         for i, row in self.profession_boss_info.iterrows():

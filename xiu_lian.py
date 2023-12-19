@@ -355,7 +355,7 @@ class XiuLianExecutor(BaseExecutor):
             pyautogui.mouseDown()
 
             start_time = time.time()
-            total_time = 5
+            total_time = 10
             while True:
                 # 检查是否到达20秒
                 if time.time() - start_time > total_time:

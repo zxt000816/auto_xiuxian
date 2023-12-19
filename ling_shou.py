@@ -109,14 +109,6 @@ class LingShouExecutor(BaseExecutor):
         ]
         return get_region_coords_by_multi_imgs(buy_times_not_enough_indicator_imgs)
 
-        # buy_times_not_enough_indicator_coords = get_region_coords(
-        #     'buy_times_not_enough_indicator',
-        #     main_region_coords=self.main_region_coords,
-        #     confidence=0.8,
-        #     cat_dir=self.cat_dir
-        # )
-        # return buy_times_not_enough_indicator_coords
-
     def execute(self):
         self.go_to_world()
         
@@ -165,6 +157,6 @@ class LingShouExecutor(BaseExecutor):
 if __name__ == '__main__':
 
     coords_manager = LingShouCoordsManager(main_region_coords)
-    executor = LingShouExecutor(coords_manager, buy_times=2, to_save_times=False)
+    executor = LingShouExecutor(coords_manager, buy_times=0, to_save_times=False)
     executor.execute()
 

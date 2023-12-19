@@ -129,19 +129,21 @@ def daily_task(
 
                 executor.execute()
                 print(f'{executor_name}执行完毕')
+
             except Exception as e:
-                executor.go_to_world()
                 print(f'{executor_name}执行失败: {e}')
                 with open('error.txt', 'a', encoding='utf-8') as f:
                     f.write(
                         f'\n-------------------------------------\n{account_name}-{executor_name}:{e}\n-------------------------------------\n'
                     )
 
+            executor.go_to_world()
+
 if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
     account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
-    account_name_ls = ['云中鹤']
+    account_name_ls = ['小七']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 
@@ -149,6 +151,7 @@ if __name__ == '__main__':
     task_execute_df.set_index('users_name', inplace=True)
 
     for account_name in account_name_ls:
+
         print(f'开始执行{account_name}的日常任务')
         account_task_info = account_task_info_df.loc[account_name].to_dict()
         account = account_task_info['users']
@@ -162,6 +165,4 @@ if __name__ == '__main__':
             print(f'{account_name}执行失败: {e}')
 
         # daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
-    
-    
 

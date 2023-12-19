@@ -2,6 +2,7 @@ import pyautogui
 import numpy as np
 import pandas as pd
 from typing import Tuple
+from datetime import datetime
 from utils import get_game_page_coords, hide_yang_chong_tou
 from coords_manager import *
 from event_executor import *
@@ -14,10 +15,7 @@ from you_li import YouliCoordsManager, YouLiExecutor
 from fu_ben import FuBenCoordsManager, FuBenExecutor
 from ling_shou import LingShouCoordsManager, LingShouExecutor
 from lun_dao import LunDaoCoordsManager, LunDaoExecutor
-from datetime import datetime
-
-# 就算当前时间是否小于11点(具体到分)
-# 如果小于11点, 则不执行兽渊探秘和论道
+from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -107,7 +105,7 @@ def daily_task(
         '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
         '挑战仙缘': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
         '拜谒': (bai_ye_executor, bai_ye),
-        
+
         '游历': (youli_executor, youli),
         '双修': (shuangxiu_executor, shuangxiu),
         '灵兽': (ling_shou_executor, ling_shou),
@@ -143,7 +141,7 @@ if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
     account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
-    # account_name_ls = ['白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
+    account_name_ls = ['云中鹤']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 
@@ -163,7 +161,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'{account_name}执行失败: {e}')
 
-        daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
+        # daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
     
     
 

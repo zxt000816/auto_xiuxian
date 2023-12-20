@@ -1,13 +1,6 @@
 import pyautogui
-import numpy as np
-from typing import Tuple
-import time
 from utils import *
 from coords_manager import *
-from event_executor import YouLiExecutor
-import pytesseract
-import cv2
-import re
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -96,7 +89,7 @@ args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.95,
-    'target_image_cat_dir': 'lun_dao',
+    'target_image_cat_dir': 'mo_dao_ru_qing',
 }
 
 get_diff_quickly = get_diff_quickly_2

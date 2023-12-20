@@ -16,6 +16,7 @@ from fu_ben import FuBenCoordsManager, FuBenExecutor
 from ling_shou import LingShouCoordsManager, LingShouExecutor
 from lun_dao import LunDaoCoordsManager, LunDaoExecutor
 from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
+from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

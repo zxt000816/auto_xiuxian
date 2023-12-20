@@ -268,7 +268,6 @@ class MoDaoRuQingExecutor(BaseExecutor):
         
         self.get_dui_huan_coords(wait_time=2, target_region="兑换", is_to_click=True, to_raise_exception=True)
 
-    
     def execute(self):
         self.go_to_world()
 

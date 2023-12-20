@@ -115,7 +115,7 @@ class LunDaoExecutor(BaseExecutor):
         self.click_ri_chang()
         self.scoll_and_click(direction='down', in_ri_chang_page=False)
 
-        wen_dao_ing_coords = self.get_wen_dao_ing_coords(wait_time=5, target_region='问道中', is_to_click=False, to_raise_exception=True)
+        wen_dao_ing_coords = self.get_wen_dao_ing_coords(wait_time=5, target_region='问道中', is_to_click=False, to_raise_exception=False)
         if wen_dao_ing_coords:
             print('正在论道中!')
             return

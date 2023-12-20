@@ -143,7 +143,7 @@ if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     
     account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
-    account_name_ls = ['小七']
+    # account_name_ls = ['小七']
     account_task_info_df = pd.read_excel('./users_info.xlsx')
     account_task_info_df.set_index('users_name', inplace=True)
 
@@ -164,5 +164,5 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'{account_name}执行失败: {e}')
 
-        # daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
+        daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
 

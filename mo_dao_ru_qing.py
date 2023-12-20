@@ -200,7 +200,75 @@ class MoDaoRuQingExecutor(BaseExecutor):
             cat_dir=self.cat_dir ,
         )
 
+    @wait_region
+    def get_dui_huan_bao_ge_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'dui_huan_bao_ge',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_plus_ten_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'plus_ten',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_dui_huan_max_num_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'dui_huan_max_num',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_dui_huan_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'dui_huan',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    def dui_huan_cai_liao(self, target='yao_chi_yu_lian', target_name='瑶池玉莲'):
+        self.get_dui_huan_bao_ge_coords(wait_time=2, target_region="兑换宝阁", is_to_click=True, to_raise_exception=False)
 
+        self.scoll_and_click(
+            direction='down',
+            other_target=target,
+            other_target_name=target_name,
+            confidence=0.7,
+            num_of_scroll=5,
+            scroll_length=300,
+            scroll_seconds=3,
+            cat_dir=self.cat_dir,
+            in_ri_chang_page=False,
+            is_to_click=True,
+        )
+
+        start_time = time.time()
+        while True:
+            if time.time() - start_time > 60:
+                print(f"已超过60秒, 退出!")
+                break
+
+            self.get_plus_ten_coords(wait_time=1, target_region="加10", is_to_click=True, to_raise_exception=False)
+            dui_huan_max_num_coords = self.get_dui_huan_max_num_coords(wait_time=2, target_region="最大购买", is_to_click=False, 
+                                                                       to_raise_exception=False)
+            
+            if dui_huan_max_num_coords is not None:
+                print(f"已达到最大兑换数量!")
+                break
+        
+        self.get_dui_huan_coords(wait_time=2, target_region="兑换", is_to_click=True, to_raise_exception=True)
+
+    
     def execute(self):
         self.go_to_world()
 
@@ -250,7 +318,11 @@ class MoDaoRuQingExecutor(BaseExecutor):
 
         time.sleep(3)
 
+        start_time = time.time()
         while True:
+            if time.time() - start_time > 600:
+                print(f"已超过600秒, 退出!")
+                break
 
             self.get_tiao_zhan_shi_jian_coords(wait_time=10, target_region="挑战事件", is_to_click=True, to_raise_exception=True)
 
@@ -278,6 +350,21 @@ class MoDaoRuQingExecutor(BaseExecutor):
                 
             self.get_tiao_zhan_over_coords(wait_time=120, target_region="挑战结束", is_to_click=True, other_region_coords=self.mdrq_coords_manager.exit(), 
                                         wait_time_before_click=1, to_raise_exception=False)
+    
+
+        # 返回世界, 重新进入活动, 然后打开兑换宝阁
+        self.go_to_world()
+
+        click_region(self.mdrq_coords_manager.ri_cheng())
+
+        self.get_mo_dao_ru_qing_coords(
+            wait_time=3,
+            target_region=self.event_name,
+            is_to_click=True,
+            to_raise_exception=True,
+        )
+
+        self.dui_huan_cai_liao(target='yao_chi_yu_lian', target_name='瑶池玉莲')
 
 if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
@@ -285,4 +372,5 @@ if __name__ == '__main__':
     coords_manager = MoDaoRuQingCoordsManager(main_region_coords)
     executor = MoDaoRuQingExecutor(coords_manager, server_nums=1, use_si_bei=True)
 
-    executor.execute()
+    # executor.execute()
+    executor.test()

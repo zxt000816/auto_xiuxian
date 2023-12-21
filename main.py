@@ -136,7 +136,8 @@ def daily_task(
             try:
                 if executor_name in ['论道', '兽渊探秘', '魔道入侵']:
                     if datetime.now().hour < 11: #  11点之前不执行
-                        raise Exception(f'没有到11点, {executor_name}尚未开启!')
+                        print(f'{executor_name}未到执行时间')
+                        break
 
                 executor.execute()
                 print(f'{executor_name}执行完毕')

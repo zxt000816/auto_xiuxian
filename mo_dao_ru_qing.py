@@ -129,7 +129,7 @@ class MoDaoRuQingExecutor(BaseExecutor):
         )
 
     @wait_region
-    def get_tan_cha_over(self, wait_time, target_region, is_to_click, to_raise_exception):
+    def get_tan_cha_over(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
         tan_cha_over_imgs = [
             {'target_region_image': 'tan_cha_over1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'tan_cha_over2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
@@ -268,6 +268,39 @@ class MoDaoRuQingExecutor(BaseExecutor):
         
         self.get_dui_huan_coords(wait_time=2, target_region="兑换", is_to_click=True, to_raise_exception=True)
 
+    @wait_region
+    def get_confirm_go_to_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'confirm_go_to',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_skip(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        return get_region_coords(
+            'skip',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir ,
+        )
+
+    @wait_region
+    def get_confirm_skip(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'confirm_skip',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir ,
+        )
+
+    def process_others(self):
+        self.get_confirm_go_to_coords(wait_time=5, target_region="确认进入", is_to_click=True, to_raise_exception=False)
+        self.get_skip(wait_time=4, target_region="跳过", is_to_click=True, click_wait_time=0, to_raise_exception=False)
+        self.get_confirm_skip(wait_time=4, target_region="确认跳过", is_to_click=True, to_raise_exception=False)
+        time.sleep(10)
+
     def execute(self):
         self.go_to_world()
 
@@ -304,11 +337,17 @@ class MoDaoRuQingExecutor(BaseExecutor):
         self.get_main_page_coords(wait_time=2, target_region="主界面", is_to_click=True, to_raise_exception=False)
 
         self.get_qian_wang_da_di_tu_coords(wait_time=2, target_region="进入活动", is_to_click=True, to_raise_exception=True)
+        
+        self.process_others()
+
 
         while True:
             self.get_tan_cha_coords(wait_time=2, target_region="探查", is_to_click=True, to_raise_exception=True)
 
-            tan_cha_over_coords = self.get_tan_cha_over(wait_time=2, target_region="探查结束", is_to_click=True, to_raise_exception=False)
+            tan_cha_over_coords = self.get_tan_cha_over(
+                wait_time=2, target_region="探查结束", is_to_click=True, 
+                other_region_coords=self.mdrq_coords_manager.exit(), to_raise_exception=False
+            )
             if tan_cha_over_coords is not None:
                 print(f"探查结束!")
                 break
@@ -348,7 +387,7 @@ class MoDaoRuQingExecutor(BaseExecutor):
                     break
                 
             self.get_tiao_zhan_over_coords(wait_time=120, target_region="挑战结束", is_to_click=True, other_region_coords=self.mdrq_coords_manager.exit(), 
-                                        wait_time_before_click=1, to_raise_exception=False)
+                                           wait_time_before_click=1, to_raise_exception=False)
     
 
         # 返回世界, 重新进入活动, 然后打开兑换宝阁
@@ -369,7 +408,6 @@ if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = MoDaoRuQingCoordsManager(main_region_coords)
-    executor = MoDaoRuQingExecutor(coords_manager, server_nums=1, use_si_bei=True)
+    executor = MoDaoRuQingExecutor(coords_manager, server_nums=4, use_si_bei=True)
 
-    # executor.execute()
-    executor.test()
+    executor.execute()

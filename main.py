@@ -107,8 +107,8 @@ def daily_task(
     all_executor = {
         '报名': (bao_ming_executor, bao_ming),
         '红包': (hong_bao_executor, hong_bao),
-        '修炼': (xiu_lian_executor, xiu_lian),
         '小助手': (assistant_executor, assistant),
+        '修炼': (xiu_lian_executor, xiu_lian),
         '混沌灵塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
         '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
         '拜谒': (bai_ye_executor, bai_ye),
@@ -155,16 +155,21 @@ def daily_task(
 if __name__ == '__main__':
     game_coords_manager = GameControlCoordsManager(main_region_coords)
     root_dir = 'C:/Users/zyf13/My Drive/auto_xiu_xian'
-    
+    file_name = 'game_execute_info.xlsx'
+    file_path = os.path.join(root_dir, file_name)
+
     # account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
-    accounts = pd.read_excel(os.path.join(root_dir, 'accounts.xlsx'))
+    # accounts
+    accounts = pd.read_excel(file_path, sheet_name='accounts')
     accounts = accounts[accounts['execute'] == 1]
     account_name_ls = accounts['account_names'].tolist()
     
-    account_task_info_df = pd.read_excel(os.path.join(root_dir, 'users_info.xlsx'))
+    # users_info
+    account_task_info_df = pd.read_excel(file_path, sheet_name='users_info')
     account_task_info_df.set_index('users_name', inplace=True)
-
-    task_execute_df = pd.read_excel(os.path.join(root_dir, 'task_execute.xlsx'))
+    
+    # task_execute
+    task_execute_df = pd.read_excel(file_path, sheet_name='task_execute')
     task_execute_df.set_index('users_name', inplace=True)
 
     for account_name in account_name_ls:

@@ -52,8 +52,10 @@ class YouLiExecutor(BaseExecutor):
         self.place_name = place_name
         self.buy_times = buy_times
         self.place_name_dict = {
-            '南疆': 'nanjiang',
-            '冰海': 'binghai',
+            '南疆': 'nan_jiang',
+            '冰海': 'bing_hai',
+            '大晋': 'da_jin',
+            '镜州': 'jing_zhou',
         }
         self.place = self.place_name_dict[self.place_name]
 

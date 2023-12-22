@@ -1,14 +1,15 @@
 import os
 import cv2
 
-this_pc_res = (554, 984) # 替换为当前游戏的分辨率(注意是宽高)
+# this_pc_res = (554, 984) # 替换为当前游戏的分辨率(注意是宽高)
+this_pc_res = (720, 1080) # 替换为当前游戏的分辨率(注意是宽高)
 other_pc_res = (1080, 1920)
 
 width_ratio = this_pc_res[0] / other_pc_res[0]
 height_ratio = this_pc_res[1] / other_pc_res[1]
 
 # 遍历文件夹下的所有.png文件
-new_root_dir = './FanRenXiuXianIcon_554_984' # 替换为当前游戏的图标文件夹
+new_root_dir = f'./FanRenXiuXianIcon_{this_pc_res[0]}_{this_pc_res[1]}' # 替换为当前游戏的图标文件夹
 root_dir = './FanRenXiuXianIcon_1920_1080' # 1920*1080分辨率下的图标文件夹
 if not os.path.exists(new_root_dir):
     os.mkdir(new_root_dir)

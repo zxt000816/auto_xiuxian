@@ -33,3 +33,11 @@ class BossNotDefeatedException(Exception):
 class FinishedTaskException(Exception):
     def __init__(self, message):
         super().__init__(message)
+
+class TiaoZhanTimesNotEnoughException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+class MianZhanException(Exception):
+    def __init__(self, message):
+        super().__init__(message)

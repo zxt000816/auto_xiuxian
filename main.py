@@ -18,6 +18,7 @@ from lun_dao import LunDaoCoordsManager, LunDaoExecutor
 from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
 from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
 from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
+from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -45,8 +46,9 @@ def daily_task(
     fuben: bool = True,
     zhui_mo_gu: bool = True,
     lun_dao: bool = True,
-    shou_yuan_tan_mi: bool = True,
-    mo_dao_ru_qing: bool = True,
+    shou_yuan_tan_mi: bool = False,
+    mo_dao_ru_qing: bool = False,
+    xian_meng_zheng_ba: bool = False,
 ):
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
@@ -68,6 +70,7 @@ def daily_task(
 
     shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords) # 兽渊探秘
     mo_dao_ru_qing_coords_manager = MoDaoRuQingCoordsManager(main_region_coords) # 魔道入侵
+    xian_meng_zheng_ba_coords_manager = XianMengZhengBaCoordsManager(main_region_coords) # 仙盟争霸
 
     xiu_lian_coords_manager = XiuLianCoordsManager(main_region_coords) # 修炼
     qi_xi_mo_jie_coords_manager = QiXiMoJieCoordsManager(main_region_coords) # 奇袭魔界
@@ -87,6 +90,7 @@ def daily_task(
 
     shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=shou_yuan_tan_mi_server_nums, only_use_free_times=True) # 兽渊探秘
     mo_dao_ru_qing_executor = MoDaoRuQingExecutor(mo_dao_ru_qing_coords_manager, server_nums=mo_dao_ru_qing_server_nums) # 魔道入侵
+    xian_meng_zheng_ba_executor = XianMengZhengBaExecutor(xian_meng_zheng_ba_coords_manager) # 仙盟争霸
 
     xiu_lian_executor = XiuLianExecutor(xiu_lian_coords_manager, buy_times=xiu_lian_buy_times) # 修炼
     qi_xi_mo_jie_executor = QiXiMoJieExecutor(qi_xi_mo_jie_coords_manager) # 奇袭魔界
@@ -123,6 +127,7 @@ def daily_task(
         '论道': (lun_dao_executor, lun_dao),
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
         '魔道入侵': (mo_dao_ru_qing_executor, mo_dao_ru_qing),
+        '仙盟争霸': (xian_meng_zheng_ba_executor, xian_meng_zheng_ba),
     }
 
     hide_yang_chong_tou(
@@ -187,4 +192,3 @@ if __name__ == '__main__':
             print(f'{account_name}执行失败: {e}')
 
         daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
-

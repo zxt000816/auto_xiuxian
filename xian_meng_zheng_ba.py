@@ -293,6 +293,8 @@ class XianMengZhengBaExecutor(BaseExecutor):
 
         self.get_skip_dong_hua_coords(wait_time=10, target_region="跳过动画", is_to_click=True, wait_time_before_click=2, to_raise_exception=False)
 
+        time.sleep(10)
+
         self.get_meng_ling_coords(wait_time=30, target_region="盟令", is_to_click=True, wait_time_before_click=2, to_raise_exception=True)
 
         self.get_qian_wang_da_zhen_coords(wait_time=2, target_region="前往大阵", is_to_click=True, to_raise_exception=True)

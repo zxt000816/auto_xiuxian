@@ -19,6 +19,8 @@ from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
 from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
 from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
 from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
+from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
+from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -49,6 +51,7 @@ def daily_task(
     shou_yuan_tan_mi: bool = False,
     mo_dao_ru_qing: bool = False,
     xian_meng_zheng_ba: bool = False,
+    check_ri_chang: bool = True
 ):
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
@@ -79,6 +82,7 @@ def daily_task(
     bao_ming_corrds_manager = BaoMingCoordsManager(main_region_coords, resolution=resolution) # 报名
     hong_bao_coords_manager = HongBaoCoordsManager(main_region_coords, resolution=resolution)# 红包
     bai_ye_coords_manager = BaiYeCoordsManager(main_region_coords) # 拜谒
+    check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords) # 检查日常
 
     youli_corrds_manager = YouliCoordsManager(main_region_coords, resolution=resolution) # 游历
     shuangxiu_corrds_manager = ShuangXiuCoordsManager(main_region_coords, resolution=resolution) # 双修
@@ -99,6 +103,7 @@ def daily_task(
     bao_ming_executor = BaoMingExecutor(bao_ming_corrds_manager) # 报名
     hong_bao_executor = HongBaoExecutor(hong_bao_coords_manager) # 红包
     bai_ye_executor = BaiYeExecutor(bai_ye_coords_manager, event_name=bai_ye_event_name, fa_ze_level=bai_ye_fa_ze_level) # 拜谒
+    check_ri_chang_executor = CheckRiChangExecutor(check_ri_chang_coords_manager, account_name) # 检查日常
 
     shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name=shuangxiu_gongfashu_name) # 双修
     tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name) # 挑战仙缘
@@ -128,6 +133,8 @@ def daily_task(
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
         '魔道入侵': (mo_dao_ru_qing_executor, mo_dao_ru_qing),
         '仙盟争霸': (xian_meng_zheng_ba_executor, xian_meng_zheng_ba),
+
+        '检查日常': (check_ri_chang_executor, check_ri_chang),
     }
 
     hide_yang_chong_tou(

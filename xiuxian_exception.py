@@ -41,3 +41,7 @@ class TiaoZhanTimesNotEnoughException(Exception):
 class MianZhanException(Exception):
     def __init__(self, message):
         super().__init__(message)
+
+class ShuangXiuException(Exception):
+    def __init__(self, message):
+        super().__init__(message)

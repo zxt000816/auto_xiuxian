@@ -21,6 +21,7 @@ from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
 from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
 from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
 from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
+from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -118,9 +119,11 @@ def daily_task(
         '红包': (hong_bao_executor, hong_bao),
         '小助手': (assistant_executor, assistant),
         '修炼': (xiu_lian_executor, xiu_lian),
-        '混沌灵塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
         '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
         '拜谒': (bai_ye_executor, bai_ye),
+
+        '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
+        '混沌灵塔_扫荡': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
 
         '挑战仙缘': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
         '游历': (youli_executor, youli),
@@ -150,8 +153,14 @@ def daily_task(
                     if datetime.now().hour < 11: #  11点之前不执行
                         print(f'{executor_name}未到执行时间')
                         break
-
-                executor.execute()
+                
+                if executor_name == '混沌灵塔_爬塔':
+                    executor.go_up()
+                elif executor_name == '混沌灵塔_扫荡':
+                    executor.sao_dang()
+                else:
+                    executor.execute()
+                
                 print(f'{executor_name}执行完毕')
 
             except Exception as e:
@@ -170,7 +179,6 @@ if __name__ == '__main__':
     file_name = 'game_execute_info.xlsx'
     file_path = os.path.join(root_dir, file_name)
 
-    # account_name_ls = ['若雨', '小七', '初心', '白起(仙山)', '云中鹤', '白起(黄河)', '野菜花', '晴雪']
     # accounts
     accounts = pd.read_excel(file_path, sheet_name='accounts')
     accounts = accounts[accounts['execute'] == 1]

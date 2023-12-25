@@ -1913,7 +1913,7 @@ class GameControlExecutor(BaseExecutor):
         return get_region_coords_by_multi_imgs(start_game_successfully_imgs)
 
     @wait_region
-    def get_vip_fu_li_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+    def get_vip_fu_li_coords(self, wait_time, target_region, is_to_click, other_region_coords, wait_time_before_click, to_raise_exception):
         return get_region_coords(
             'vip_fu_li',
             self.main_region_coords,
@@ -1983,7 +1983,8 @@ class GameControlExecutor(BaseExecutor):
         # 判断是否弹出vip福利, 如果弹出, 则点击关闭
         self.get_vip_fu_li_coords(
             wait_time=3, target_region="vip福利", is_to_click=True, 
-            other_region_coords=self.cc_coords_manager.close_vip_fu_li(), to_raise_exception=False
+            other_region_coords=self.cc_coords_manager.close_vip_fu_li(), 
+            wait_time_before_click=5, to_raise_exception=False
         )
 
         # 等待登录成功

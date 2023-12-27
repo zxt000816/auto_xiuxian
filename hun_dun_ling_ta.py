@@ -92,6 +92,7 @@ class HunDunLingTaExecutor(BaseExecutor):
     def get_tiao_zhan_over_coords(self, wait_time, target_region, is_to_click, other_region_coords, wait_time_before_click, to_raise_exception):
         tiao_zhan_over_imgs = [
             {'target_region_image': 'tiao_zhan_over1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'tiao_zhan_over3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
 
         return get_region_coords_by_multi_imgs(tiao_zhan_over_imgs)

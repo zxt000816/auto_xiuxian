@@ -106,40 +106,23 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         # 确认`仙缘页面`是否打开
         self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False)
         click_region(self.tzxy_coords_manager.all_xian_yuan())
-            
-        # for xian_yuan_role_name in self.candidate_role_names:
-        #     xian_yuan_role = self.role_name_dict[xian_yuan_role_name]
-        #     try:
-        #         self.scoll_and_click(
-        #             direction='down', 
-        #             other_target=xian_yuan_role, 
-        #             other_target_name=xian_yuan_role_name, 
-        #             confidence=0.7,
-        #             num_of_scroll=10,
-        #             scroll_length=400, 
-        #             scroll_seconds=4
-        #         )
-
-        #         break
-        #     except Exception as e:
-        #         print(f"没有{xian_yuan_role_name}!")
 
         try:
             self.scoll_and_click(
                 direction='down', 
                 other_target=self.xian_yuan_role, 
                 other_target_name=self.xian_yuan_role_name, 
-                confidence=0.7,
+                confidence=0.8,
                 num_of_scroll=10,
                 scroll_length=400, 
                 scroll_seconds=4
             )
         except Exception as e:
             print(f"没有{self.xian_yuan_role_name}!")
-            index = index + 1
             self.xian_yuan_role_name = self.candidate_role_names[index]
             self.xian_yuan_role = self.role_name_dict[self.xian_yuan_role_name]
-            self.execute(index=index)
+            print(f"切换为{self.xian_yuan_role_name}!")
+            self.execute(index=index+1)
             
         click_region(self.tzxy_coords_manager.qian_wang())
 
@@ -156,6 +139,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.get_battle_over2_coords(wait_time=20, target_region='战斗结束2', is_to_click=False)
         click_region(self.tzxy_coords_manager.exit())
 
-tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
-executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='王婵')
-executor.execute()
+if __name__ == '__main__':
+    tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
+    executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='势不两立')
+    executor.execute()

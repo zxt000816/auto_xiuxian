@@ -22,6 +22,8 @@ from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExec
 from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
 from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
 from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
+from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
+from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -52,7 +54,8 @@ def daily_task(
     shou_yuan_tan_mi: bool = False,
     mo_dao_ru_qing: bool = False,
     xian_meng_zheng_ba: bool = False,
-    check_ri_chang: bool = True
+    check_ri_chang: bool = True,
+    pa_tian_ti: bool = False,
 ):
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
@@ -114,6 +117,9 @@ def daily_task(
     fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name=fuben_name, buy_times=fuben_buy_times) # 副本
     lun_dao_executor = LunDaoExecutor(lun_dao_coords_manager, dao_chang_level=dao_chang_level) # 论道
 
+    pa_tian_ti_coords_manager = PaTianTiCoordsManager(main_region_coords) # 爬天梯
+    pa_tian_ti_executor = PaTianTiExecutor(pa_tian_ti_coords_manager) # 爬天梯
+
     all_executor = {
         '报名': (bao_ming_executor, bao_ming),
         '红包': (hong_bao_executor, hong_bao),
@@ -136,6 +142,8 @@ def daily_task(
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
         '魔道入侵': (mo_dao_ru_qing_executor, mo_dao_ru_qing),
         '仙盟争霸': (xian_meng_zheng_ba_executor, xian_meng_zheng_ba),
+
+        '爬天梯': (pa_tian_ti_executor, pa_tian_ti),
 
         '检查日常': (check_ri_chang_executor, check_ri_chang),
     }

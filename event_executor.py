@@ -286,9 +286,9 @@ class BaseExecutor:
         price_in_store_coords = self.coords_manager.price_in_store()
         price_in_store_image = pyautogui.screenshot(region=price_in_store_coords)
         price_in_store_arr = np.array(price_in_store_image)
-        price = extract_int_from_image(price_in_store_arr, error_value=4) #  从图片中提取失败时, 返回float('inf')
+        price = extract_int_from_image(price_in_store_arr, error_value=250) #  从图片中提取失败时, 返回float('inf')
         
-        times_already_bought = price_to_times.get(price)
+        times_already_bought = price_to_times.get(price) + 1 # 已经购买的次数(如果price是100, 那么times_already_bought就是0)
         if times_already_bought >= buy_times:
             click_region(self.exit_coords, seconds=2)
             actual_buy_times = buy_times
@@ -2015,7 +2015,7 @@ class GameControlExecutor(BaseExecutor):
         )
 
         # 等待开始游戏成功
-        self.get_start_game_successfully_coords(wait_time=30, target_region="开始游戏成功")
+        # self.get_start_game_successfully_coords(wait_time=30, target_region="开始游戏成功")
 
 class QiXiMoJieExecutor(BaseExecutor):
     def __init__(self, qxmj_coords_manager: QiXiMoJieCoordsManager):

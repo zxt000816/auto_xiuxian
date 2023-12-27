@@ -168,7 +168,7 @@ class ShuangXiuExecutor(BaseExecutor):
         # 在双修界面中，点击屏幕中心, 可以快速跳过双修动画
         start_time = time.time()
         while self.confirm_go_to_xiulian_is_exist() is False:
-            if time.time() - start_time > 30:
+            if time.time() - start_time > 60:
                 raise ShuangXiuException("双修超时")
             
             click_region(self.shuangxiu_coords_manager.main_region_coords, seconds=2)
@@ -210,6 +210,6 @@ if __name__ == '__main__':
     
     coords_manager = ShuangXiuCoordsManager(main_region_coords)
     
-    sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='百花烟雨')
+    sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='六欲练心')
 
     sx_executor.execute()

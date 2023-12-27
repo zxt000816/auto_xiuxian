@@ -118,16 +118,16 @@ class YouLiExecutor(BaseExecutor):
         self.click_ri_chang()
 
         self.scoll_and_click(direction='down', in_ri_chang_page=False)
-        buy_button_coords = self.get_buy_button_coords(wait_time=3, target_region='购买并使用', is_to_click=False, to_raise_exception=False)
+        buy_button_coords = self.get_buy_button_coords(wait_time=5, target_region='购买并使用', is_to_click=False, to_raise_exception=False)
         if buy_button_coords is not None:
             self.buy_times_in_store(self.buy_times, to_raise_exception=True)
             self.scoll_and_click(direction='up', in_ri_chang_page=False)
 
-        self.get_buy_icon_coords(wait_time=3, target_region='购买图标', is_to_click=True, to_raise_exception=True)
+        self.get_buy_icon_coords(wait_time=5, target_region='购买图标', is_to_click=True, to_raise_exception=True)
 
         self.buy_times_in_store(self.buy_times, 'buy_times_is_not_enough')
         
-        self.get_place_coords(wait_time=3, target_region=self.place_name, is_to_click=True, to_raise_exception=True)
+        self.get_place_coords(wait_time=5, target_region=self.place_name, is_to_click=True, to_raise_exception=True)
 
         # 超过30秒就退出
         start_time = time.time()

@@ -25,11 +25,18 @@ def calculate_center_coords(coords: Tuple[int, int, int, int]) -> Tuple[int, int
         return (coords[0] + int(coords[2] / 2), coords[1] + int(coords[3] / 2))
 
 def hide_yang_chong_tou(main_region_coords: Tuple[int, int, int, int], hidden_region_coords: Tuple[int, int]):
-        yang_chong_tou_coords = get_region_coords(
-            'yang_chong_tou',
-            main_region_coords,
-            confidence=0.7,
-        )
+        
+        yang_chong_tou_imgs = [
+            {'target_region_image': 'yang_chong_tou1', 'main_region_coords': main_region_coords, 'confidence': 0.7, 'grayscale': False},
+            {'target_region_image': 'yang_chong_tou2', 'main_region_coords': main_region_coords, 'confidence': 0.7, 'grayscale': False},
+        ]
+
+        yang_chong_tou_coords = get_region_coords_by_multi_imgs(yang_chong_tou_imgs)
+        # yang_chong_tou_coords = get_region_coords(
+        #     'yang_chong_tou',
+        #     main_region_coords,
+        #     confidence=0.7,
+        # )
         
         if yang_chong_tou_coords is None:
             return
@@ -37,7 +44,7 @@ def hide_yang_chong_tou(main_region_coords: Tuple[int, int, int, int], hidden_re
         yang_chong_tou_center_coords = calculate_center_coords(yang_chong_tou_coords)
 
         pyautogui.moveTo(yang_chong_tou_center_coords[0], yang_chong_tou_center_coords[1])
-        pyautogui.dragTo(hidden_region_coords, duration=3) 
+        pyautogui.dragTo(hidden_region_coords, duration=2) 
 
         time.sleep(2)
 

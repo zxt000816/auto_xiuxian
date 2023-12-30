@@ -85,6 +85,7 @@ class HunDunLingTaExecutor(BaseExecutor):
     def get_tiao_zhan_over_coords(self, wait_time, target_region, is_to_click, other_region_coords, wait_time_before_click, to_raise_exception):
         tiao_zhan_over_imgs = [
             {'target_region_image': 'tiao_zhan_over1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'tiao_zhan_over2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'tiao_zhan_over3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
 
@@ -108,6 +109,15 @@ class HunDunLingTaExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
     
+    @wait_region
+    def get_dian_ji_ji_xu_coords(self, wait_time, target_region, is_to_click, wait_time_before_click, to_raise_exception):
+        return get_region_coords(
+            'dian_ji_ji_xu',
+            main_region_coords=self.hdlt_cm.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+
     def go_up(self):
         self.go_to_world()
 
@@ -169,17 +179,8 @@ class HunDunLingTaExecutor(BaseExecutor):
             # 如果没有弹出扫荡完成界面, 则点击开始扫荡
             start_sweep_coords = self.get_start_sweep_coords(wait_time=10, target_region='开始扫荡')
             click_region(start_sweep_coords)
-
-    # def execute(self):
-    #     try:
-    #         self.go_up()
-    #     except Exception as e:
-    #         print(e)
-        
-    #     try:
-    #         self.sao_da()
-    #     except Exception as e:
-    #         print(e)
+            self.get_dian_ji_ji_xu_coords(wait_time=10, target_region='点击继续', is_to_click=True, 
+                                          wait_time_before_click=2, to_raise_exception=False)
 
 if __name__ == '__main__':
     
@@ -190,4 +191,6 @@ if __name__ == '__main__':
 
     corrds_manager = HunDunLingTaCoordsManager(main_region_coords)
     executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='弥罗之塔')
+    executor.get_dian_ji_ji_xu_coords(wait_time=10, target_region='点击继续', is_to_click=True, 
+                                          wait_time_before_click=2, to_raise_exception=False)
 

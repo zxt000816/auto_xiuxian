@@ -95,13 +95,31 @@ class BaseExecutor:
     
     def get_network_not_stable_coords(self):
         # 获取网络不稳定的坐标
-        netword_not_stable_coords = get_region_coords(
+        network_not_stable_coords = get_region_coords(
             'network_not_stable',
             main_region_coords=self.main_region_coords,
             confidence=0.8,
         )
-        return netword_not_stable_coords
-
+        return network_not_stable_coords
+    
+    @wait_region
+    def get_chao_li_fan_li_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'chao_zhi_fan_li',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            grayscale=False
+        )
+    
+    @wait_region
+    def get_close_chao_zhi_fan_li_coords(self, wait_time, target_region, is_to_click, wait_time_before_click, to_raise_exception):
+        return get_region_coords(
+            'close_chao_zhi_fan_li',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            grayscale=False
+        )
+    
     def _check_is_in_world(self):
         # 判断是否处于世界地图界面
         check_region_coords = self.coords_manager.map_or_leave()
@@ -130,18 +148,12 @@ class BaseExecutor:
             # 判断的优先级: 网络不稳定 > 返回按钮 > 离开按钮 > 世界图标 > 指定位置 > 
             # 后续需要添加条件判断点击指定位置, 画面是否发生变化, 如果没有发生变化, while会陷入死循环!!!
             print("当前是否在世界地图界面: ", False)
-            netword_not_stable_coords = self.get_network_not_stable_coords()
-            if netword_not_stable_coords is not None:
-                click_region(self.coords_manager.confirm_button_in_network_not_statble(), seconds=3)
-                print("点击确定按钮, 退出网络不稳定提示框")
-
             leave_coords = self.get_leave_coords()
             if self.click_if_coords_exist(leave_coords, "点击离开按钮") is True:
                 # 当弹出离开提示框后, 点击确认离开按钮  
                 if self.get_leave_confirm_coords() is not None:
                     click_region(self.coords_manager.confirm_button_in_leave_alert(), seconds=5)
                     print("完成: 点击确认离开按钮")
-
                 continue
 
             back_arrow_coords = self.get_back_arrow_coords()
@@ -151,6 +163,16 @@ class BaseExecutor:
             world_coords = self.get_world_coords(self.coords_manager.region_for_check_world())
             if self.click_if_coords_exist(world_coords, "点击世界图标", seconds=5):
                 continue
+
+            network_not_stable_coords = self.get_network_not_stable_coords()
+            if network_not_stable_coords is not None:
+                click_region(self.coords_manager.confirm_button_in_network_not_statble(), seconds=3)
+                print("点击确定按钮, 退出网络不稳定提示框")
+
+            chao_zhi_fan_li_coords = self.get_chao_li_fan_li_coords(wait_time=2, target_region='超值返利', is_to_click=False, to_raise_exception=False)
+            if chao_zhi_fan_li_coords is not None:
+                self.get_close_chao_zhi_fan_li_coords(wait_time=2, target_region='关闭超值返利', is_to_click=True, 
+                                                      wait_time_before_click=1, to_raise_exception=False)
 
             click_region(self.coords_manager.exit(), seconds=3)
     
@@ -214,8 +236,6 @@ class BaseExecutor:
             print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
         scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
-        # scroll_length = scroll_length * self.coords_manager.y_ratio
-        # scroll_length = int(round(scroll_length))
         scroll_length = self.calculate_scroll_length(scroll_length)
 
         while target_coords is None and num_of_scroll > 0:
@@ -1999,9 +2019,9 @@ class GameControlExecutor(BaseExecutor):
 
         # 判断是否弹出vip福利, 如果弹出, 则点击关闭
         self.get_vip_fu_li_coords(
-            wait_time=3, target_region="vip福利", is_to_click=True, 
+            wait_time=10, target_region="vip福利", is_to_click=True, 
             other_region_coords=self.cc_coords_manager.close_vip_fu_li(), 
-            wait_time_before_click=5, to_raise_exception=False
+            wait_time_before_click=3, to_raise_exception=False
         )
 
         # 等待登录成功

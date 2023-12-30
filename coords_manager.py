@@ -77,7 +77,8 @@ class BaseCoordsManager:
         return self.calculate_relative_coords(diff)
     
     def scroll_start_point(self): # 日常界面-鼠标滚动起始点
-        diff = (382, 756, 0, 0)
+        # diff = (382, 756, 0, 0)
+        diff = (561, 668, 0, 0)
         return self.calculate_relative_coords(diff)
     
     def price_in_store(self): # 在日常列表界面点击游历, 弹出购买界面时, 价格后面的数字的位置

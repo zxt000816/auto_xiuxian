@@ -38,6 +38,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
             '势不两立': 'shi_bu_liang_li'
         }
         self.candidate_role_names = ['势不两立', '尸魈', '炫烨王', '极阴', '王婵', '乌丑', '青背苍狼', '黄枫灵鲲']
+        self.candidate_role_names.remove(xian_yuan_role_name)
         self.xian_yuan_role_name = xian_yuan_role_name
         self.xian_yuan_role = self.role_name_dict[xian_yuan_role_name]
 
@@ -72,7 +73,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         return kan_zhao_ba_coords
     
     @wait_region
-    def get_battle_over_coords(self, wait_time, target_region, is_to_click=False):
+    def get_battle_over_coords(self, wait_time, target_region, is_to_click, wait_time_before_click):
         battle_over_coords = get_region_coords(
             'battle_over',
             main_region_coords=self.main_region_coords,
@@ -82,7 +83,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         return battle_over_coords
     
     @wait_region
-    def get_battle_over2_coords(self, wait_time, target_region, is_to_click=False):
+    def get_battle_over2_coords(self, wait_time, target_region, is_to_click, other_region_coords, wait_time_before_click):
         battle_over2_coords = get_region_coords(
             'battle_over2',
             main_region_coords=self.main_region_coords,
@@ -128,11 +129,12 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.get_kan_zhao_ba_coords(wait_time=10, target_region='看招吧', is_to_click=True)
 
         # 确认`战斗结束`是否出现
-        self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True)
+        self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True, wait_time_before_click=2)
 
         # 确认`战斗结束2`是否出现
-        self.get_battle_over2_coords(wait_time=20, target_region='战斗结束2', is_to_click=False)
-        click_region(self.tzxy_coords_manager.exit())
+        self.get_battle_over2_coords(wait_time=20, target_region='战斗结束2', is_to_click=True, 
+                                     other_region_coords=self.tzxy_coords_manager.exit(), wait_time_before_click=1)
+        # click_region(self.tzxy_coords_manager.exit())
 
 if __name__ == '__main__':
     

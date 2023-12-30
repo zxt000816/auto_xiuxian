@@ -14,10 +14,6 @@ class ShuangXiuCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
 
-    # def gongfashu_level(self, gongfashu_coords): # 日常界面-双修图标
-    #     diff = (360, 131, 22, 27)
-    #     return self.calculate_relative_coords(diff, gongfashu_coords)
-    
     def yaoqing_daoyou(self): # 双修界面-邀请道友按钮
         diff = (478, 1447, 127, 127)
         return self.calculate_relative_coords(diff)
@@ -127,8 +123,6 @@ class ShuangXiuExecutor(BaseExecutor):
 
         scroll_length = self.calculate_scroll_length(600)
         while get_region_coords(**args) is None:
-            # scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
-            # scroll_length = int(round(scroll_length))
             scroll_specific_length(length=scroll_length)
 
         yaoqing_coords = get_region_coords(**args)
@@ -145,19 +139,15 @@ class ShuangXiuExecutor(BaseExecutor):
             return False
         else:
             return True
-
-    def confirm_shuangxiu_is_over(self):
-        shuangxiu_over_indicator_coords = get_region_coords(
+    
+    @wait_region
+    def confirm_shuangxiu_is_over(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
             'shuangxiu_over_indicator',
             main_region_coords=self.main_region_coords,
-            confidence=0.8,
+            confidence=0.7,
             cat_dir='shuangxiu'
         )
-
-        if shuangxiu_over_indicator_coords is None:
-            return False
-        else:
-            return True
 
     def click_go_to_xiulian(self):
         # 在双修界面中，点击前往修炼按钮
@@ -195,7 +185,14 @@ class ShuangXiuExecutor(BaseExecutor):
 
         while True:
             self.click_go_to_xiulian()
-            if self.confirm_shuangxiu_is_over():
+            confirm_shuangxiu_is_over_coords = self.confirm_shuangxiu_is_over(
+                wait_time=3,
+                target_region='双修结束',
+                is_to_click=False,
+                to_raise_exception=False
+            )
+            if confirm_shuangxiu_is_over_coords:
+                print("完成: 双修结束")
                 break
 
             self.speed_up_shuangxiu()

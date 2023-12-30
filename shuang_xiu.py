@@ -125,9 +125,10 @@ class ShuangXiuExecutor(BaseExecutor):
             'cat_dir': 'shuangxiu'
         }
 
+        scroll_length = self.calculate_scroll_length(600)
         while get_region_coords(**args) is None:
-            scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
-            scroll_length = int(round(scroll_length))
+            # scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
+            # scroll_length = int(round(scroll_length))
             scroll_specific_length(length=scroll_length)
 
         yaoqing_coords = get_region_coords(**args)

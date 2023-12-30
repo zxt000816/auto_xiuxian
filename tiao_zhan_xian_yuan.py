@@ -11,11 +11,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
-
 class TiaoZhanXianYuanCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -140,6 +135,9 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         click_region(self.tzxy_coords_manager.exit())
 
 if __name__ == '__main__':
+    
+    main_region_coords = get_game_page_coords(resolution = resolution)
+
     tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
     executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='势不两立')
     executor.execute()

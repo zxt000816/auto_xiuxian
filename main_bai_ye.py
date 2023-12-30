@@ -2,8 +2,7 @@ import time
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import get_game_page_coords, get_region_coords, get_region_coords_by_multi_imgs, click_region, \
-                  move_to_specific_coords, scroll_specific_length, extract_int_from_image
+from utils import get_game_page_coords
 from coords_manager import BaseCoordsManager, BaiYeCoordsManager
 from event_executor import BaseExecutor, BaiYeExecutor
 from xiuxian_exception import *

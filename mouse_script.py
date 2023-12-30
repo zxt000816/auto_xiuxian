@@ -10,3 +10,6 @@ while True:
     if keyboard.is_pressed('f'):
         pyautogui.click(pyautogui.position())
         time.sleep(0.05)
+
+
+# pyautogui.mouseDown()

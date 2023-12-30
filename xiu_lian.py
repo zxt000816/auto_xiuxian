@@ -8,15 +8,6 @@ from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
 
-pyautogui.PAUSE = 0.01
-pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
-
 class XiuLianCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -316,10 +307,11 @@ class XiuLianExecutor(BaseExecutor):
                 self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
 
             #滚动会顶部
+            scroll_length = self.calculate_scroll_length(1000)
             for _ in range(3):
                 print("滚动到顶部!")
                 pyautogui.moveTo(self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2])
-                scroll_specific_length(1000, seconds=1)
+                scroll_specific_length(scroll_length, seconds=1)
 
             self.xiu_lian_xin_de_level_up()
             pyautogui.mouseDown()
@@ -386,6 +378,15 @@ class XiuLianExecutor(BaseExecutor):
         self.go_to_world()
 
 if __name__ == '__main__':
+    pyautogui.PAUSE = 0.01
+    pyautogui.FAILSAFE = True
+    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+
+    try:
+        main_region_coords = get_game_page_coords(resolution = resolution)
+    except Exception as e:
+        print(f"未定位到游戏界面!")
+
     coords_manager = XiuLianCoordsManager(main_region_coords)
     executor = XiuLianExecutor(coords_manager, buy_times=0)
 

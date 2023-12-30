@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from typing import Tuple
 from datetime import datetime
-from utils import get_game_page_coords, hide_yang_chong_tou
+from utils import get_game_page_coords, hide_yang_chong_tou, wait_for_evelen
 from coords_manager import *
 from event_executor import *
 from swy_coords_manager import *
@@ -28,6 +28,7 @@ from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+# resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
 
 try:
     main_region_coords = get_game_page_coords(resolution = resolution)
@@ -156,6 +157,8 @@ def daily_task(
     for executor_name, if_execute in all_executor.items():
         executor, if_execute = if_execute
         if if_execute:
+            wait_for_evelen()
+
             try:
                 if executor_name in ['论道', '兽渊探秘', '魔道入侵']:
                     if datetime.now().hour < 11: #  11点之前不执行

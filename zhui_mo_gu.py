@@ -12,10 +12,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
 
 class ZhuiMoGuCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -66,7 +62,9 @@ class ZhuiMoGuExecutor(BaseExecutor):
         )
 
         move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-        scroll_specific_length(-1000, seconds=3)
+        scroll_length = self.calculate_scroll_length(-1000)
+        # scroll_specific_length(-1000 * self.coords_manager.y_ratio, seconds=3)
+        scroll_specific_length(scroll_length, seconds=3)
 
         return scroll_end_indicator_coords
     
@@ -83,9 +81,11 @@ class ZhuiMoGuExecutor(BaseExecutor):
             {'target_region_image': 'indicator8', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
         ]
         any_available_coords = get_region_coords_by_multi_imgs(any_available_imgs)
+        scroll_length = self.calculate_scroll_length(500)
         if any_available_coords is None:
             move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-            scroll_specific_length(500, seconds=3)
+            scroll_specific_length(scroll_length, seconds=3)
+            # scroll_specific_length(500 * self.coords_manager.y_ratio, seconds=3)
         
         return any_available_coords
     
@@ -249,6 +249,9 @@ class ZhuiMoGuExecutor(BaseExecutor):
             self.go_to_world()
 
 if __name__ == '__main__':
+    
+    main_region_coords = get_game_page_coords(resolution = resolution)
+
     coords_manager = ZhuiMoGuCoordsManager(main_region_coords)
     executor = ZhuiMoGuExecutor(coords_manager, '法', max_level='元婴-中期-十层')
     executor.execute()

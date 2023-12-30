@@ -2,7 +2,7 @@ import os
 import cv2
 
 # this_pc_res = (554, 984) # 替换为当前游戏的分辨率(注意是宽高)
-this_pc_res = (720, 1080) # 替换为当前游戏的分辨率(注意是宽高)
+this_pc_res = (720, 1280) # 替换为当前游戏的分辨率(注意是宽高)
 other_pc_res = (1080, 1920)
 
 width_ratio = this_pc_res[0] / other_pc_res[0]

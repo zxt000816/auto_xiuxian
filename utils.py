@@ -8,8 +8,18 @@ from typing import Tuple, List, Dict
 import time
 from dotenv import load_dotenv
 from xiuxian_exception import TargetRegionNotFoundException
+from datetime import datetime
 
 load_dotenv()
+
+def wait_for_evelen():
+    hour = datetime.now().hour
+    minute = datetime.now().minute
+
+    if hour == 10 and minute > 45:
+        wait_seconds = (60 - minute) * 60
+        print(f'等待{wait_seconds}秒')
+        time.sleep(wait_seconds)
 
 def calculate_center_coords(coords: Tuple[int, int, int, int]) -> Tuple[int, int]:
         return (coords[0] + int(coords[2] / 2), coords[1] + int(coords[3] / 2))
@@ -41,16 +51,20 @@ def hide_yang_chong_tou(main_region_coords: Tuple[int, int, int, int], hidden_re
 def get_game_page_coords(resolution=(1080, 1920)):
     # 在屏幕上定位登录页面的坐标
     game_page_coords = None
-    for game_page in ['shouye', 'login_page', 'xiulian']:
+    # for game_page in ['shouye', 'login_page', 'user_custom']:
+    for game_page in ['shouye', 'user_custom']:
         if game_page == 'shouye':
             shouye_coords = get_region_coords('shouye', grayscale=True)
+            if shouye_coords is None:
+                continue
+
             left_bottom_x = shouye_coords[0]
             left_bottom_y = shouye_coords[1] + shouye_coords[3]
             return (left_bottom_x, left_bottom_y, resolution[0], resolution[1] )
         
         game_page_coords = pyautogui.locateOnScreen(
-            './FanRenXiuXianIcon/{}.png'.format(game_page),
-            confidence=0.8
+            './FanRenXiuXianIcon_{}_{}/{}.png'.format(resolution[0], resolution[1], game_page),
+            confidence=0.7
         )
         if game_page_coords is not None:
             return game_page_coords

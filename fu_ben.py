@@ -9,10 +9,7 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
+
 
 class FuBenCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -307,6 +304,11 @@ class FuBenExecutor(BaseExecutor):
         print('挑战结束!')
 
 if __name__ == '__main__':
+    try:
+        main_region_coords = get_game_page_coords(resolution = resolution)
+    except Exception as e:
+        print(f"未定位到游戏界面!")
+
     coords_manager = FuBenCoordsManager(main_region_coords)
     main_region_coords = coords_manager.main_region_coords
 

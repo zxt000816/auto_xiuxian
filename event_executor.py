@@ -154,6 +154,12 @@ class BaseExecutor:
 
             click_region(self.coords_manager.exit(), seconds=3)
     
+    def calculate_scroll_length(self, length: int):
+        # 计算滚动的长度
+        scroll_length = length * self.coords_manager.y_ratio
+        scroll_length = int(round(scroll_length))
+        return scroll_length
+
     def click_ri_chang(self):
         time.sleep(1)
         click_region(self.richang_coords, seconds=2)
@@ -208,8 +214,9 @@ class BaseExecutor:
             print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
         scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
-        scroll_length = scroll_length * self.coords_manager.y_ratio
-        scroll_length = int(round(scroll_length))
+        # scroll_length = scroll_length * self.coords_manager.y_ratio
+        # scroll_length = int(round(scroll_length))
+        scroll_length = self.calculate_scroll_length(scroll_length)
 
         while target_coords is None and num_of_scroll > 0:
             print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
@@ -376,14 +383,16 @@ class BaoMingExecutor(BaseExecutor):
         }
 
         num_to_scroll = 2
+        # scroll_length = -300 * self.coords_manager.y_ratio
+        # scroll_length = int(round(scroll_length))
+        scroll_length = self.calculate_scroll_length(-300)
+
         while True:
             baoming_coords = get_region_coords(**get_baoming_coords_args)
             if baoming_coords is None:
                 if num_to_scroll == 0:
                     break
                 num_to_scroll -= 1
-                scroll_length = -300 * self.coords_manager.y_ratio
-                scroll_length = int(round(scroll_length))
 
                 scroll_specific_length(scroll_length, seconds=4)
                 continue
@@ -719,9 +728,10 @@ class ShuangXiuExecutor(BaseExecutor):
             'cat_dir': 'shuangxiu'
         }
 
+        scroll_length = self.calculate_scroll_length(600)
         while get_region_coords(**args) is None:
-            scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
-            scroll_length = int(round(scroll_length))
+            # scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
+            # scroll_length = int(round(scroll_length))
             scroll_specific_length(length=scroll_length)
 
         yaoqing_coords = get_region_coords(**args)
@@ -1626,7 +1636,10 @@ class ZhuiMoGuExecutor(BaseExecutor):
         )
 
         move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-        scroll_specific_length(-1000, seconds=3)
+        # scroll_length = int(1000 * self.coords_manager.y_ratio)
+        # scroll_specific_length(-1000 * self.coords_manager.y_ratio, seconds=3)
+        scroll_length = self.calculate_scroll_length(-1000)
+        scroll_specific_length(scroll_length, seconds=3)
 
         return scroll_end_indicator_coords
     
@@ -1643,9 +1656,11 @@ class ZhuiMoGuExecutor(BaseExecutor):
             {'target_region_image': 'indicator8', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
         ]
         any_available_coords = get_region_coords_by_multi_imgs(any_available_imgs)
+        scroll_length = self.calculate_scroll_length(500)
+
         if any_available_coords is None:
             move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-            scroll_specific_length(500, seconds=3)
+            scroll_specific_length(scroll_length, seconds=3)
         
         return any_available_coords
     
@@ -1879,7 +1894,9 @@ class GameControlExecutor(BaseExecutor):
 
     def scroll_to_top(self, scroll_start_point_coords, scroll_length, scroll_seconds, scroll_times=5):
         pyautogui.moveTo(scroll_start_point_coords)
+        scroll_length = self.calculate_scroll_length(scroll_length)
         for _ in range(scroll_times):
+            # scroll_specific_length(scroll_length * self.coords_manager.y_ratio, scroll_seconds)
             scroll_specific_length(scroll_length, scroll_seconds)
 
     @wait_region

@@ -10,7 +10,7 @@ from xiuxian_exception import *
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
-main_region_coords = get_game_page_coords() # (x, y, width, height)
+
 
 class YouliCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -148,6 +148,8 @@ class YouLiExecutor(BaseExecutor):
             self.get_confirm_in_you_li_one_time_coords(wait_time=3, target_region='游历结束一次', is_to_click=True, to_raise_exception=True)
 
 if __name__ == '__main__':
+
+    main_region_coords = get_game_page_coords() # (x, y, width, height)
 
     coords_manager = YouliCoordsManager(main_region_coords)
     

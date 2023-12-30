@@ -11,10 +11,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
 
 class PaTianTiCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -45,6 +41,7 @@ class PaTianTiExecutor(BaseExecutor):
         fei_sheng_imgs = [
             {'target_region_image': 'fei_sheng1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': self.cat_dir},
             {'target_region_image': 'fei_sheng2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'fei_sheng3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': True, 'cat_dir': self.cat_dir},
         ]
         return get_region_coords_by_multi_imgs(fei_sheng_imgs)
 
@@ -72,6 +69,7 @@ class PaTianTiExecutor(BaseExecutor):
             'tiao_guo',
             main_region_coords=self.main_region_coords,
             confidence=0.7,
+            grayscale=True,
             cat_dir=self.cat_dir
         )
     
@@ -178,6 +176,11 @@ class PaTianTiExecutor(BaseExecutor):
             )
 
 if __name__ == '__main__':
+    try:
+        main_region_coords = get_game_page_coords(resolution = resolution)
+    except Exception as e:
+        print(f"未定位到游戏界面!")
+
     ptt_coords_manager = PaTianTiCoordsManager(main_region_coords)
     executor = PaTianTiExecutor(ptt_coords_manager)
     executor.execute()

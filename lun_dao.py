@@ -12,10 +12,7 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
+
 
 class LunDaoCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -191,6 +188,11 @@ class LunDaoExecutor(BaseExecutor):
         )
 
 if __name__ == '__main__':
+    try:
+        main_region_coords = get_game_page_coords(resolution = resolution)
+    except Exception as e:
+        print(f"未定位到游戏界面!")
+
     coords_manager = LunDaoCoordsManager(main_region_coords)
     executor = LunDaoExecutor(coords_manager, dao_chang_level=3)
 

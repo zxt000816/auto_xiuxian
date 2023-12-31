@@ -36,18 +36,13 @@ class ZhuiMoGuCoordsManager(BaseCoordsManager):
     def shou_ling_scroll_start_point(self):
         diff = (540, 960, 0, 0)
         return self.calculate_relative_coords(diff)
-    
-    def switch_coords(self):
-        diff = (203, 83, 65, 54)
-        return self.calculate_relative_coords(diff)
 
 class ZhuiMoGuExecutor(BaseExecutor):
-    def __init__(self, zmg_coords_manager: ZhuiMoGuCoordsManager, profession_name: str, max_level: str, wei_mian: str='人界'):
+    def __init__(self, zmg_coords_manager: ZhuiMoGuCoordsManager, profession_name: str, max_level='炼虚-后期-五层'):
         super().__init__(zmg_coords_manager, 'zhui_mo_gu')
         self.zmg_coords_manager = zmg_coords_manager
         self.profession_name = profession_name
-        self.wei_mian = wei_mian
-        self.boss_info: pd.DataFrame = pd.read_excel('boss_info.xlsx', sheet_name=self.wei_mian)
+        self.boss_info: pd.DataFrame = pd.read_excel('boss_info.xlsx')
         
         self.max_level_1, self.max_level_2, self.max_level_3 = max_level.split('-')
         self.level_1_numbering = { '练气': 1, '筑基': 2, '结丹': 3, '元婴': 4, '化神': 5, '炼虚': 6 }
@@ -75,24 +70,16 @@ class ZhuiMoGuExecutor(BaseExecutor):
     
     @wait_region
     def scroll_to_any_available_coords(self, wait_time, target_region, is_to_click):
-        if self.wei_mian == '人界':
-            any_available_imgs = [
-                {'target_region_image': 'indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator7', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'indicator8', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-            ]
-        elif self.wei_mian == '灵界':
-            any_available_imgs = [
-                {'target_region_image': 'ling_jie_indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'ling_jie_indicator2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-                {'target_region_image': 'ling_jie_indicator3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
-            ]
-
+        any_available_imgs = [
+            {'target_region_image': 'indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator7', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+            {'target_region_image': 'indicator8', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'zhui_mo_gu'},
+        ]
         any_available_coords = get_region_coords_by_multi_imgs(any_available_imgs)
         scroll_length = self.calculate_scroll_length(500)
         if any_available_coords is None:
@@ -159,20 +146,13 @@ class ZhuiMoGuExecutor(BaseExecutor):
     
     @wait_region
     def get_shou_ling_page_indicator_coords(self, wait_time, target_region, to_raise_exception):
-        # shou_ling_page_indicator_coords = get_region_coords(
-        #     'shou_ling_page_indicator',
-        #     main_region_coords=self.main_region_coords,
-        #     confidence=0.7,
-        #     cat_dir=self.cat_dir,
-        # )
-        # return shou_ling_page_indicator_coords
-    
-        shou_ling_icon_imgs = [
-                {'target_region_image': 'shou_ling_page_indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
-                {'target_region_image': 'shou_ling_page_indicator3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
-                {'target_region_image': 'shou_ling_page_indicator2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
-            ]
-        return get_region_coords_by_multi_imgs(shou_ling_icon_imgs)
+        shou_ling_page_indicator_coords = get_region_coords(
+            'shou_ling_page_indicator',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+        return shou_ling_page_indicator_coords
 
     @wait_region
     def get_shou_ling_icon_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
@@ -180,31 +160,8 @@ class ZhuiMoGuExecutor(BaseExecutor):
             {'target_region_image': 'shou_ling_icon1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'shou_ling_icon2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
+
         return get_region_coords_by_multi_imgs(shou_ling_icon_imgs)
-    
-    @wait_region
-    def get_ling_jie_page_indicator_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
-        ling_jie_page_indicator_coords = get_region_coords(
-            'ling_jie_page_indicator',
-            main_region_coords=self.main_region_coords,
-            confidence=0.7,
-            cat_dir=self.cat_dir,
-        )
-        return ling_jie_page_indicator_coords
-
-    def switch_between_ren_jie_and_ling_jie(self):
-        if self.wei_mian == '灵界':
-            ling_jie_page_indicator_coords = self.get_ling_jie_page_indicator_coords(wait_time=3, target_region='灵界页面_标识', is_to_click=False, to_raise_exception=False)
-            if ling_jie_page_indicator_coords is None:
-                click_region(self.zmg_coords_manager.switch_coords())
-
-        elif self.wei_mian == '人界':
-            ling_jie_page_indicator_coords = self.get_ling_jie_page_indicator_coords(wait_time=3, target_region='灵界页面_标识', is_to_click=False, to_raise_exception=False)
-            if ling_jie_page_indicator_coords is not None:
-                click_region(self.zmg_coords_manager.switch_coords())
-
-        else:
-            raise ValueError(f"未知的位面: {self.wei_mian}")
 
     def go_to_shou_ling_page(self, boss, boss_name, method):
         if method not in ['日常图标', '首领图标']:
@@ -212,15 +169,7 @@ class ZhuiMoGuExecutor(BaseExecutor):
         
         if method == '日常图标':
             self.click_ri_chang()
-            # self.scoll_and_click(direction='down')
-            self.scoll_and_click_by_multiple_imgs(
-                direction='down',
-                targets_imgs_info=[
-                    {'target_region_image': 'zhui_mo_gu', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': False, 'cat_dir': self.cat_dir},
-                    {'target_region_image': 'zhui_mo_gu_ling_jie', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': False, 'cat_dir': self.cat_dir},
-                ],
-                target_name='坠魔谷/积麟秘境',
-            )
+            self.scoll_and_click(direction='down')
         else:
             # 检查是否有首领图标, 如果有, 点击首领图标, 没有则报错
             # 等待120秒
@@ -239,10 +188,8 @@ class ZhuiMoGuExecutor(BaseExecutor):
 
                 self.get_shou_ling_icon_coords(wait_time=2, target_region='首领图标', is_to_click=True, to_raise_exception=False)
 
-        # 在首领页面, 切换到灵界或人界
-        self.switch_between_ren_jie_and_ling_jie()
-
         # 滚动到首领列表底端, 然后点击最后一个首领打开首领页面     
+        # self.scroll_to_end_indicator_coords(wait_time=60, target_region='炼虚后期-霜晶云凤', is_to_click=True)
         self.scroll_to_any_available_coords(wait_time=60, target_region='任何可以进入副本的区域', is_to_click=True)
 
         # 判断当前是哪个首领, 获取该首领的等级编码
@@ -305,5 +252,5 @@ if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = ZhuiMoGuCoordsManager(main_region_coords)
-    executor = ZhuiMoGuExecutor(coords_manager, '法', max_level='炼虚-中期-十层', wei_mian='人界')
+    executor = ZhuiMoGuExecutor(coords_manager, '法', max_level='元婴-中期-十层')
     executor.execute()

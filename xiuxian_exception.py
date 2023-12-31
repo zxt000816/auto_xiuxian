@@ -45,3 +45,7 @@ class MianZhanException(Exception):
 class ShuangXiuException(Exception):
     def __init__(self, message):
         super().__init__(message)
+
+class GongFengTimeOutException(Exception):
+    def __init__(self, message):
+        super().__init__(message)

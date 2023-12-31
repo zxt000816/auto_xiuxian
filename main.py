@@ -8,6 +8,7 @@ from coords_manager import *
 from event_executor import *
 from swy_coords_manager import *
 from swy_event_executor import *
+from name_dict import task_name_dict, task_info_name_dict
 
 from assistant import AssistantCoordsManager, AssistantExecutor
 from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
@@ -24,11 +25,11 @@ from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
 from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
 from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
 from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
+from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-
 
 def daily_task(
     main_region_coords: Tuple[int, int, int, int],
@@ -53,11 +54,14 @@ def daily_task(
     xian_meng_zheng_ba: bool = False,
     check_ri_chang: bool = True,
     pa_tian_ti: bool = False,
+    bai_zu_gong_feng: bool = False,
 ):
+    wei_mian = account_task_info['wei_mian']
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
     bai_ye_event_name = account_task_info['bai_ye_event_name']
     bai_ye_fa_ze_level = account_task_info['bai_ye_fa_ze_level']
+    bai_zu_gong_feng_buy_times = account_task_info['bai_zu_gong_feng_buy_times']
     shuangxiu_gongfashu_name = account_task_info['shuangxiu_gongfashu_name']
     tiao_zhan_xian_yuan_role_name = account_task_info['tiao_zhan_xian_yuan_role_name']
     youli_place_name = account_task_info['youli_place_name']
@@ -83,6 +87,8 @@ def daily_task(
     bao_ming_corrds_manager = BaoMingCoordsManager(main_region_coords, resolution=resolution) # 报名
     hong_bao_coords_manager = HongBaoCoordsManager(main_region_coords, resolution=resolution)# 红包
     bai_ye_coords_manager = BaiYeCoordsManager(main_region_coords) # 拜谒
+    bai_zu_gong_feng_coords_manager = BaiZuGongFengCoordsManager(main_region_coords) # 百族供奉
+
     check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords) # 检查日常
 
     youli_corrds_manager = YouliCoordsManager(main_region_coords, resolution=resolution) # 游历
@@ -104,13 +110,15 @@ def daily_task(
     bao_ming_executor = BaoMingExecutor(bao_ming_corrds_manager) # 报名
     hong_bao_executor = HongBaoExecutor(hong_bao_coords_manager) # 红包
     bai_ye_executor = BaiYeExecutor(bai_ye_coords_manager, event_name=bai_ye_event_name, fa_ze_level=bai_ye_fa_ze_level) # 拜谒
+    bai_zu_gong_feng_executor = BaiZuGongFengExecutor(bai_zu_gong_feng_coords_manager, buy_times=bai_zu_gong_feng_buy_times) # 百族供奉
+
     check_ri_chang_executor = CheckRiChangExecutor(check_ri_chang_coords_manager, account_name) # 检查日常
 
     shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name=shuangxiu_gongfashu_name) # 双修
-    tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name) # 挑战仙缘
+    tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name, wei_mian=wei_mian) # 挑战仙缘
     youli_executor = YouLiExecutor(youli_corrds_manager, place_name=youli_place_name, buy_times=youli_buy_times) # 游历
     ling_shou_executor = LingShouExecutor(ling_shou_coords_manager, buy_times=ling_shou_buy_times, to_save_times=ling_shou_to_save_times) # 灵兽
-    zhui_mo_gu_executor = ZhuiMoGuExecutor(zhui_mo_gu_coords_manager, profession_name=profession_name, max_level=zhui_mo_gu_max_level) # 坠魔谷
+    zhui_mo_gu_executor = ZhuiMoGuExecutor(zhui_mo_gu_coords_manager, profession_name=profession_name, max_level=zhui_mo_gu_max_level, wei_mian=wei_mian) # 坠魔谷
     fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name=fuben_name, buy_times=fuben_buy_times) # 副本
     lun_dao_executor = LunDaoExecutor(lun_dao_coords_manager, dao_chang_level=dao_chang_level) # 论道
 
@@ -126,8 +134,8 @@ def daily_task(
         '红包': (hong_bao_executor, hong_bao),
         '小助手': (assistant_executor, assistant),
         '修炼': (xiu_lian_executor, xiu_lian),
-        
         '拜谒': (bai_ye_executor, bai_ye),
+        '百族供奉': (bai_zu_gong_feng_executor, bai_zu_gong_feng),
 
         '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
         '混沌灵塔_扫荡': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
@@ -194,13 +202,6 @@ def daily_task(
             executor.go_to_world()
 
 if __name__ == '__main__':
-
-    task_name_dict = {
-        '混沌灵塔': 'hun_dun_ling_ta', '小助手': 'assistant', '报名': 'bao_ming', '红包': 'hong_bao', '拜谒': 'bai_ye',
-        '游历': 'youli', '双修': 'shuangxiu', '挑战仙缘': 'tiao_zhan_xian_yuan', '灵兽': 'ling_shou', '副本': 'fuben',
-        '坠魔谷': 'zhui_mo_gu', '修炼': 'xiu_lian', '奇袭魔界': 'qi_xi_mo_jie', '论道': 'lun_dao', '兽渊探秘': 'shou_yuan_tan_mi',
-        '魔道入侵': 'mo_dao_ru_qing', '仙盟争霸': 'xian_meng_zheng_ba', '爬天梯': 'pa_tian_ti'
-    }
     
     try:
         main_region_coords = get_game_page_coords(resolution = resolution)
@@ -221,11 +222,12 @@ if __name__ == '__main__':
     # users_info
     account_task_info_df = pd.read_excel(file_path, sheet_name='users_info')
     account_task_info_df.set_index('users_name', inplace=True)
+    account_task_info_df.rename(columns=task_info_name_dict, inplace=True)
     
     # task_execute
     task_execute_df = pd.read_excel(file_path, sheet_name='task_execute')
     task_execute_df.set_index('users_name', inplace=True)
-    task_execute_df.columns = [task_name_dict[task_name] for task_name in task_execute_df.columns]
+    task_execute_df.rename(columns=task_name_dict, inplace=True)
 
     for account_name in account_name_ls:
 
@@ -241,4 +243,4 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'{account_name}执行失败: {e}')
 
-        # daily_task(account_name=account_name, account_task_info=account_task_info, **execute_info)
+        daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)

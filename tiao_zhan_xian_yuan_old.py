@@ -9,6 +9,7 @@ from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
+resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
 class TiaoZhanXianYuanCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -23,7 +24,7 @@ class TiaoZhanXianYuanCoordsManager(BaseCoordsManager):
         return self.calculate_relative_coords(diff)
 
 class TiaoZhanXianYuanExecutor(BaseExecutor):
-    def __init__(self, tzxy_coords_manager: TiaoZhanXianYuanCoordsManager, xian_yuan_role_name: str, wei_mian: str='人界'):
+    def __init__(self, tzxy_coords_manager: TiaoZhanXianYuanCoordsManager, xian_yuan_role_name: str):
         super().__init__(tzxy_coords_manager, 'tiao_zhan_xian_yuan')
         self.tzxy_coords_manager = tzxy_coords_manager
         self.role_name_dict = {
@@ -40,7 +41,6 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.candidate_role_names.remove(xian_yuan_role_name)
         self.xian_yuan_role_name = xian_yuan_role_name
         self.xian_yuan_role = self.role_name_dict[xian_yuan_role_name]
-        self.wei_mian = wei_mian
 
     @wait_region
     def get_open_tiao_zhan_xian_yuan_coords(self, wait_time, target_region, is_to_click=False):
@@ -92,24 +92,6 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
         return battle_over2_coords
-    
-    @wait_region
-    def get_ling_jie_coords(self, wait_time, target_region, is_to_click, wait_time_before_click, to_raise_exception):
-        return get_region_coords(
-            'ling_jie',
-            main_region_coords=self.main_region_coords,
-            confidence=0.8,
-            cat_dir=self.cat_dir,
-        )
-    
-    @wait_region
-    def get_ren_jie_coords(self, wait_time, target_region, is_to_click, wait_time_before_click, to_raise_exception):
-        return get_region_coords(
-            'ren_jie',
-            main_region_coords=self.main_region_coords,
-            confidence=0.8,
-            cat_dir=self.cat_dir,
-        )
 
     def execute(self, index=0):
         self.go_to_world()
@@ -119,19 +101,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
 
         # 确认`仙缘页面`是否打开
         self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False)
-        
-        if self.wei_mian == '人界':
-            ren_jie_coords = self.get_ren_jie_coords(
-                wait_time=3, target_region='人界', is_to_click=True, wait_time_before_click=1, to_raise_exception=False
-            )
-            if ren_jie_coords is None:
-                click_region(self.tzxy_coords_manager.all_xian_yuan())      
-
-        elif self.wei_mian == '灵界':
-            self.get_ling_jie_coords(wait_time=3, target_region='灵界', is_to_click=True, wait_time_before_click=1, to_raise_exception=False)
-
-        else:
-            raise ValueError(f"未知的位面: {self.wei_mian}!")
+        click_region(self.tzxy_coords_manager.all_xian_yuan())
 
         try:
             self.scoll_and_click(
@@ -162,15 +132,13 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True, wait_time_before_click=2)
 
         # 确认`战斗结束2`是否出现
-        # self.get_battle_over2_coords(wait_time=10, target_region='战斗结束2', is_to_click=True, 
-        #                              other_region_coords=self.tzxy_coords_manager.exit(), wait_time_before_click=1)
+        self.get_battle_over2_coords(wait_time=20, target_region='战斗结束2', is_to_click=True, 
+                                     other_region_coords=self.tzxy_coords_manager.exit(), wait_time_before_click=1)
 
 if __name__ == '__main__':
-
-    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-
+    
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
-    executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='势不两立', wei_mian='灵界')
+    executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='势不两立')
     executor.execute()

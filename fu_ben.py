@@ -52,6 +52,7 @@ class FuBenExecutor(BaseExecutor):
         self.fuben_name = fuben_name
         self.buy_times = buy_times
         self.fuben_name_dict = {
+            '广寒界': 'guang_han_jie',
             '昆吾山': 'kun_wu_shan',
             '天澜圣殿': 'tian_lan_sheng_dian',
             '深海巢穴': 'shen_hai_chao_xue',
@@ -87,7 +88,7 @@ class FuBenExecutor(BaseExecutor):
         return get_region_coords(
             'tiao_zhan',
             self.main_region_coords,
-            confidence=0.9,
+            confidence=0.8,
             grayscale=True,
             cat_dir=self.cat_dir
         )
@@ -97,7 +98,7 @@ class FuBenExecutor(BaseExecutor):
         return get_region_coords(
             'chuang_jian_dui_wu',
             self.main_region_coords,
-            confidence=0.9,
+            confidence=0.8,
             grayscale=True,
             cat_dir=self.cat_dir
         )
@@ -221,15 +222,22 @@ class FuBenExecutor(BaseExecutor):
     
     @wait_region
     def get_fu_ben_page_indicator_coords(self, wait_time, target_region, is_to_click):
-        fu_ben_page_indicator_coords = get_region_coords(
-            'fu_ben_page_indicator',
+        fu_ben_page_indicator_imgs = [
+            {'target_region_image': 'fu_ben_page_indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'fu_ben_page_indicator2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'cat_dir': self.cat_dir},
+        ]
+        return get_region_coords_by_multi_imgs(fu_ben_page_indicator_imgs)
+    
+    @wait_region
+    def get_tiao_zhan_alert_coords(self, wait_time, target_region, is_to_click, wait_time_before_click, to_raise_exception):
+        return get_region_coords(
+            'tiao_zhan_alert',
             self.main_region_coords,
-            confidence=0.8,
+            confidence=0.7,
             cat_dir=self.cat_dir
         )
-        return fu_ben_page_indicator_coords
-    
-    def get_wu_ci_shu_alert(self):
+        
+    def get_times_not_enough(self):
         return get_region_coords(
             'wu_ci_shu_alert',
             self.main_region_coords,
@@ -275,14 +283,17 @@ class FuBenExecutor(BaseExecutor):
             tiao_zhan_coords = self.get_tiao_zhan_coords()
             click_region(tiao_zhan_coords, seconds=0)
             
+            self.get_tiao_zhan_alert_coords(wait_time=2, target_region='挑战提示框', is_to_click=True, 
+                                            wait_time_before_click=1, to_raise_exception=False)
+
             # 检查2秒内是否弹出挑战次数不足的提示框
             start_time = time.time()
             while True:
                 if time.time() - start_time > 2:
                     break
                 
-                wu_ci_shu_alert_coords = self.get_wu_ci_shu_alert()
-                if wu_ci_shu_alert_coords is not None:
+                times_not_enough_coords = self.get_times_not_enough()
+                if times_not_enough_coords is not None:
                     raise Exception("挑战次数不足, 退出挑战!")
 
             # 如果弹出购买次数不足提示框, 则挑战结束
@@ -290,7 +301,7 @@ class FuBenExecutor(BaseExecutor):
                 print("完成: 挑战次数不足!")
                 break
             
-            self.get_tiao_zhan_over_coords(wait_time=120, target_region='挑战结束', is_to_click=True)
+            self.get_tiao_zhan_over_coords(wait_time=480, target_region='挑战结束', is_to_click=True)
 
             # 如果是最后一次挑战, 则不需要再次进入副本
             if i == self.challenge_times - 1:
@@ -312,7 +323,7 @@ if __name__ == '__main__':
     coords_manager = FuBenCoordsManager(main_region_coords)
     main_region_coords = coords_manager.main_region_coords
 
-    fuben_executor = FuBenExecutor(coords_manager, '昆吾山', buy_times=2)
+    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=3)
 
     fuben_executor.execute()
 

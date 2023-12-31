@@ -30,6 +30,7 @@ class BaseExecutor:
             'qi_xi_mo_jie': 'qi_xi_mo_jie',  # 奇袭魔界
             'game_control': 'game_control',  # 游戏控制
             'lun_dao': 'lun_dao',  # 论道
+            'bai_zu_gong_feng': 'bai_zu_gong_feng',  # 百族供奉
         }
         self.taget_name_dict = {
             'youli': '游历',
@@ -48,6 +49,7 @@ class BaseExecutor:
             'game_control': '游戏控制',
             'qi_xi_mo_jie': '奇袭魔界',
             'lun_dao': '论道',
+            'bai_zu_gong_feng': '百族供奉',
         }
         self.target = target
         self.target_name = self.taget_name_dict.get(self.target, None)
@@ -195,7 +197,7 @@ class BaseExecutor:
         confidence=0.9,
         num_of_scroll=12, 
         scroll_length=300,
-        scroll_seconds=5,
+        scroll_seconds=3,
         grayscale=False,
         scroll_start_point_coords=None,
         cat_dir=None,
@@ -276,6 +278,65 @@ class BaseExecutor:
             click_region(target_coords, seconds=3)
             print(f"完成: 点击{target_name}按钮")
 
+    def scoll_and_click_by_multiple_imgs(
+        self, 
+        direction, 
+        targets_imgs_info, 
+        target_name,
+        num_of_scroll=12, 
+        scroll_length=300,
+        scroll_seconds=3,
+        in_ri_chang_page=True,
+        is_to_click=True,
+    ):
+        if direction not in ['up', 'down']:
+            raise Exception("direction must be 'up' or 'down'")
+        
+        target_coords = get_region_coords_by_multi_imgs(targets_imgs_info)
+        print(f"完成: 识别一次{target_name}位置")
+
+        if target_coords is None:
+            scroll_start_point_coords = self.coords_manager.scroll_start_point()
+            scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
+            
+            move_to_specific_coords(scroll_start_point_coords)
+            print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
+        
+        scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
+        scroll_length = self.calculate_scroll_length(scroll_length)
+
+        while target_coords is None and num_of_scroll > 0:
+            print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
+            scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            
+            target_coords = get_region_coords_by_multi_imgs(targets_imgs_info)
+            num_of_scroll -= 1
+        
+        if target_coords is None:
+            raise ScrollException(f"未找到{target_name}位置.")
+
+        if in_ri_chang_page:
+            # 计算出日常列表中的, 任务的宽度和高度
+            task_height, task_width = 223, 933
+            task_height = task_height * self.coords_manager.y_ratio
+            task_height = int(round(task_height))
+            task_width = task_width * self.coords_manager.x_ratio
+            task_width = int(round(task_width))
+            full_target_coords = (target_coords[0], target_coords[1], task_width, task_height)
+
+            # 在full_target_coords中, 查看是否有`已完成`的标识
+            finished_task_coords = get_region_coords(
+                'finished_task',
+                main_region_coords=full_target_coords,
+                confidence=0.8,
+            )
+            if finished_task_coords is not None:
+                raise FinishedTaskException(f"{target_name}任务已经完成, 无需点击")
+
+        if is_to_click:
+            click_region(target_coords, seconds=3)
+            print(f"完成: 点击{target_name}按钮")
+
     def if_buy_store_pop_up(self):
         buy_store_coords_is_in_main_region = get_region_coords(
             'buy_store', 
@@ -287,7 +348,14 @@ class BaseExecutor:
         else:
             return False
 
-    def buy_times_in_store(self, buy_times: int, buy_times_not_enough_indicator: str = None, to_raise_exception=False):
+    def buy_times_in_store(
+        self, 
+        buy_times: int, 
+        buy_times_not_enough_indicator: str = None, 
+        to_raise_exception=False,
+        price_in_store_coords=None,
+        price_to_times: dict = None,
+    ):
         print("="*25 + f"购买{self.target_name}次数" + "="*25)
         actual_buy_times = 0
 
@@ -304,18 +372,22 @@ class BaseExecutor:
                 return actual_buy_times
 
         # 显示100灵石, 目前已购买0次; 显示150灵石, 目前已购买1次; 显示200灵石, 目前已购买2次; 显示250灵石, 目前已购买3次
-        price_to_times = {100: 0, 150: 1, 200: 2, 250: 3} 
+        if price_to_times is None:
+            price_to_times = {100: 0, 150: 1, 200: 2, 250: 3} 
+            
         current_lingshi_coords = self.coords_manager.current_lingshi()
         current_lingshi_image = pyautogui.screenshot(region=current_lingshi_coords)
         current_lingshi_arr = np.array(current_lingshi_image)
         current_lingshi = extract_int_from_image(current_lingshi_arr, error_value=0)
 
-        price_in_store_coords = self.coords_manager.price_in_store()
+        if price_in_store_coords is None:
+            price_in_store_coords = self.coords_manager.price_in_store()
+
         price_in_store_image = pyautogui.screenshot(region=price_in_store_coords)
         price_in_store_arr = np.array(price_in_store_image)
         price = extract_int_from_image(price_in_store_arr, error_value=250) #  从图片中提取失败时, 返回float('inf')
         
-        times_already_bought = price_to_times.get(price) + 1 # 已经购买的次数(如果price是100, 那么times_already_bought就是0)
+        times_already_bought = price_to_times.get(price) # 已经购买的次数(如果price是100, 那么times_already_bought就是0)
         if times_already_bought >= buy_times:
             click_region(self.exit_coords, seconds=2)
             actual_buy_times = buy_times

@@ -194,8 +194,11 @@ def daily_task(
                 print(f'{executor_name}执行失败: {e}')
                 with open('error.txt', 'a', encoding='utf-8') as f:
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+                    # f.write(
+                    #     f'\n------------------------------------------------\n{current_time}-{account_name}-{executor_name}:{e}\n------------------------------------------------\n'
+                    # )
                     f.write(
-                        f'\n------------------------------------------------\n{current_time}-{account_name}-{executor_name}:{e}\n------------------------------------------------\n'
+                        f'\n{current_time}-{account_name}-{executor_name}:{e}\n'
                     )
 
             end_time = datetime.now()
@@ -203,8 +206,11 @@ def daily_task(
             with open('time.txt', 'a', encoding='utf-8') as f:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
                 cost_time = (end_time - start_time).seconds
+                # f.write(
+                #     f'\n------------------------------------------------\n{current_time}-{account_name}-{executor_name}-执行时间: {cost_time}秒\n------------------------------------------------\n'
+                # )
                 f.write(
-                    f'\n------------------------------------------------\n{current_time}-{account_name}-{executor_name}-执行时间: {cost_time}秒\n------------------------------------------------\n'
+                    f'\n{current_time}-{account_name}-{executor_name}-执行时间: {cost_time}秒\n'
                 )
 
             executor.go_to_world()

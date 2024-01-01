@@ -89,7 +89,7 @@ class BaiZuGongFengExecutor(BaseExecutor):
         start_time = time.time()
         while True:
             if time.time() - start_time > 120:
-                raise GongFengTimeOutException('供奉超时!')
+                raise TimeOutException('供奉超时!')
 
             self.get_jie_shou_gong_feng_coords(wait_time=2, 
                                                target_region='接受供奉', 

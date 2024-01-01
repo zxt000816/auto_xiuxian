@@ -180,7 +180,7 @@ class HunDunLingTaExecutor(BaseExecutor):
             start_sweep_coords = self.get_start_sweep_coords(wait_time=10, target_region='开始扫荡')
             click_region(start_sweep_coords)
             self.get_dian_ji_ji_xu_coords(wait_time=10, target_region='点击继续', is_to_click=True, 
-                                          wait_time_before_click=2, to_raise_exception=False)
+                                          wait_time_before_click=6, to_raise_exception=False)
 
 if __name__ == '__main__':
     
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         print(f"未定位到游戏界面!")
 
     corrds_manager = HunDunLingTaCoordsManager(main_region_coords)
-    executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='弥罗之塔')
-    executor.get_dian_ji_ji_xu_coords(wait_time=10, target_region='点击继续', is_to_click=True, 
-                                          wait_time_before_click=2, to_raise_exception=False)
-
+    executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='鸿古之塔')
+    
+    executor.go_up()
+    executor.sao_dang()

@@ -104,14 +104,8 @@ class PaTianTiExecutor(BaseExecutor):
         
         self.go_to_world()
 
-        self.get_fei_sheng_coords(
-            wait_time=3,
-            target_region="飞升",
-            is_to_click=True,
-            click_wait_time=1,
-            wait_time_before_click=1,
-            to_raise_exception=True
-        )
+        self.click_ri_chang()
+        self.scoll_and_click(direction='down', other_target='pa_tian_ti', other_target_name='爬天梯', cat_dir=self.cat_dir)
 
         self.get_deng_shang_tian_ti_coords(
             wait_time=3,

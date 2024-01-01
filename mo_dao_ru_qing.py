@@ -313,6 +313,17 @@ class MoDaoRuQingExecutor(BaseExecutor):
             to_raise_exception=True,
         )
 
+        start_time = time.time()
+        while True:
+            if time.time() - start_time > 60:
+                print(f"已超过60秒, 退出!")
+                break
+            
+            qian_wang_da_di_tu_coords = self.get_qian_wang_da_di_tu_coords(wait_time=2, target_region="进入活动", is_to_click=False, to_raise_exception=False)
+            if qian_wang_da_di_tu_coords is not None:
+                break
+            click_region(self.mdrq_coords_manager.exit())
+
         # 超过60秒, 就退出
         start_time = time.time()
         while True:
@@ -408,6 +419,6 @@ if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = MoDaoRuQingCoordsManager(main_region_coords)
-    executor = MoDaoRuQingExecutor(coords_manager, server_nums=4, use_si_bei=True)
+    executor = MoDaoRuQingExecutor(coords_manager, server_nums=1, use_si_bei=False)
 
     executor.execute()

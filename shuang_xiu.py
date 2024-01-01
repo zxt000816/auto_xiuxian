@@ -208,6 +208,7 @@ if __name__ == '__main__':
     
     coords_manager = ShuangXiuCoordsManager(main_region_coords)
     
-    sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='六欲练心')
+    sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='百花烟雨')
 
     sx_executor.execute()
+

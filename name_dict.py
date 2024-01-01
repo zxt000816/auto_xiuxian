@@ -1,4 +1,5 @@
 task_name_dict = {
+    '日常抽奖': 'ri_chang_chou_jiang',
     '混沌灵塔': 'hun_dun_ling_ta', 
     '小助手': 'assistant', 
     '报名': 'bao_ming', 
@@ -23,6 +24,7 @@ task_name_dict = {
 task_info_name_dict = {
     '职业': 'profession_name',
     '位面': 'wei_mian',
+    '日常抽奖': 'chou_jiang_event',
     '混沌灵塔': 'ling_ta_name',
     '拜谒': 'bai_ye_event_name',
     '拜谒法则': 'bai_ye_fa_ze_level',
@@ -34,7 +36,7 @@ task_info_name_dict = {
     '灵兽囤次数': 'ling_shou_to_save_times',
     '副本': 'fuben_name',
     '副本购买次数': 'fuben_buy_times',
-    
+    '百族供奉': 'bai_zu_gong_feng_buy_times',
     '坠魔谷首领': 'zhui_mo_gu_max_level',
     '修炼购买次数': 'xiu_lian_buy_times',
     '论道': 'dao_chang_level',

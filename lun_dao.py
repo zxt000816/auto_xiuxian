@@ -12,8 +12,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-
-
 class LunDaoCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -126,7 +124,7 @@ class LunDaoExecutor(BaseExecutor):
             scroll_length=300,
             scroll_seconds=3,
             grayscale=False,
-            scroll_start_point_coords=self.ld_coords_manager.scroll_start_point(),
+            # scroll_start_point_coords=self.ld_coords_manager.scroll_start_point()[:2],
             cat_dir=self.cat_dir,
             in_ri_chang_page=False,
             is_to_click=True,

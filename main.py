@@ -6,8 +6,8 @@ from datetime import datetime
 from utils import get_game_page_coords, hide_yang_chong_tou, wait_for_evelen
 from coords_manager import *
 from event_executor import *
-from swy_coords_manager import *
-from swy_event_executor import *
+# from swy_coords_manager import *
+# from swy_event_executor import *
 from name_dict import task_name_dict, task_info_name_dict
 
 from assistant import AssistantCoordsManager, AssistantExecutor
@@ -26,6 +26,8 @@ from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
 from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
 from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
 from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
+from hong_bao import HongBaoCoordsManager, HongBaoExecutor
+from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -35,6 +37,7 @@ def daily_task(
     main_region_coords: Tuple[int, int, int, int],
     account_name: str,
     account_task_info: dict,
+    ri_chang_chou_jiang: bool = True,
     xiu_lian: bool = True,
     qi_xi_mo_jie: bool = True,
     hun_dun_ling_ta: bool = True,
@@ -55,6 +58,7 @@ def daily_task(
     check_ri_chang: bool = True,
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
+    
 ):
     wei_mian = account_task_info['wei_mian']
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
@@ -75,11 +79,13 @@ def daily_task(
     dao_chang_level = account_task_info['dao_chang_level']
     shou_yuan_tan_mi_server_nums = account_task_info.get('shou_yuan_tan_mi_server_nums', 1)
     mo_dao_ru_qing_server_nums = account_task_info.get('mo_dao_ru_qing_server_nums', 1)
+    chou_jiang_event = account_task_info.get('chou_jiang_event', '灵缈探宝')
 
     shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords) # 兽渊探秘
     mo_dao_ru_qing_coords_manager = MoDaoRuQingCoordsManager(main_region_coords) # 魔道入侵
     xian_meng_zheng_ba_coords_manager = XianMengZhengBaCoordsManager(main_region_coords) # 仙盟争霸
 
+    ri_chang_chou_jiang_coords_manager = RiChangChouJiangCoordsManager(main_region_coords) # 日常抽奖
     xiu_lian_coords_manager = XiuLianCoordsManager(main_region_coords) # 修炼
     qi_xi_mo_jie_coords_manager = QiXiMoJieCoordsManager(main_region_coords) # 奇袭魔界
     hun_dun_ling_ta_coords_manager = HunDunLingTaCoordsManager(main_region_coords) # 混沌灵塔
@@ -103,6 +109,7 @@ def daily_task(
     mo_dao_ru_qing_executor = MoDaoRuQingExecutor(mo_dao_ru_qing_coords_manager, server_nums=mo_dao_ru_qing_server_nums) # 魔道入侵
     xian_meng_zheng_ba_executor = XianMengZhengBaExecutor(xian_meng_zheng_ba_coords_manager) # 仙盟争霸
 
+    ri_chang_chou_jiang_executor = RiChangChouJiangExecutor(ri_chang_chou_jiang_coords_manager, chou_jiang_event=chou_jiang_event) # 日常抽奖
     xiu_lian_executor = XiuLianExecutor(xiu_lian_coords_manager, buy_times=xiu_lian_buy_times) # 修炼
     qi_xi_mo_jie_executor = QiXiMoJieExecutor(qi_xi_mo_jie_coords_manager) # 奇袭魔界
     hun_dun_ling_ta_executor = HunDunLingTaExecutor(hun_dun_ling_ta_coords_manager, ling_ta_name=ling_ta_name) # 弥罗之塔
@@ -129,6 +136,7 @@ def daily_task(
 
         '论道': (lun_dao_executor, lun_dao),
         '奇袭魔界': (qi_xi_mo_jie_executor, qi_xi_mo_jie),
+        '日常抽奖': (ri_chang_chou_jiang_executor, ri_chang_chou_jiang), # 日常抽奖
 
         '报名': (bao_ming_executor, bao_ming),
         '红包': (hong_bao_executor, hong_bao),

@@ -46,6 +46,6 @@ class ShuangXiuException(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-class GongFengTimeOutException(Exception):
+class TimeOutException(Exception):
     def __init__(self, message):
         super().__init__(message)

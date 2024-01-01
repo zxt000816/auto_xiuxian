@@ -103,12 +103,23 @@ class LunDaoExecutor(BaseExecutor):
             {'target_region_image': 'wen_dao_zhong3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
         return get_region_coords_by_multi_imgs(wen_dao_ing_imgs)
+    
+    @wait_region
+    def get_lun_dao_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'lun_dao',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir,
+        )
 
     def execute(self):
         self.go_to_world()
 
-        self.click_ri_chang()
-        self.scoll_and_click(direction='down', in_ri_chang_page=False)
+        click_region(self.ld_coords_manager.ri_cheng())
+        self.get_general_coords(wait_time=5, target_region='常规', is_to_click=True, to_raise_exception=True)
+
+        self.get_lun_dao_coords(wait_time=5, target_region='论道', is_to_click=True, to_raise_exception=True)
 
         wen_dao_ing_coords = self.get_wen_dao_ing_coords(wait_time=5, target_region='问道中', is_to_click=False, to_raise_exception=False)
         if wen_dao_ing_coords:
@@ -124,7 +135,6 @@ class LunDaoExecutor(BaseExecutor):
             scroll_length=300,
             scroll_seconds=3,
             grayscale=False,
-            # scroll_start_point_coords=self.ld_coords_manager.scroll_start_point()[:2],
             cat_dir=self.cat_dir,
             in_ri_chang_page=False,
             is_to_click=True,

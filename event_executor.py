@@ -55,11 +55,19 @@ class BaseExecutor:
         self.target_name = self.taget_name_dict.get(self.target, None)
         self.cat_dir = self.cat_dirs.get(self.target, None)
 
+    @wait_region
+    def get_general_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'general',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            grayscale=False
+        )
+
     def get_leave_coords(self):
         # 获取离开按钮的坐标
         leave_imgs = [
             {'target_region_image': 'leave2', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'leave'},
-            # {'target_region_image': 'leave1', 'main_region_coords': self.main_region_coords, 'confidence': 0.6, 'grayscale': True, 'cat_dir': 'leave'},
             {'target_region_image': 'leave3', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': True, 'cat_dir': 'leave'},
         ]
 
@@ -194,7 +202,7 @@ class BaseExecutor:
         direction='down', 
         other_target=None, 
         other_target_name=None,
-        confidence=0.9,
+        confidence=0.7,
         num_of_scroll=12, 
         scroll_length=300,
         scroll_seconds=3,

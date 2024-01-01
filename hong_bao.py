@@ -50,20 +50,11 @@ class HongBaoExecutor(BaseExecutor):
         return next_coords
     
     def get_ling_shi_hong_bao_coords(self):
-        # ling_shi_hong_bao_coords = get_region_coords(
-        #     'ling_shi_hong_bao',
-        #     main_region_coords=self.hong_bao_coords_manager.main_region_coords,
-        #     confidence=0.8,
-        #     cat_dir='hong_bao',
-        # )
-        # return ling_shi_hong_bao_coords
-    
-        back_arrow_imgs = [
+        ling_shi_hong_bao_imgs = [
             {'target_region_image': 'ling_shi_hong_bao2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'ling_shi_hong_bao1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
-        back_arrow_coords = get_region_coords_by_multi_imgs(back_arrow_imgs)
-        return back_arrow_coords
+        return get_region_coords_by_multi_imgs(ling_shi_hong_bao_imgs)
 
     def start_ling_qu_hong_bao(self):
         # 开始领取红包

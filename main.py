@@ -28,6 +28,7 @@ from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
 from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
 from hong_bao import HongBaoCoordsManager, HongBaoExecutor
 from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
+from game_control import GameControlCoordsManager, GameControlExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

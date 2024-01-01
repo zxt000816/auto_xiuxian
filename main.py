@@ -1,25 +1,22 @@
+import os
 import pyautogui
-import numpy as np
 import pandas as pd
 from typing import Tuple
 from datetime import datetime
 from utils import get_game_page_coords, hide_yang_chong_tou, wait_for_evelen
-from coords_manager import *
-from event_executor import *
-# from swy_coords_manager import *
-# from swy_event_executor import *
 from name_dict import task_name_dict, task_info_name_dict
 
 from assistant import AssistantCoordsManager, AssistantExecutor
+from bao_ming import BaoMingCoordsManager, BaoMingExecutor
 from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
+from bai_ye import BaiYeCoordsManager, BaiYeExecutor
 from you_li import YouliCoordsManager, YouLiExecutor
 from fu_ben import FuBenCoordsManager, FuBenExecutor
 from ling_shou import LingShouCoordsManager, LingShouExecutor
 from lun_dao import LunDaoCoordsManager, LunDaoExecutor
+from qi_xi_mo_jie import QiXiMoJieCoordsManager, QiXiMoJieExecutor
 from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
-from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
-from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
-from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
+
 from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
 from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
 from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
@@ -29,6 +26,11 @@ from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
 from hong_bao import HongBaoCoordsManager, HongBaoExecutor
 from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
 from game_control import GameControlCoordsManager, GameControlExecutor
+
+from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
+from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
+
+from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

@@ -10,8 +10,6 @@ from xiuxian_exception import *
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
-
-
 class YouliCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)

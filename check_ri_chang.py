@@ -1,13 +1,12 @@
 import pyautogui
 from utils import *
-from swy_coords_manager import BaseCoordsManager
-from swy_event_executor import BaseExecutor
+from coords_manager import BaseCoordsManager
+from event_executor import BaseExecutor
 from xiuxian_exception import *
 from datetime import datetime
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
 class CheckRiChangCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -76,6 +75,9 @@ class CheckRiChangExecutor(BaseExecutor):
             time.sleep(3)
 
 if __name__ == '__main__':
+    
+    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+    
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = CheckRiChangCoordsManager(main_region_coords)

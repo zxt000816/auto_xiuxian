@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+
 import pyautogui
 import numpy as np
 from typing import Tuple
@@ -8,13 +12,6 @@ import keyboard
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-
-try:
-    main_region_coords = get_game_page_coords(resolution = resolution)
-except Exception as e:
-    print(f"未定位到游戏界面!")
-
 
 class XiLingCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -69,18 +66,23 @@ class XiLingExecutor(BaseExecutor):
             if high_level_attribute_alert_coords:
                 click_region(self.xi_ling_coords_manager.continue_xilian(), seconds=0.5)
                 continue
-            
-xi_ling_coords_manager = XiLingCoordsManager(main_region_coords, resolution)
-# xi_ling_executor = XiLingExecutor(xi_ling_coords_manager)
-# xi_ling_executor.execute()
 
-while True:
-    # 如果捕捉到按下了q键，点击洗灵按钮
-    if keyboard.is_pressed('q'):
-        click_region(xi_ling_coords_manager.xilian_region(), seconds=0.5)
-        continue
+if __name__ == "__main__":
+    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    # 如果捕捉到按下了w键，点击继续洗灵按钮
-    if keyboard.is_pressed('w'):
-        click_region(xi_ling_coords_manager.continue_xilian(), seconds=0.5)
-        continue
+    main_region_coords = get_game_page_coords(resolution = resolution)
+
+    xi_ling_coords_manager = XiLingCoordsManager(main_region_coords, resolution)
+    # xi_ling_executor = XiLingExecutor(xi_ling_coords_manager)
+    # xi_ling_executor.execute()
+
+    while True:
+        # 如果捕捉到按下了q键，点击洗灵按钮
+        if keyboard.is_pressed('q'):
+            click_region(xi_ling_coords_manager.xilian_region(), seconds=0.5)
+            continue
+
+        # 如果捕捉到按下了w键，点击继续洗灵按钮
+        if keyboard.is_pressed('w'):
+            click_region(xi_ling_coords_manager.continue_xilian(), seconds=0.5)
+            continue

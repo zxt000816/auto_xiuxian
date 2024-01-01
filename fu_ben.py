@@ -9,8 +9,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-
-
 class FuBenCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)

@@ -10,7 +10,7 @@ from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+
 
 class XianMengZhengBaCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -336,6 +336,8 @@ class XianMengZhengBaExecutor(BaseExecutor):
             cnt += 1
 
 if __name__ == '__main__':
+    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = XianMengZhengBaCoordsManager(main_region_coords)

@@ -266,4 +266,4 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'{account_name}执行失败: {e}')
 
-        # daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)
+        daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)

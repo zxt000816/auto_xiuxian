@@ -8,6 +8,9 @@ from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
 
+pyautogui.PAUSE = 0.01
+pyautogui.FAILSAFE = True
+
 class XiuLianCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -38,6 +41,18 @@ class XiuLianCoordsManager(BaseCoordsManager):
     
     def wait_detect_mouse_pos(self):
         diff = (211, 307, 0, 0)
+        return self.calculate_relative_coords(diff)
+    
+    def switch_gong_fa_icon(self):
+        diff = (854, 1606, 85, 102)
+        return self.calculate_relative_coords(diff)
+
+    def switch_gong_fa(self):
+        diff = (423, 883, 216, 51)
+        return self.calculate_relative_coords(diff)
+    
+    def ti_sheng_icon(self):
+        diff = (855, 1753, 77, 85)
         return self.calculate_relative_coords(diff)
         
 class XiuLianExecutor(BaseExecutor):
@@ -154,6 +169,15 @@ class XiuLianExecutor(BaseExecutor):
         )
     
     @wait_region
+    def get_xiu_lian_button_in_switch_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'xiu_lian_button_in_switch',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
+
+    @wait_region
     def get_yi_chu_alert_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
         return get_region_coords(
             'yi_chu_alert',
@@ -162,8 +186,34 @@ class XiuLianExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
     
+    def switch_gong_fa(self):
+
+        click_region(self.xl_coords_manager.switch_gong_fa_icon(), seconds=2)
+        click_region(self.xl_coords_manager.switch_gong_fa_icon(), seconds=2)
+        click_region(self.xl_coords_manager.switch_gong_fa_icon(), seconds=2)
+        click_region(self.xl_coords_manager.switch_gong_fa(), seconds=2)
+
+        self.get_xiu_lian_button_in_switch_coords(
+            wait_time=3,
+            target_region='修炼按钮',
+            is_to_click=True,
+            to_raise_exception=True,
+        )
+
+        time.sleep(3)
     
     def process_alert_in_level_up(self):
+
+        gong_fa_max_level_coords = self.get_gong_fa_max_level_coords(
+            wait_time=2,
+            target_region='功法满级',
+            is_to_click=False,
+            to_raise_exception=False,
+        )
+        if gong_fa_max_level_coords is not None:
+            self.switch_gong_fa()
+            return True
+
         # 如果弹出了经验溢出提示，点击确认, 然后执行提升
         self.get_yi_chu_alert_coords(
             wait_time=3,
@@ -200,24 +250,21 @@ class XiuLianExecutor(BaseExecutor):
 
         return False
 
-    def level_up(self):
-        # 点击修炼心得
-        self.get_xiu_lian_xin_de_coords(duration=10, target_region='修炼心得')
-        # 点击修炼
-        self.get_jing_yan_shu_coords(duration=10, target_region='经验书')
-
     def xiu_lian_xin_de_level_up(self):
         # 移动到修炼心得
         xiu_lian_xin_de_coords = self.get_xiu_lian_xin_de_coords(wait_time=2, target_region='修炼心得', is_to_click=False, to_raise_exception=False)
         if xiu_lian_xin_de_coords is None:
-            print("没有修炼心得!")
-            return None
+            click_region(self.xl_coords_manager.ti_sheng_icon())
         
+        xiu_lian_xin_de_coords = self.get_xiu_lian_xin_de_coords(wait_time=2, target_region='修炼心得', is_to_click=False, to_raise_exception=False)
         xiu_lian_xin_de_center = calculate_center_coords(xiu_lian_xin_de_coords)
         pyautogui.moveTo(xiu_lian_xin_de_center, duration=0.5)
 
     def gong_fa_shu_level_up(self):
-        # 移动到功法书
+        xiu_lian_xin_de_coords = self.get_xiu_lian_xin_de_coords(wait_time=2, target_region='修炼心得', is_to_click=False, to_raise_exception=False)
+        if xiu_lian_xin_de_coords is None:
+            click_region(self.xl_coords_manager.ti_sheng_icon())
+        
         jing_yan_shu_coords = self.get_jing_yan_shu_coords(wait_time=2, target_region='经验书', is_to_click=False, to_raise_exception=False)
         if jing_yan_shu_coords is None:
             print("没有经验书!")
@@ -241,7 +288,7 @@ class XiuLianExecutor(BaseExecutor):
         return get_region_coords(
             'zero_xiu_lian_xin_de',
             main_region_coords=self.main_region_coords,
-            confidence=0.7,
+            confidence=0.8,
             cat_dir=self.cat_dir,
         )
     
@@ -253,133 +300,136 @@ class XiuLianExecutor(BaseExecutor):
             confidence=0.7,
             cat_dir=self.cat_dir,
         )
+    
+    @wait_region
+    def get_gong_fa_max_level_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'gong_fa_max_level',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir,
+        )
 
     def execute(self):
         self.go_to_world()
-        try:
-            # 进入修炼
-            click_region(self.xl_coords_manager.xiu_lian_small(), seconds=5)
-            # 寻找并点击修炼图标
-            self.get_xiu_lian_icon_coords(wait_time=15, target_region='修炼图标', is_to_click=True)
-            # 检查是否弹出了丹药服用结束的窗口
-            fu_yong_over_coords = self.get_fu_yong_over_coords(wait_time=2, target_region='服用结束', is_to_click=False, to_raise_exception=False)
-            if fu_yong_over_coords is not None:
-                print('完成: 弹出了丹药服用结束的窗口，点击退出!')
-                click_region(self.xl_coords_manager.exit())
-            
-            # 点击提升按钮
+
+        # 进入修炼
+        click_region(self.xl_coords_manager.xiu_lian_small(), seconds=5)
+        # 寻找并点击修炼图标
+        self.get_xiu_lian_icon_coords(wait_time=15, target_region='修炼图标', is_to_click=True)
+        # 检查是否弹出了丹药服用结束的窗口
+        fu_yong_over_coords = self.get_fu_yong_over_coords(wait_time=2, target_region='服用结束', is_to_click=False, to_raise_exception=False)
+        if fu_yong_over_coords is not None:
+            print('完成: 弹出了丹药服用结束的窗口，点击退出!')
+            click_region(self.xl_coords_manager.exit())
+        
+        # 点击提升按钮
+        self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
+
+        if self.buy_times > 0:
+            try:
+                self.scroll_and_click(
+                    direction='down',
+                    other_target='buy_qian_xiu_zhen_wu',
+                    other_target_name='潜修真悟',
+                    confidence=0.7,
+                    num_of_scroll=4,
+                    scroll_length=300,
+                    scroll_seconds=3,
+                    grayscale=False,
+                    scroll_start_point_coords=self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2],
+                    cat_dir='xiu_lian',
+                    in_ri_chang_page=False,
+                    is_to_click=True,
+                )
+
+                store_open_indicator_args = { 'wait_time': 3, 'target_region': '商店打开标志', 'is_to_click': False, 'to_raise_exception': False }
+                if self.get_store_open_indicator_coords(**store_open_indicator_args) is not None:
+                    actual_buy_times = self.buy_times_in_store(self.buy_times)
+                    print(f"实际购买次数: {actual_buy_times}")
+                    if self.get_store_open_indicator_coords(**store_open_indicator_args) is None:
+                        self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
+                    else:
+                        click_region(self.xl_coords_manager.exit())
+                else:
+                    print("商店未打开, 无法购买!")
+
+            except ScrollException:
+                print("未找到可购买的潜修真悟!")
+
+        #如果没有看到修炼心得，就再次点击提升
+        chang_an_alert_coords = self.get_chang_an_alert_coords(wait_time=2, target_region='长按提示', is_to_click=False, to_raise_exception=False)
+        if chang_an_alert_coords is None:
             self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
 
-            if self.buy_times > 0:
-                try:
-                    self.scroll_and_click(
-                        direction='down',
-                        other_target='buy_qian_xiu_zhen_wu',
-                        other_target_name='潜修真悟',
-                        confidence=0.7,
-                        num_of_scroll=4,
-                        scroll_length=300,
-                        scroll_seconds=3,
-                        grayscale=False,
-                        scroll_start_point_coords=self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2],
-                        cat_dir='xiu_lian',
-                        in_ri_chang_page=False,
-                        is_to_click=True,
-                    )
+        #滚动会顶部
+        scroll_length = self.calculate_scroll_length(1000)
+        for _ in range(3):
+            print("滚动到顶部!")
+            pyautogui.moveTo(self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2])
+            scroll_specific_length(scroll_length, seconds=1)
 
-                    store_open_indicator_args = { 'wait_time': 3, 'target_region': '商店打开标志', 'is_to_click': False, 'to_raise_exception': False }
-                    if self.get_store_open_indicator_coords(**store_open_indicator_args) is not None:
-                        actual_buy_times = self.buy_times_in_store(self.buy_times)
-                        print(f"实际购买次数: {actual_buy_times}")
-                        if self.get_store_open_indicator_coords(**store_open_indicator_args) is None:
-                            self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
-                        else:
-                            click_region(self.xl_coords_manager.exit())
-                    else:
-                        print("商店未打开, 无法购买!")
+        self.xiu_lian_xin_de_level_up()
+        pyautogui.mouseDown()
 
-                except ScrollException:
-                    print("未找到可购买的潜修真悟!")
+        start_time = time.time()
+        total_time = 20
+        while True:
+            # 检查是否到达20秒
+            if time.time() - start_time > total_time:
+                print("到达20秒，退出!")
+                pyautogui.mouseUp()
+                break
 
-            #如果没有看到修炼心得，就再次点击提升
-            chang_an_alert_coords = self.get_chang_an_alert_coords(wait_time=2, target_region='长按提示', is_to_click=False, to_raise_exception=False)
-            if chang_an_alert_coords is None:
-                self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
+            # 处理弹出的窗口
+            if_processed = self.process_alert_in_level_up()
+            if if_processed is True:
+                # 如果处理了弹出的窗口，就将计时器重置
+                self.xiu_lian_xin_de_level_up()
+                pyautogui.mouseDown()
+                start_time = time.time()
+            
+            zero_xiu_lian_xin_de_coords = self.get_zero_xiu_lian_xin_de_coords(
+                wait_time=2, target_region='修炼心得为0', 
+                is_to_click=False, to_raise_exception=False
+            )
+            if zero_xiu_lian_xin_de_coords is not None:
+                print("修炼心得为0，退出!")
+                pyautogui.mouseUp()
+                break
 
-            #滚动会顶部
-            scroll_length = self.calculate_scroll_length(1000)
-            for _ in range(3):
-                print("滚动到顶部!")
-                pyautogui.moveTo(self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2])
-                scroll_specific_length(scroll_length, seconds=1)
+        ############################################################################################################
+        self.gong_fa_shu_level_up()
+        pyautogui.mouseDown()
 
-            self.xiu_lian_xin_de_level_up()
-            pyautogui.mouseDown()
-
-            start_time = time.time()
-            total_time = 20
-            while True:
-                # 检查是否到达20秒
-                if time.time() - start_time > total_time:
-                    print("到达20秒，退出!")
-                    pyautogui.mouseUp()
+        start_time = time.time()
+        total_time = 10
+        while True:
+            # 检查是否到达20秒
+            if time.time() - start_time > total_time:
+                pyautogui.mouseUp()
+                pyautogui.moveTo(self.xl_coords_manager.wait_detect_mouse_pos()[:2])
+                if self.gong_fa_shu_level_up() is None:
+                    print("到达5秒，退出!")
                     break
-
-                # 处理弹出的窗口
-                if_processed = self.process_alert_in_level_up()
-                if if_processed is True:
-                    # 如果处理了弹出的窗口，就将计时器重置
-                    self.xiu_lian_xin_de_level_up()
+                else:
                     pyautogui.mouseDown()
                     start_time = time.time()
-                
-                zero_xiu_lian_xin_de_coords = self.get_zero_xiu_lian_xin_de_coords(
-                    wait_time=2, target_region='修炼心得为0', 
-                    is_to_click=False, to_raise_exception=False
-                )
-                if zero_xiu_lian_xin_de_coords is not None:
-                    print("修炼心得为0，退出!")
-                    pyautogui.mouseUp()
-                    break
+                    continue
 
-            ############################################################################################################
-            self.gong_fa_shu_level_up()
-            pyautogui.mouseDown()
+            # 处理弹出的窗口
+            if_processed = self.process_alert_in_level_up()
+            if if_processed is True:
+                # 如果处理了弹出的窗口，就将计时器重置
+                self.gong_fa_shu_level_up()
+                pyautogui.mouseDown()
+                start_time = time.time()
 
-            start_time = time.time()
-            total_time = 10
-            while True:
-                # 检查是否到达20秒
-                if time.time() - start_time > total_time:
-                    pyautogui.mouseUp()
-                    pyautogui.moveTo(self.xl_coords_manager.wait_detect_mouse_pos()[:2])
-                    if self.gong_fa_shu_level_up() is None:
-                        print("到达5秒，退出!")
-                        break
-                    else:
-                        pyautogui.mouseDown()
-                        start_time = time.time()
-                        continue
-
-                # 处理弹出的窗口
-                if_processed = self.process_alert_in_level_up()
-                if if_processed is True:
-                    # 如果处理了弹出的窗口，就将计时器重置
-                    self.gong_fa_shu_level_up()
-                    pyautogui.mouseDown()
-                    start_time = time.time()
-
-            # 使用小绿瓶
-            self.get_xiao_lv_ping_coords(wait_time=2, target_region='小绿瓶', is_to_click=True, to_raise_exception=False)
-
-        except Exception as e:
-            print(f"执行修炼出错: {e}")
-        
-        self.go_to_world()
+        # 使用小绿瓶
+        self.get_xiao_lv_ping_coords(wait_time=2, target_region='小绿瓶', is_to_click=True, to_raise_exception=False)
 
 if __name__ == '__main__':
-    pyautogui.PAUSE = 0.01
-    pyautogui.FAILSAFE = True
+    
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
     try:

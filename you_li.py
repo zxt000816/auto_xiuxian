@@ -116,11 +116,11 @@ class YouLiExecutor(BaseExecutor):
 
         self.click_ri_chang()
 
-        self.scoll_and_click(direction='down', scroll_seconds=3, in_ri_chang_page=False)
+        self.scroll_and_click(direction='down', scroll_seconds=3, in_ri_chang_page=False)
         buy_button_coords = self.get_buy_button_coords(wait_time=2, target_region='购买并使用', is_to_click=False, to_raise_exception=False)
         if buy_button_coords is not None:
             self.buy_times_in_store(self.buy_times, to_raise_exception=True)
-            self.scoll_and_click(direction='up', in_ri_chang_page=False)
+            self.scroll_and_click(direction='up', in_ri_chang_page=False)
 
         self.get_buy_icon_coords(wait_time=2, target_region='购买图标', is_to_click=True, to_raise_exception=True)
 

@@ -69,7 +69,7 @@ class BaiZuGongFengExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
+        self.scroll_and_click(direction='down')
 
         self.get_ling_qu_coords(wait_time=2, target_region='领取百族供奉', is_to_click=True, 
                                 wait_time_before_click=1, to_raise_exception=True)

@@ -85,7 +85,7 @@ class HongBaoExecutor(BaseExecutor):
                 print('滚动超时，退出')
                 break
 
-            self.scoll_and_click(direction='down', other_target='hong_bao', other_target_name='红包', num_of_scroll=3)
+            self.scroll_and_click(direction='down', other_target='hong_bao', other_target_name='红包', num_of_scroll=3)
 
             hong_bao_coords = self.get_hon_bao_coords()
             if not self.click_if_coords_exist(hong_bao_coords, message='检测到红包'):

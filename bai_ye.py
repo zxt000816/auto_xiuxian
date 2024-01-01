@@ -74,8 +74,8 @@ class BaiYeExecutor(BaseExecutor):
         self.go_to_world()
         try:
             self.click_ri_chang()
-            self.scoll_and_click(direction='down')
-            self.scoll_and_click(
+            self.scroll_and_click(direction='down')
+            self.scroll_and_click(
                 direction='down',
                 other_target=f'{self.fa_ze_level}_kua_fa_ze',
                 other_target_name=f'{self.fa_ze_level}跨法则',

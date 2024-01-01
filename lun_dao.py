@@ -126,7 +126,7 @@ class LunDaoExecutor(BaseExecutor):
             print('正在论道中!')
             return
 
-        self.scoll_and_click(
+        self.scroll_and_click(
             direction='down',
             other_target=f'dao_chang{self.dao_chang_level}',
             other_target_name=self.dao_chang_name,

@@ -110,7 +110,7 @@ class LingShouExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
+        self.scroll_and_click(direction='down')
 
         self.get_open_ling_shou_coords(wait_time=120, target_region='灵兽界面', is_to_click=False)
         self.get_tui_jian_coords(wait_time=10, target_region='推荐剿灭', is_to_click=True)

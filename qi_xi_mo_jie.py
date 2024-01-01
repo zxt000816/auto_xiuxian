@@ -98,7 +98,7 @@ class QiXiMoJieExecutor(BaseExecutor):
 
         self.get_qi_xi_mo_jie_coords(wait_time=5, target_region='奇袭魔界', is_to_click=True, other_region_coords=None, to_raise_exception=True)
 
-        # self.scoll_and_click(direction='down', in_ri_chang_page=False) # 虽然在日常页面, 但因为奇袭魔界的完成, 并不是真正的完成, 需要进去进行判断.
+        # self.scroll_and_click(direction='down', in_ri_chang_page=False) # 虽然在日常页面, 但因为奇袭魔界的完成, 并不是真正的完成, 需要进去进行判断.
 
         already_have_team_coords = self.get_already_have_team_coords(wait_time=3, target_region='已有队伍', is_to_click=False, other_region_coords=None, to_raise_exception=False)
         if already_have_team_coords is not None:

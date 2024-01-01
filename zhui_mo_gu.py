@@ -212,8 +212,8 @@ class ZhuiMoGuExecutor(BaseExecutor):
         
         if method == '日常图标':
             self.click_ri_chang()
-            # self.scoll_and_click(direction='down')
-            self.scoll_and_click_by_multiple_imgs(
+            # self.scroll_and_click(direction='down')
+            self.scroll_and_click_by_multiple_imgs(
                 direction='down',
                 targets_imgs_info=[
                     {'target_region_image': 'zhui_mo_gu', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': False, 'cat_dir': self.cat_dir},

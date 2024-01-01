@@ -239,7 +239,7 @@ class MoDaoRuQingExecutor(BaseExecutor):
     def dui_huan_cai_liao(self, target='yao_chi_yu_lian', target_name='瑶池玉莲'):
         self.get_dui_huan_bao_ge_coords(wait_time=2, target_region="兑换宝阁", is_to_click=True, to_raise_exception=False)
 
-        self.scoll_and_click(
+        self.scroll_and_click(
             direction='down',
             other_target=target,
             other_target_name=target_name,

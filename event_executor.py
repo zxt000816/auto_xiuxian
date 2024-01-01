@@ -197,12 +197,12 @@ class BaseExecutor:
         click_region(self.richang_coords, seconds=2)
         print("完成: 点击日常按钮")
 
-    def scoll_and_click(
+    def scroll_and_click(
         self, 
         direction='down', 
         other_target=None, 
         other_target_name=None,
-        confidence=0.7,
+        confidence=0.8,
         num_of_scroll=12, 
         scroll_length=300,
         scroll_seconds=3,
@@ -286,7 +286,7 @@ class BaseExecutor:
             click_region(target_coords, seconds=3)
             print(f"完成: 点击{target_name}按钮")
 
-    def scoll_and_click_by_multiple_imgs(
+    def scroll_and_click_by_multiple_imgs(
         self, 
         direction, 
         targets_imgs_info, 
@@ -645,14 +645,14 @@ class YouLiExecutor(BaseExecutor):
             return False
 
     def scroll_and_click_youli(self):
-        self.scoll_and_click(direction='down')
+        self.scroll_and_click(direction='down')
         print("商店是否弹出: ", self.if_buy_store_pop_up())
         if self.if_buy_store_pop_up():
             if self.buy_times == 0:
                 print("完成: 购买次数用完或者不需要购买")
             
             self.buy_times_in_store(self.buy_times)
-            self.scoll_and_click(direction='up')
+            self.scroll_and_click(direction='up')
 
     def buy_youli(self):
         print("="*25 + "购买游历" + "="*25)
@@ -888,9 +888,9 @@ class ShuangXiuExecutor(BaseExecutor):
 
         try:
             self.click_ri_chang()
-            self.scoll_and_click(direction='down')
+            self.scroll_and_click(direction='down')
             # self.click_shuangxiu_gongfashu()
-            self.scoll_and_click(
+            self.scroll_and_click(
                 direction='down', 
                 other_target=self.gongfashu, 
                 other_target_name=self.gongfashu_name,
@@ -1164,8 +1164,8 @@ class FuBenExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
-        self.scoll_and_click(
+        self.scroll_and_click(direction='down')
+        self.scroll_and_click(
             direction='up', 
             other_target=self.fuben,
             other_target_name=self.fuben_name,
@@ -1291,7 +1291,7 @@ class HongBaoExecutor(BaseExecutor):
         # 滚动到包含红包的对话
         while True:
             try:
-                self.scoll_and_click(direction='down', other_target='hong_bao', other_target_name='红包', num_of_scroll=3)
+                self.scroll_and_click(direction='down', other_target='hong_bao', other_target_name='红包', num_of_scroll=3)
 
                 hong_bao_coords = self.get_hon_bao_coords()
                 if not self.click_if_coords_exist(hong_bao_coords, message='检测到红包'):
@@ -1366,7 +1366,7 @@ class HunDunLingTaExecutor(BaseExecutor):
         
         try:
             self.click_ri_chang()
-            self.scoll_and_click(direction='down')
+            self.scroll_and_click(direction='down')
 
             # 确认`混沌灵塔`是否打开
             self.get_open_indicator_coords(wait_time=120, target_region='混沌灵塔')
@@ -1456,13 +1456,13 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         
         try:
             self.click_ri_chang()
-            self.scoll_and_click(direction='down')
+            self.scroll_and_click(direction='down')
 
             # 确认`仙缘页面`是否打开
             self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False)
             click_region(self.tzxy_coords_manager.all_xian_yuan())
                     
-            self.scoll_and_click(
+            self.scroll_and_click(
                 direction='down', 
                 other_target=self.xian_yuan_role, 
                 other_target_name=self.xian_yuan_role_name, 
@@ -1588,7 +1588,7 @@ class LingShouExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
+        self.scroll_and_click(direction='down')
 
         self.get_open_ling_shou_coords(wait_time=120, target_region='灵兽界面', is_to_click=False)
         self.get_tui_jian_coords(wait_time=10, target_region='推荐剿灭', is_to_click=True)
@@ -1679,8 +1679,8 @@ class BaiYeExecutor(BaseExecutor):
         self.go_to_world()
         try:
             self.click_ri_chang()
-            self.scoll_and_click(direction='down')
-            self.scoll_and_click(
+            self.scroll_and_click(direction='down')
+            self.scroll_and_click(
                 direction='down',
                 other_target=f'{self.fa_ze_level}_kua_fa_ze',
                 other_target_name=f'{self.fa_ze_level}跨法则',
@@ -1853,7 +1853,7 @@ class ZhuiMoGuExecutor(BaseExecutor):
         
         if method == '日常图标':
             self.click_ri_chang()
-            self.scoll_and_click(direction='down')
+            self.scroll_and_click(direction='down')
         else:
             # 检查是否有首领图标, 如果有, 点击首领图标, 没有则报错
             # 等待120秒
@@ -2078,7 +2078,7 @@ class GameControlExecutor(BaseExecutor):
                 scroll_seconds=1,
             )
             # 滚动账户列表, 点击指定账户
-            self.scoll_and_click(
+            self.scroll_and_click(
                 direction='down',
                 other_target=self.account,
                 other_target_name=self.account_name,
@@ -2187,7 +2187,7 @@ class QiXiMoJieExecutor(BaseExecutor):
         self.go_to_world()
         try:
             self.click_ri_chang()
-            self.scoll_and_click(direction='down', in_ri_chang_page=False) # 虽然在日常页面, 但因为奇袭魔界的完成, 并不是真正的完成, 需要进去进行判断.
+            self.scroll_and_click(direction='down', in_ri_chang_page=False) # 虽然在日常页面, 但因为奇袭魔界的完成, 并不是真正的完成, 需要进去进行判断.
 
             self.get_last_qi_xi_alert(wait_time=3, target_region='上次奇袭魔界提示框', is_to_click=True, 
                                       other_region_coords=self.qxmj_coords_manager.confirm_button_in_last_qi_xi_alert(), to_raise_exception=False)

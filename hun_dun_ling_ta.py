@@ -87,6 +87,7 @@ class HunDunLingTaExecutor(BaseExecutor):
             {'target_region_image': 'tiao_zhan_over1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'tiao_zhan_over2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'tiao_zhan_over3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'tiao_zhan_over4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
 
         return get_region_coords_by_multi_imgs(tiao_zhan_over_imgs)
@@ -122,12 +123,12 @@ class HunDunLingTaExecutor(BaseExecutor):
         self.go_to_world()
 
         self.click_ri_chang()
-        self.scoll_and_click(direction='down', in_ri_chang_page=False)
+        self.scroll_and_click(direction='down', in_ri_chang_page=False)
 
         # 确认`混沌灵塔`是否打开
         self.get_open_indicator_coords(wait_time=120, target_region='混沌灵塔')
 
-        self.scoll_and_click(
+        self.scroll_and_click(
             direction='down',
             other_target=self.ling_ta,
             other_target_name=self.ling_ta_name,
@@ -164,7 +165,7 @@ class HunDunLingTaExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down', in_ri_chang_page=False)
+        self.scroll_and_click(direction='down', in_ri_chang_page=False)
 
         # 确认`混沌灵塔`是否打开
         self.get_open_indicator_coords(wait_time=120, target_region='混沌灵塔')
@@ -179,6 +180,11 @@ class HunDunLingTaExecutor(BaseExecutor):
             # 如果没有弹出扫荡完成界面, 则点击开始扫荡
             start_sweep_coords = self.get_start_sweep_coords(wait_time=10, target_region='开始扫荡')
             click_region(start_sweep_coords)
+            
+            # 跳过动画
+            time.sleep(1)
+            click_region(self.hdlt_cm.exit())
+
             self.get_dian_ji_ji_xu_coords(wait_time=10, target_region='点击继续', is_to_click=True, 
                                           wait_time_before_click=6, to_raise_exception=False)
 

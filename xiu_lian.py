@@ -272,7 +272,7 @@ class XiuLianExecutor(BaseExecutor):
 
             if self.buy_times > 0:
                 try:
-                    self.scoll_and_click(
+                    self.scroll_and_click(
                         direction='down',
                         other_target='buy_qian_xiu_zhen_wu',
                         other_target_name='潜修真悟',

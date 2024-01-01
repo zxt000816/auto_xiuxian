@@ -64,6 +64,12 @@ def daily_task(
     
 ):
     wei_mian = account_task_info['wei_mian']
+    if wei_mian == '人界':
+        bai_zu_gong_feng = False
+
+    xian_yuan_wei_mian = account_task_info['xian_yuan_wei_mian']
+    shou_ling_wei_mian = account_task_info['shou_ling_wei_mian']
+
     xiu_lian_buy_times = account_task_info['xiu_lian_buy_times']
     ling_ta_name = account_task_info['ling_ta_name']
     bai_ye_event_name = account_task_info['bai_ye_event_name']
@@ -125,10 +131,10 @@ def daily_task(
     check_ri_chang_executor = CheckRiChangExecutor(check_ri_chang_coords_manager, account_name) # 检查日常
 
     shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name=shuangxiu_gongfashu_name) # 双修
-    tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name, wei_mian=wei_mian) # 挑战仙缘
+    tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name, wei_mian=xian_yuan_wei_mian) # 挑战仙缘
     youli_executor = YouLiExecutor(youli_corrds_manager, place_name=youli_place_name, buy_times=youli_buy_times) # 游历
     ling_shou_executor = LingShouExecutor(ling_shou_coords_manager, buy_times=ling_shou_buy_times, to_save_times=ling_shou_to_save_times) # 灵兽
-    zhui_mo_gu_executor = ZhuiMoGuExecutor(zhui_mo_gu_coords_manager, profession_name=profession_name, max_level=zhui_mo_gu_max_level, wei_mian=wei_mian) # 坠魔谷
+    zhui_mo_gu_executor = ZhuiMoGuExecutor(zhui_mo_gu_coords_manager, profession_name=profession_name, max_level=zhui_mo_gu_max_level, wei_mian=shou_ling_wei_mian) # 坠魔谷
     fuben_executor = FuBenExecutor(fu_ben_coords_manager, fuben_name=fuben_name, buy_times=fuben_buy_times) # 副本
     lun_dao_executor = LunDaoExecutor(lun_dao_coords_manager, dao_chang_level=dao_chang_level) # 论道
 
@@ -260,4 +266,4 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'{account_name}执行失败: {e}')
 
-        daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)
+        # daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)

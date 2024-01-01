@@ -115,7 +115,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
+        self.scroll_and_click(direction='down')
 
         # 确认`仙缘页面`是否打开
         self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False)
@@ -134,7 +134,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
             raise ValueError(f"未知的位面: {self.wei_mian}!")
 
         try:
-            self.scoll_and_click(
+            self.scroll_and_click(
                 direction='down', 
                 other_target=self.xian_yuan_role, 
                 other_target_name=self.xian_yuan_role_name, 

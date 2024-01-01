@@ -166,7 +166,7 @@ class GameControlExecutor(BaseExecutor):
                 scroll_seconds=1,
             )
             # 滚动账户列表, 点击指定账户
-            self.scoll_and_click(
+            self.scroll_and_click(
                 direction='down',
                 other_target=self.account,
                 other_target_name=self.account_name,

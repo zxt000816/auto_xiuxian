@@ -62,7 +62,6 @@ class FuBenExecutor(BaseExecutor):
         self.challenge_times = 3
         self.to_save_times = to_save_times
 
-
     @wait_region
     def get_zui_dui_coords(self, wait_time, target_region, is_to_click):
         return get_region_coords(
@@ -247,8 +246,8 @@ class FuBenExecutor(BaseExecutor):
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
-        self.scoll_and_click(
+        self.scroll_and_click(direction='down')
+        self.scroll_and_click(
             direction='up', 
             other_target=self.fuben,
             other_target_name=self.fuben_name,
@@ -272,6 +271,10 @@ class FuBenExecutor(BaseExecutor):
         # 如果不存储次数, 那么将购买的次数加到实际挑战次数中
         if self.to_save_times is False:
             self.challenge_times += actual_buy_times
+
+        # 如果有多次挑战权限, 则挑战次数为1
+        if self.get_multi_challenge_auth_coords() is not None:
+            self.challenge_times = 1
 
         print(f'完成: 总共挑战次数为{self.challenge_times}次!')
         self.zu_dui()
@@ -323,6 +326,7 @@ if __name__ == '__main__':
 
     fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=3)
 
+    fuben_executor.get_multi_challenge_auth_coords()
     fuben_executor.execute()
 
 

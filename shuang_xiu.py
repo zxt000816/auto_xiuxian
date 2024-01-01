@@ -171,8 +171,8 @@ class ShuangXiuExecutor(BaseExecutor):
         self.go_to_world()
 
         self.click_ri_chang()
-        self.scoll_and_click(direction='down')
-        self.scoll_and_click(
+        self.scroll_and_click(direction='down')
+        self.scroll_and_click(
             direction='down', 
             other_target=self.gongfashu, 
             other_target_name=self.gongfashu_name,

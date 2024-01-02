@@ -29,6 +29,7 @@ from game_control import GameControlCoordsManager, GameControlExecutor
 
 from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
 from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
+from xu_tian_dian import XuTianDianCoordsManager, XuTianDianExecutor
 
 from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
 
@@ -57,6 +58,7 @@ def daily_task(
     lun_dao: bool = True,
     shou_yuan_tan_mi: bool = False,
     mo_dao_ru_qing: bool = False,
+    xu_tian_dian: bool = False,
     xian_meng_zheng_ba: bool = False,
     check_ri_chang: bool = True,
     pa_tian_ti: bool = False,
@@ -88,10 +90,13 @@ def daily_task(
     dao_chang_level = account_task_info['dao_chang_level']
     shou_yuan_tan_mi_server_nums = account_task_info.get('shou_yuan_tan_mi_server_nums', 1)
     mo_dao_ru_qing_server_nums = account_task_info.get('mo_dao_ru_qing_server_nums', 1)
+    xu_tian_dian_server_nums = account_task_info.get('xu_tian_dian_server_nums', 1)
     chou_jiang_event = account_task_info.get('chou_jiang_event', '灵缈探宝')
 
     shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords) # 兽渊探秘
     mo_dao_ru_qing_coords_manager = MoDaoRuQingCoordsManager(main_region_coords) # 魔道入侵
+    xu_tian_dian_coords_manager = XuTianDianCoordsManager(main_region_coords) # 修炼
+
     xian_meng_zheng_ba_coords_manager = XianMengZhengBaCoordsManager(main_region_coords) # 仙盟争霸
 
     ri_chang_chou_jiang_coords_manager = RiChangChouJiangCoordsManager(main_region_coords) # 日常抽奖
@@ -116,6 +121,8 @@ def daily_task(
 
     shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=shou_yuan_tan_mi_server_nums, only_use_free_times=True) # 兽渊探秘
     mo_dao_ru_qing_executor = MoDaoRuQingExecutor(mo_dao_ru_qing_coords_manager, server_nums=mo_dao_ru_qing_server_nums) # 魔道入侵
+    xu_tian_dian_executor = XuTianDianExecutor(xu_tian_dian_coords_manager, server_nums=xu_tian_dian_server_nums) # 修炼
+
     xian_meng_zheng_ba_executor = XianMengZhengBaExecutor(xian_meng_zheng_ba_coords_manager) # 仙盟争霸
 
     ri_chang_chou_jiang_executor = RiChangChouJiangExecutor(ri_chang_chou_jiang_coords_manager, chou_jiang_event=chou_jiang_event) # 日常抽奖
@@ -166,6 +173,8 @@ def daily_task(
         
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
         '魔道入侵': (mo_dao_ru_qing_executor, mo_dao_ru_qing),
+        '虚天殿': (xu_tian_dian_executor, xu_tian_dian),
+
         '仙盟争霸': (xian_meng_zheng_ba_executor, xian_meng_zheng_ba),
 
         '爬天梯': (pa_tian_ti_executor, pa_tian_ti),
@@ -185,7 +194,7 @@ def daily_task(
 
             start_time = datetime.now()
             try:
-                if executor_name in ['论道', '兽渊探秘', '魔道入侵']:
+                if executor_name in ['论道', '兽渊探秘', '魔道入侵', '虚天殿']:
                     if datetime.now().hour < 11: #  11点之前不执行
                         print(f'{executor_name}未到执行时间')
                         break
@@ -203,24 +212,14 @@ def daily_task(
                 print(f'{executor_name}执行失败: {e}')
                 with open('error.txt', 'a', encoding='utf-8') as f:
                     current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
-                    # f.write(
-                    #     f'\n------------------------------------------------\n{current_time}-{account_name}-{executor_name}:{e}\n------------------------------------------------\n'
-                    # )
-                    f.write(
-                        f'\n{current_time}-{account_name}-{executor_name}:{e}\n'
-                    )
+                    f.write(f'\n{current_time}-{account_name}-{executor_name}:{e}\n')
 
             end_time = datetime.now()
             print(f'{executor_name}执行时间: {end_time - start_time}')
             with open('time.txt', 'a', encoding='utf-8') as f:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M')
                 cost_time = (end_time - start_time).seconds
-                # f.write(
-                #     f'\n------------------------------------------------\n{current_time}-{account_name}-{executor_name}-执行时间: {cost_time}秒\n------------------------------------------------\n'
-                # )
-                f.write(
-                    f'\n{current_time}-{account_name}-{executor_name}-执行时间: {cost_time}秒\n'
-                )
+                f.write(f'\n{current_time}-{account_name}-{executor_name}-执行时间: {cost_time}秒\n')
 
             executor.go_to_world()
 
@@ -267,3 +266,5 @@ if __name__ == '__main__':
             print(f'{account_name}执行失败: {e}')
 
         daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)
+
+    os.system('shutdown -s -t 10') # 关机

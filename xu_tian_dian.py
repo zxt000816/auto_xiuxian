@@ -40,6 +40,10 @@ class XuTianDianCoordsManager(BaseCoordsManager):
         diff = (212, 1264, 186, 164)
         return self.calculate_relative_coords(diff)
 
+    def exit_2(self):
+        diff = (416, 1579, 0, 0)
+        return self.calculate_relative_coords(diff)
+    
     # def tiao_zhan_region(self):
     #     diff = (27, 64, 321, 62)
     #     return self.calculate_relative_coords(diff)
@@ -132,13 +136,22 @@ class XuTianDianExecutor(BaseExecutor):
     
     @wait_region
     def get_xu_tian_bao_tu_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        xu_tian_bao_tu_imgs = [
+            {'target_region_image': 'xu_tian_bao_tu1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'xu_tian_bao_tu2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+        ]
+
+        return get_region_coords_by_multi_imgs(xu_tian_bao_tu_imgs)
+    
+    @wait_region
+    def get_whether_skip_tan_cha_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
         return get_region_coords(
-            'xu_tian_bao_tu',
+            'whether_skip_tan_cha',
             main_region_coords=self.main_region_coords,
-            confidence=0.7,
+            confidence=0.8,
             cat_dir=self.cat_dir ,
         )
-    
+
     @wait_region
     def get_skip_tan_cha_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
         return get_region_coords(
@@ -164,7 +177,7 @@ class XuTianDianExecutor(BaseExecutor):
         return get_region_coords(
             'auto_tiao_zhan',
             main_region_coords=self.main_region_coords,
-            confidence=0.8,
+            confidence=0.7,
             cat_dir=self.cat_dir ,
         )
     
@@ -311,10 +324,14 @@ class XuTianDianExecutor(BaseExecutor):
         while True:
             xu_tian_bao_tu_coords = self.get_xu_tian_bao_tu_coords(wait_time=3, target_region="虚天宝图", is_to_click=False, to_raise_exception=False)
             if xu_tian_bao_tu_coords is not None:
-                print(f"虚天宝图出现, 退出!")
-                break
+                click_region(xu_tian_bao_tu_coords)
+                whether_skip_tan_cha_coords = self.get_whether_skip_tan_cha_coords(wait_time=2, target_region="是否跳过探查", is_to_click=False, to_raise_exception=False)
+                if whether_skip_tan_cha_coords is not None:
+                    print(f"动画结束, 退出!")
+                    click_region(self.xtd_coords_manager.exit())
+                    break
 
-            click_region(self.xtd_coords_manager.exit(), seconds=1)
+            click_region(self.xtd_coords_manager.exit_2(), seconds=1)
 
         self.check_skip_tan_cha()
 
@@ -334,7 +351,7 @@ class XuTianDianExecutor(BaseExecutor):
         
         self.get_start_auto_tiao_zhan_coords(wait_time=3, target_region="开始自动挑战", is_to_click=True, to_raise_exception=True)
 
-        self.get_auto_tiao_zhan_over_coords(wait_time=120, target_region="自动挑战结束", is_to_click=True, to_raise_exception=True)
+        self.get_auto_tiao_zhan_over_coords(wait_time=420, target_region="自动挑战结束", is_to_click=True, to_raise_exception=True)
 
         # 返回世界, 重新进入活动, 然后打开兑换宝阁
         self.go_to_world()

@@ -88,8 +88,8 @@ args3 = {
 args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'confidence': 0.90,
-    'target_image_cat_dir': 'xu_tian_dian',
+    'confidence': 0.7,
+    # 'target_image_cat_dir': 'xu_tian_dian',
 }
 
 get_diff_quickly = get_diff_quickly_2

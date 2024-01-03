@@ -19,6 +19,10 @@ class CheckRiChangCoordsManager(BaseCoordsManager):
     def bei_bao_scroll_start_point(self):
         diff = (561, 668, 0, 0)
         return self.calculate_relative_coords(diff)
+    
+    def role_icon(self):
+        diff = (406, 1745, 89, 120)
+        return self.calculate_relative_coords(diff)
 
 class CheckRiChangExecutor(BaseExecutor):
     def __init__(self, cm: CheckRiChangCoordsManager, account_name):
@@ -73,6 +77,12 @@ class CheckRiChangExecutor(BaseExecutor):
             pyautogui.moveTo(self.cm.bei_bao_scroll_start_point()[:2])
             pyautogui.scroll(scroll_length)
             time.sleep(3)
+
+        self.go_to_world()
+        self.save_img(img_coords=self.main_region_coords, img_path=self.create_image_path('世界', 1))
+
+        click_region(self.cm.role_icon())
+        self.save_img(img_coords=self.main_region_coords, img_path=self.create_image_path('角色', 1))
 
 if __name__ == '__main__':
     

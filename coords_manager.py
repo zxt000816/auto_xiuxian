@@ -44,6 +44,10 @@ class BaseCoordsManager:
         diff = (332, 1844, 0, 0)
         return self.calculate_relative_coords(diff)
     
+    def better_exit(self):
+        diff = (380, 1844, 0, 0)
+        return self.calculate_relative_coords(diff)
+    
     def confirm_button_in_leave_alert(self): # 离开提示框-确认按钮
         diff = (584, 1224, 302, 99)
         return self.calculate_relative_coords(diff)

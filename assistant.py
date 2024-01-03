@@ -20,6 +20,14 @@ class AssistantCoordsManager(BaseCoordsManager):
     def duihuan_run_button(self):
         diff = (218, 1226, 306, 98)
         return self.calculate_relative_coords(diff)
+    
+    def menu_expansion(self):
+        diff = (976, 1743, 52, 54)
+        return self.calculate_relative_coords(diff)
+    
+    def better_exit(self):
+        diff = (370, 1844, 0, 0)
+        return self.calculate_relative_coords(diff)
 
 class AssistantExecutor(BaseExecutor):
     def __init__(self, assistant_coords_manager: AssistantCoordsManager):
@@ -114,8 +122,27 @@ class AssistantExecutor(BaseExecutor):
             {'target_region_image': 'zhi_xing_over', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
         return get_region_coords_by_multi_imgs(imgs)
+    
+    @wait_region
+    def get_email_coords(self, wait_time, target_region, is_to_click, click_wait_time):
+        return get_region_coords(
+            'email',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_yi_jian_ling_qu_coords(self, wait_time, target_region, is_to_click, click_wait_time):
+        return get_region_coords(
+            'yi_jian_ling_qu',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
 
     def execute(self):
+
         self.go_to_world()
 
         self.click_ri_chang()
@@ -138,9 +165,22 @@ class AssistantExecutor(BaseExecutor):
             except Exception as e:
                 print(e)
 
+        self.go_to_world()
+
+        click_region(self.assistant_coords_manager.menu_expansion(), seconds=2)
+
+        self.get_email_coords(wait_time=3, target_region='邮件', is_to_click=True, click_wait_time=2)
+
+        self.get_yi_jian_ling_qu_coords(wait_time=3, target_region='一键领取', is_to_click=True, click_wait_time=2)
+
+        click_region(self.assistant_coords_manager.better_exit())
+
 if __name__ == '__main__':
+
     main_region_coords = get_game_page_coords()
+
     corrds_manager = AssistantCoordsManager(main_region_coords)
+    
     executor = AssistantExecutor(corrds_manager)
 
     executor.execute()

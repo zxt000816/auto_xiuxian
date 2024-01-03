@@ -197,7 +197,7 @@ def daily_task(
                 if executor_name in ['论道', '兽渊探秘', '魔道入侵', '虚天殿']:
                     if datetime.now().hour < 11: #  11点之前不执行
                         print(f'{executor_name}未到执行时间')
-                        break
+                        continue
                 
                 if executor_name == '混沌灵塔_爬塔':
                     executor.go_up()
@@ -267,4 +267,4 @@ if __name__ == '__main__':
 
         daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)
 
-    os.system('shutdown -s -t 10') # 关机
+    # os.system('shutdown -s -t 10') # 关机

@@ -37,6 +37,10 @@ class YouliCoordsManager(BaseCoordsManager):
     def current_lingshi(self):
         diff = (573, 1372, 166, 50)
         return self.calculate_relative_coords(diff)
+    
+    def xiu_xian_zhuan(self):
+        diff = (910, 123, 50, 85)
+        return self.calculate_relative_coords(diff)
 
 class YouLiExecutor(BaseExecutor):
     def __init__(
@@ -55,8 +59,18 @@ class YouLiExecutor(BaseExecutor):
             '大晋': 'da_jin',
             '镜州': 'jing_zhou',
             '地渊冥河': 'di_yuan_ming_he',
+            '火瑚群岛': 'huo_hu_qun_dao',
         }
         self.place = self.place_name_dict[self.place_name]
+
+    @wait_region
+    def get_xiu_xian_zhuan_you_li(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        return get_region_coords(
+            'xiu_xian_zhuan_you_li',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir,
+        )
 
     @wait_region
     def get_place_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
@@ -112,15 +126,12 @@ class YouLiExecutor(BaseExecutor):
         return get_region_coords_by_multi_imgs(you_li_over_indicator_imgs)
 
     def execute(self):
+
         self.go_to_world()
 
-        self.click_ri_chang()
+        click_region(self.youli_coords_manager.xiu_xian_zhuan())
 
-        self.scroll_and_click(direction='down', scroll_seconds=3, in_ri_chang_page=False)
-        buy_button_coords = self.get_buy_button_coords(wait_time=2, target_region='购买并使用', is_to_click=False, to_raise_exception=False)
-        if buy_button_coords is not None:
-            self.buy_times_in_store(self.buy_times, to_raise_exception=True)
-            self.scroll_and_click(direction='up', in_ri_chang_page=False)
+        self.get_xiu_xian_zhuan_you_li(wait_time=3, target_region='修仙传_游历', is_to_click=True, click_wait_time=5, to_raise_exception=True)
 
         self.get_buy_icon_coords(wait_time=2, target_region='购买图标', is_to_click=True, to_raise_exception=True)
 
@@ -146,6 +157,9 @@ class YouLiExecutor(BaseExecutor):
 
             self.get_confirm_in_you_li_one_time_coords(wait_time=3, target_region='游历结束一次', is_to_click=True, to_raise_exception=True)
 
+        for _ in range(3):
+            click_region(self.youli_coords_manager.better_exit())
+
 if __name__ == '__main__':
 
     main_region_coords = get_game_page_coords() # (x, y, width, height)
@@ -154,8 +168,8 @@ if __name__ == '__main__':
     
     youli_executor = YouLiExecutor(
         youli_coords_manager=coords_manager,
-        place_name='地渊冥河', # 冰海 or 南疆
-        buy_times=3
+        place_name='地渊冥河', # 冰海 or 南疆 or 地渊冥河
+        buy_times=0
     )
 
     youli_executor.execute()

@@ -44,6 +44,10 @@ class BaseCoordsManager:
         diff = (332, 1844, 0, 0)
         return self.calculate_relative_coords(diff)
     
+    def menu_arrow(self): # 修炼界面-菜单箭头
+        diff = (959, 1733, 92, 56)
+        return self.calculate_relative_coords(diff)
+
     def better_exit(self):
         diff = (380, 1844, 0, 0)
         return self.calculate_relative_coords(diff)

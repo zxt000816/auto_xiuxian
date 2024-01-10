@@ -65,6 +65,24 @@ class ShuangXiuExecutor(BaseExecutor):
         self.gongfashu = self.gongfashu_name_dict[self.gongfashu_name]
         # self.main_region_coords = self.shuangxiu_coords_manager.main_region_coords
 
+    @wait_region
+    def get_mi_shu_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        return get_region_coords(
+            'mi_shu',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir='shuangxiu'
+        )
+    
+    @wait_region
+    def get_shuang_ren_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        return get_region_coords(
+            'shuang_ren',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir='shuangxiu'
+        )
+
     def click_shuangxiu_gongfashu(self):
         # 在日常界面中，点击双修图标
         gongfashu_coords = get_region_coords(
@@ -170,8 +188,15 @@ class ShuangXiuExecutor(BaseExecutor):
     def execute(self):
         self.go_to_world()
 
-        self.click_ri_chang()
-        self.scroll_and_click(direction='down')
+        # self.click_ri_chang()
+        # self.scroll_and_click(direction='down')
+
+        self.get_gong_fa_shu_icon_coords(wait_time=3, target_region='功法书图标', is_to_click=True, click_wait_time=3, to_raise_exception=True)
+
+        self.get_mi_shu_coords(wait_time=3, target_region='秘术', is_to_click=True, click_wait_time=3, to_raise_exception=True)
+
+        self.get_shuang_ren_coords(wait_time=3, target_region='双人', is_to_click=True, click_wait_time=3, to_raise_exception=True)
+
         self.scroll_and_click(
             direction='down', 
             other_target=self.gongfashu, 
@@ -201,6 +226,7 @@ class ShuangXiuExecutor(BaseExecutor):
             self.click_yaoqing()
         
         print("完成: 双修结束!")
+        click_region(self.shuangxiu_coords_manager.better_exit())
 
 if __name__ == '__main__':
 
@@ -211,4 +237,6 @@ if __name__ == '__main__':
     sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='百花烟雨')
 
     sx_executor.execute()
+
+    click_region(coords_manager.better_exit())
 

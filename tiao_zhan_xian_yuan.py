@@ -43,7 +43,23 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.wei_mian = wei_mian
 
     @wait_region
-    def get_open_tiao_zhan_xian_yuan_coords(self, wait_time, target_region, is_to_click=False):
+    def get_tzxy_icon_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        # tzxy_icon_coords = get_region_coords(
+        #     'tzxy_icon',
+        #     main_region_coords=self.main_region_coords,
+        #     confidence=0.7,
+        #     cat_dir=self.cat_dir
+        # )
+        # return tzxy_icon_coords
+
+        tzxy_icon_imgs = [
+            {'target_region_image': 'tzxy_icon1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'tzxy_icon2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
+        ]
+        return get_region_coords_by_multi_imgs(tzxy_icon_imgs)
+
+    @wait_region
+    def get_open_tiao_zhan_xian_yuan_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
         tiao_zhan_xian_yuan_coords = get_region_coords(
             'open_tiao_zhan_xian_yuan',
             main_region_coords=self.main_region_coords,
@@ -114,11 +130,15 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
     def execute(self, index=0):
         self.go_to_world()
         
-        self.click_ri_chang()
-        self.scroll_and_click(direction='down')
+        # self.click_ri_chang()
+        # self.scroll_and_click(direction='down')
+
+        click_region(self.tzxy_coords_manager.menu_arrow())
+
+        self.get_tzxy_icon_coords(wait_time=3, target_region='挑战仙缘图标', is_to_click=True, click_wait_time=3, to_raise_exception=True)
 
         # 确认`仙缘页面`是否打开
-        self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False)
+        self.get_open_tiao_zhan_xian_yuan_coords(wait_time=3, target_region='仙缘页面', is_to_click=False, to_raise_exception=True)
         
         if self.wei_mian == '人界':
             ren_jie_coords = self.get_ren_jie_coords(
@@ -159,11 +179,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         self.get_kan_zhao_ba_coords(wait_time=10, target_region='看招吧', is_to_click=True)
 
         # 确认`战斗结束`是否出现
-        self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True, wait_time_before_click=2)
-
-        # 确认`战斗结束2`是否出现
-        # self.get_battle_over2_coords(wait_time=10, target_region='战斗结束2', is_to_click=True, 
-        #                              other_region_coords=self.tzxy_coords_manager.exit(), wait_time_before_click=1)
+        self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True, wait_time_before_click=5)
 
 if __name__ == '__main__':
 

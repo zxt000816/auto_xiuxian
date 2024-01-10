@@ -7,7 +7,6 @@ from event_executor import BaseExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
 class FuBenCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -243,6 +242,7 @@ class FuBenExecutor(BaseExecutor):
         )
 
     def execute(self):
+
         self.go_to_world()
         
         self.click_ri_chang()
@@ -316,15 +316,15 @@ class FuBenExecutor(BaseExecutor):
         print('挑战结束!')
 
 if __name__ == '__main__':
-    try:
-        main_region_coords = get_game_page_coords(resolution = resolution)
-    except Exception as e:
-        print(f"未定位到游戏界面!")
+
+    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+
+    main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = FuBenCoordsManager(main_region_coords)
     main_region_coords = coords_manager.main_region_coords
 
-    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=3)
+    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=0)
 
     fuben_executor.get_multi_challenge_auth_coords()
     fuben_executor.execute()

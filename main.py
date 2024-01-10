@@ -60,10 +60,9 @@ def daily_task(
     mo_dao_ru_qing: bool = False,
     xu_tian_dian: bool = False,
     xian_meng_zheng_ba: bool = False,
-    check_ri_chang: bool = True,
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
-    
+    check_ri_chang: bool = True,
 ):
     wei_mian = account_task_info['wei_mian']
     if wei_mian == '人界':

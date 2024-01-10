@@ -190,10 +190,7 @@ class HunDunLingTaExecutor(BaseExecutor):
 
 if __name__ == '__main__':
     
-    try:
-        main_region_coords = get_game_page_coords(resolution = resolution)
-    except Exception as e:
-        print(f"未定位到游戏界面!")
+    main_region_coords = get_game_page_coords(resolution = resolution)
 
     corrds_manager = HunDunLingTaCoordsManager(main_region_coords)
     executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='鸿古之塔')

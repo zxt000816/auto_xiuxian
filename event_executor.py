@@ -63,6 +63,16 @@ class BaseExecutor:
             confidence=0.8,
             grayscale=False
         )
+    
+    @wait_region
+    def get_gong_fa_shu_icon_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        # 获取返回按钮的坐标
+        back_arrow_imgs = [
+            {'target_region_image': 'gong_fa_shu_icon1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': None},
+            {'target_region_image': 'gong_fa_shu_icon2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': None},
+        ]
+        back_arrow_coords = get_region_coords_by_multi_imgs(back_arrow_imgs)
+        return back_arrow_coords
 
     def get_leave_coords(self):
         # 获取离开按钮的坐标

@@ -23,6 +23,10 @@ class BaiYeCoordsManager(BaseCoordsManager):
     def drag_to(self):
         diff = (504, 1312, 0, 0)
         return self.calculate_relative_coords(diff)
+    
+    def san_qian_da_dao(self):
+        diff = (144, 1538, 118, 110)
+        return self.calculate_relative_coords(diff)
 
 class BaiYeExecutor(BaseExecutor):
     def __init__(self, by_coords_manager: BaiYeCoordsManager, event_name: str, fa_ze_level=1):
@@ -41,6 +45,15 @@ class BaiYeExecutor(BaseExecutor):
         }
         self.event = self.event_name_dict[self.event_name]
         self.fa_ze_level = fa_ze_level
+
+    @wait_region
+    def get_fa_ze_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
+        return get_region_coords(
+            'fa_ze',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir,
+        )
 
     @drag_region
     def get_event_coords(self, wait_time, target_region, is_to_click, drag_from_coords, drag_to_coords):
@@ -72,39 +85,43 @@ class BaiYeExecutor(BaseExecutor):
 
     def execute(self):
         self.go_to_world()
-        try:
-            self.click_ri_chang()
-            self.scroll_and_click(direction='down')
-            self.scroll_and_click(
-                direction='down',
-                other_target=f'{self.fa_ze_level}_kua_fa_ze',
-                other_target_name=f'{self.fa_ze_level}跨法则',
-                confidence=0.8,
-                grayscale=False,
-            )
 
-            self.get_event_coords(
-                wait_time=120, 
-                target_region=self.event_name, 
-                is_to_click=True, 
-                drag_from_coords=self.by_coords_manager.drag_from(), 
-                drag_to_coords=self.by_coords_manager.drag_to()
-            )
+        # self.click_ri_chang()
+        # self.scroll_and_click(direction='down')
 
-            bai_ye_over_coords = self.get_bai_ye_over_coords()
-            if bai_ye_over_coords:
-                raise BaiYeOverException('已拜谒!')
-            
-            self.get_bai_ye_start_coords(wait_time=10, target_region='开始拜谒', is_to_click=True)
+        self.get_gong_fa_shu_icon_coords(wait_time=3, target_region='功法书图标', is_to_click=True, click_wait_time=3, to_raise_exception=True)
 
-            bai_ye_over_coords = self.get_bai_ye_over_coords()
-            if bai_ye_over_coords:
-                raise BaiYeOverException('已拜谒!')
+        self.get_fa_ze_coords(wait_time=3, target_region='法则', is_to_click=True, click_wait_time=3, to_raise_exception=True)
+
+        click_region(self.by_coords_manager.san_qian_da_dao(), seconds=3)
+
+        self.scroll_and_click(
+            direction='down',
+            other_target=f'{self.fa_ze_level}_kua_fa_ze',
+            other_target_name=f'{self.fa_ze_level}跨法则',
+            confidence=0.8,
+            grayscale=False,
+        )
+
+        self.get_event_coords(
+            wait_time=120, 
+            target_region=self.event_name, 
+            is_to_click=True, 
+            drag_from_coords=self.by_coords_manager.drag_from(), 
+            drag_to_coords=self.by_coords_manager.drag_to()
+        )
+
+        bai_ye_over_coords = self.get_bai_ye_over_coords()
+        if bai_ye_over_coords:
+            print('已拜谒!')
+            return
         
-        except Exception as e:
-            print(e)
+        self.get_bai_ye_start_coords(wait_time=10, target_region='开始拜谒', is_to_click=True)
 
-        self.go_to_world()
+        bai_ye_over_coords = self.get_bai_ye_over_coords()
+        if bai_ye_over_coords:
+            print('已拜谒!')
+            return
 
 if __name__ == '__main__':
     
@@ -114,6 +131,6 @@ if __name__ == '__main__':
 
     coords_manager = BaiYeCoordsManager(main_region_coords)
 
-    executor = BaiYeExecutor(coords_manager, event_name='魔道', fa_ze_level=1)
+    executor = BaiYeExecutor(coords_manager, event_name='兽渊', fa_ze_level=1)
 
     executor.execute()

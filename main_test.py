@@ -88,8 +88,8 @@ args3 = {
 args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'confidence': 0.7,
-    # 'target_image_cat_dir': 'xu_tian_dian',
+    'confidence': 0.8,
+    'target_image_cat_dir': 'bai_ye',
 }
 
 get_diff_quickly = get_diff_quickly_2
@@ -98,10 +98,8 @@ diffs = get_diff_quickly(**args2)
 
 # %% 
 pyautogui.screenshot(region=diffs['target_image_coords'])
+# %% 
 
-# %% 
-# pyautogui.screenshot(region=diffs['main_region_coords'])
-# %% 
 diff_between_target_and_main = diffs['diff_between_target_and_main']
 
 print("区域坐标为: ", diff_between_target_and_main)

@@ -88,8 +88,8 @@ args3 = {
 args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'confidence': 0.8,
-    'target_image_cat_dir': 'bai_ye',
+    'confidence': 0.95,
+    'target_image_cat_dir': 'assistant',
 }
 
 get_diff_quickly = get_diff_quickly_2

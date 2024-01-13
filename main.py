@@ -5,6 +5,7 @@ from typing import Tuple
 from datetime import datetime
 from utils import get_game_page_coords, hide_yang_chong_tou, wait_for_evelen
 from name_dict import task_name_dict, task_info_name_dict
+from dotenv import load_dotenv
 
 from assistant import AssistantCoordsManager, AssistantExecutor
 from bao_ming import BaoMingCoordsManager, BaoMingExecutor
@@ -35,7 +36,10 @@ from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExec
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+
+load_dotenv()
+
+# resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
 def daily_task(
     main_region_coords: Tuple[int, int, int, int],
@@ -63,6 +67,7 @@ def daily_task(
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
     check_ri_chang: bool = True,
+    resolution: Tuple[int, int] = (1080, 1920),
 ):
     wei_mian = account_task_info['wei_mian']
     if wei_mian == '人界':
@@ -92,31 +97,31 @@ def daily_task(
     xu_tian_dian_server_nums = account_task_info.get('xu_tian_dian_server_nums', 1)
     chou_jiang_event = account_task_info.get('chou_jiang_event', '灵缈探宝')
 
-    shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords) # 兽渊探秘
-    mo_dao_ru_qing_coords_manager = MoDaoRuQingCoordsManager(main_region_coords) # 魔道入侵
-    xu_tian_dian_coords_manager = XuTianDianCoordsManager(main_region_coords) # 修炼
+    shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords, resolution=resolution) # 兽渊探秘
+    mo_dao_ru_qing_coords_manager = MoDaoRuQingCoordsManager(main_region_coords, resolution=resolution) # 魔道入侵
+    xu_tian_dian_coords_manager = XuTianDianCoordsManager(main_region_coords, resolution=resolution) # 修炼
 
-    xian_meng_zheng_ba_coords_manager = XianMengZhengBaCoordsManager(main_region_coords) # 仙盟争霸
+    xian_meng_zheng_ba_coords_manager = XianMengZhengBaCoordsManager(main_region_coords, resolution=resolution) # 仙盟争霸
 
-    ri_chang_chou_jiang_coords_manager = RiChangChouJiangCoordsManager(main_region_coords) # 日常抽奖
-    xiu_lian_coords_manager = XiuLianCoordsManager(main_region_coords) # 修炼
-    qi_xi_mo_jie_coords_manager = QiXiMoJieCoordsManager(main_region_coords) # 奇袭魔界
-    hun_dun_ling_ta_coords_manager = HunDunLingTaCoordsManager(main_region_coords) # 混沌灵塔
+    ri_chang_chou_jiang_coords_manager = RiChangChouJiangCoordsManager(main_region_coords, resolution=resolution) # 日常抽奖
+    xiu_lian_coords_manager = XiuLianCoordsManager(main_region_coords, resolution=resolution) # 修炼
+    qi_xi_mo_jie_coords_manager = QiXiMoJieCoordsManager(main_region_coords, resolution=resolution) # 奇袭魔界
+    hun_dun_ling_ta_coords_manager = HunDunLingTaCoordsManager(main_region_coords, resolution=resolution) # 混沌灵塔
     assistant_corrds_manager = AssistantCoordsManager(main_region_coords, resolution=resolution) # 小助手
     bao_ming_corrds_manager = BaoMingCoordsManager(main_region_coords, resolution=resolution) # 报名
     hong_bao_coords_manager = HongBaoCoordsManager(main_region_coords, resolution=resolution)# 红包
-    bai_ye_coords_manager = BaiYeCoordsManager(main_region_coords) # 拜谒
-    bai_zu_gong_feng_coords_manager = BaiZuGongFengCoordsManager(main_region_coords) # 百族供奉
+    bai_ye_coords_manager = BaiYeCoordsManager(main_region_coords, resolution=resolution) # 拜谒
+    bai_zu_gong_feng_coords_manager = BaiZuGongFengCoordsManager(main_region_coords, resolution=resolution) # 百族供奉
 
-    check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords) # 检查日常
+    check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords, resolution=resolution) # 检查日常
 
     youli_corrds_manager = YouliCoordsManager(main_region_coords, resolution=resolution) # 游历
     shuangxiu_corrds_manager = ShuangXiuCoordsManager(main_region_coords, resolution=resolution) # 双修
-    fu_ben_coords_manager = FuBenCoordsManager(main_region_coords) # 副本
-    tiao_zhan_xian_yuan_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords) # 挑战仙缘
-    ling_shou_coords_manager = LingShouCoordsManager(main_region_coords) # 灵兽
-    zhui_mo_gu_coords_manager = ZhuiMoGuCoordsManager(main_region_coords) # 坠魔谷
-    lun_dao_coords_manager = LunDaoCoordsManager(main_region_coords) # 论道
+    fu_ben_coords_manager = FuBenCoordsManager(main_region_coords, resolution=resolution) # 副本
+    tiao_zhan_xian_yuan_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords, resolution=resolution) # 挑战仙缘
+    ling_shou_coords_manager = LingShouCoordsManager(main_region_coords, resolution=resolution) # 灵兽
+    zhui_mo_gu_coords_manager = ZhuiMoGuCoordsManager(main_region_coords, resolution=resolution) # 坠魔谷
+    lun_dao_coords_manager = LunDaoCoordsManager(main_region_coords, resolution=resolution) # 论道
 
     shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=shou_yuan_tan_mi_server_nums, only_use_free_times=True) # 兽渊探秘
     mo_dao_ru_qing_executor = MoDaoRuQingExecutor(mo_dao_ru_qing_coords_manager, server_nums=mo_dao_ru_qing_server_nums) # 魔道入侵
@@ -224,15 +229,13 @@ def daily_task(
 
 if __name__ == '__main__':
     
-    try:
-        main_region_coords = get_game_page_coords(resolution = resolution)
-    except Exception as e:
-        print(f"未定位到游戏界面!")
+    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    game_coords_manager = GameControlCoordsManager(main_region_coords)
-    root_dir = 'C:/Users/zyf13/My Drive/auto_xiu_xian'
-    file_name = 'game_execute_info.xlsx'
-    file_path = os.path.join(root_dir, file_name)
+    main_region_coords = get_game_page_coords(resolution = resolution)
+
+    game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
+
+    file_path = os.getenv('game_execute_info_file_path')
 
     # accounts
     accounts = pd.read_excel(file_path, sheet_name='accounts')

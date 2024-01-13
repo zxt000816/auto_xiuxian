@@ -25,6 +25,18 @@ class AssistantCoordsManager(BaseCoordsManager):
         diff = (976, 1743, 52, 54)
         return self.calculate_relative_coords(diff)
     
+    def dao_yi_region(self):
+        diff = (105, 419, 889, 208)
+        return self.calculate_relative_coords(diff)
+    
+    def shen_wu_yuan_region(self):
+        diff = (105, 670, 889, 208)
+        return self.calculate_relative_coords(diff)
+
+    def zong_men_zhu_shou_region(self):
+        diff = (104, 923, 889, 208)
+        return self.calculate_relative_coords(diff)
+
     def better_exit(self):
         diff = (370, 1844, 0, 0)
         return self.calculate_relative_coords(diff)
@@ -150,11 +162,20 @@ class AssistantExecutor(BaseExecutor):
         
         for task in self.task_order:
             try:
-                task_coords = self.get_task_coords(task, wait_time=3, target_region=self.task_name_dict[task],
-                                                    is_to_click=False, to_raise_exception=False)
-                if task_coords is None:
-                    print(f"未找到{self.task_name_dict[task]}位置")
-                    continue
+                if task == 'zongmen':
+                    task_coords = self.assistant_coords_manager.zong_men_zhu_shou_region()
+                elif task == 'shenwuyuan':
+                    task_coords = self.assistant_coords_manager.shen_wu_yuan_region()
+                elif task == 'daoyi':
+                    task_coords = self.assistant_coords_manager.dao_yi_region()
+                else:
+                    raise Exception("未知任务")
+                
+                # task_coords = self.get_task_coords(task, wait_time=3, target_region=self.task_name_dict[task],
+                #                                     is_to_click=False, to_raise_exception=False)
+                # if task_coords is None:
+                #     print(f"未找到{self.task_name_dict[task]}位置")
+                #     continue
                 
                 self.search_run_button_and_click(task_coords)
 

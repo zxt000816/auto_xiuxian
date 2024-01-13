@@ -419,6 +419,6 @@ if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = MoDaoRuQingCoordsManager(main_region_coords)
-    executor = MoDaoRuQingExecutor(coords_manager, server_nums=1, use_si_bei=False)
+    executor = MoDaoRuQingExecutor(coords_manager, server_nums=4, use_si_bei=False)
 
     executor.execute()

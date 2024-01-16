@@ -32,11 +32,6 @@ def hide_yang_chong_tou(main_region_coords: Tuple[int, int, int, int], hidden_re
         ]
 
         yang_chong_tou_coords = get_region_coords_by_multi_imgs(yang_chong_tou_imgs)
-        # yang_chong_tou_coords = get_region_coords(
-        #     'yang_chong_tou',
-        #     main_region_coords,
-        #     confidence=0.7,
-        # )
         
         if yang_chong_tou_coords is None:
             return
@@ -71,7 +66,7 @@ def get_game_page_coords(resolution=(1080, 1920)):
         
         game_page_coords = pyautogui.locateOnScreen(
             './FanRenXiuXianIcon_{}_{}/{}.png'.format(resolution[0], resolution[1], game_page),
-            confidence=0.7
+            confidence=0.95
         )
         if game_page_coords is not None:
             return game_page_coords

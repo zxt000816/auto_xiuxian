@@ -18,6 +18,7 @@ task_name_dict = {
     '魔道入侵': 'mo_dao_ru_qing', 
     '虚天殿': 'xu_tian_dian',
     '仙盟争霸': 'xian_meng_zheng_ba', 
+    '云梦试剑': 'yun_meng_shi_jian',
     '爬天梯': 'pa_tian_ti',
     '百族供奉': 'bai_zu_gong_feng',
 }
@@ -46,4 +47,5 @@ task_info_name_dict = {
     '兽渊探秘': 'shou_yuan_tan_mi_server_nums',
     '魔道入侵': 'mo_dao_ru_qing_server_nums',
     '虚天殿': 'xu_tian_dian_server_nums',
+    '云梦试剑': 'yun_meng_shi_jian_server_nums',
 }

@@ -28,10 +28,6 @@ class BaseCoordsManager:
 
         return (left_top_x, left_top_y, width, height)
     
-    # def world(self): # 修炼界面-世界地图图标
-    #     diff = (30, 1695, 250, 214)
-    #     return self.calculate_relative_coords(diff)
-    
     def map_or_leave(self): # 在世界地图界面是`大地图`, 不在世界地图界面是`离开`
         diff = (919, 847, 148, 182)
         return self.calculate_relative_coords(diff)

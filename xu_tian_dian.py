@@ -53,22 +53,28 @@ class XuTianDianCoordsManager(BaseCoordsManager):
     #     return self.calculate_relative_coords(diff)
 
 class XuTianDianExecutor(BaseExecutor):
-    def __init__(self, xtd_coords_manager: XuTianDianCoordsManager, server_nums: int, use_si_bei: bool = False):
+    def __init__(self, xtd_coords_manager: XuTianDianCoordsManager, use_si_bei: bool = False):
         super().__init__(xtd_coords_manager)
         self.xtd_coords_manager = xtd_coords_manager
-        self.server_nums = server_nums
+        # self.server_nums = server_nums
         self.use_si_bei = use_si_bei
-        self.event_name = f'虚天殿[{self.server_nums}]跨'
+        self.event_name = f'虚天殿'
         self.cat_dir = 'xu_tian_dian'
 
     @wait_region
     def get_xu_tian_dian_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
-        return get_region_coords(
-            f'xu_tian_dian_{self.server_nums}',
-            main_region_coords=self.main_region_coords,
-            confidence=0.8,
-            cat_dir=self.cat_dir ,
-        )
+        # return get_region_coords(
+        #     f'xu_tian_dian_{self.server_nums}',
+        #     main_region_coords=self.main_region_coords,
+        #     confidence=0.8,
+        #     cat_dir=self.cat_dir ,
+        # )
+        xu_tian_dian_imgs = [
+            {'target_region_image': 'xu_tian_dian_16', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': False, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'xu_tian_dian_2', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'grayscale': False, 'cat_dir': self.cat_dir},
+        ]
+
+        return get_region_coords_by_multi_imgs(xu_tian_dian_imgs)
     
     @wait_region
     def get_ke_ling_qu_coords(self, search_region_coords, wait_time, target_region, is_to_click, to_raise_exception):
@@ -135,7 +141,7 @@ class XuTianDianExecutor(BaseExecutor):
         )
     
     @wait_region
-    def get_xu_tian_bao_tu_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+    def get_xu_tian_bao_tu_coords(self, wait_time, target_region, is_to_click, wait_time_before_click, to_raise_exception):
         xu_tian_bao_tu_imgs = [
             {'target_region_image': 'xu_tian_bao_tu1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'xu_tian_bao_tu2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
@@ -163,7 +169,7 @@ class XuTianDianExecutor(BaseExecutor):
     
     def check_skip_tan_cha(self):
         
-        self.get_xu_tian_bao_tu_coords(wait_time=3, target_region="虚天宝图", is_to_click=True, to_raise_exception=True)
+        self.get_xu_tian_bao_tu_coords(wait_time=3, target_region="虚天宝图", is_to_click=True, wait_time_before_click=3, to_raise_exception=True)
 
         skip_tan_cha_coords = self.get_skip_tan_cha_coords(wait_time=3, target_region="跳过探查", is_to_click=False, to_raise_exception=False)
         
@@ -291,7 +297,7 @@ class XuTianDianExecutor(BaseExecutor):
 
         click_region(self.xtd_coords_manager.ri_cheng())
 
-        self.get_xu_tian_dian_coords(wait_time=3, target_region=self.event_name, is_to_click=True, to_raise_exception=True)
+        self.get_xu_tian_dian_coords(wait_time=20, target_region=self.event_name, is_to_click=True, to_raise_exception=True)
 
         # 超过60秒, 就退出
         start_time = time.time()
@@ -322,20 +328,20 @@ class XuTianDianExecutor(BaseExecutor):
         self.get_qian_wang_alert_coords(wait_time=3, target_region="进入活动提醒", is_to_click=True, to_raise_exception=True)
 
         while True:
-            xu_tian_bao_tu_coords = self.get_xu_tian_bao_tu_coords(wait_time=3, target_region="虚天宝图", is_to_click=False, to_raise_exception=False)
+            xu_tian_bao_tu_coords = self.get_xu_tian_bao_tu_coords(wait_time=3, target_region="虚天宝图",  is_to_click=False, wait_time_before_click=3, to_raise_exception=False)
             if xu_tian_bao_tu_coords is not None:
                 click_region(xu_tian_bao_tu_coords)
                 whether_skip_tan_cha_coords = self.get_whether_skip_tan_cha_coords(wait_time=2, target_region="是否跳过探查", is_to_click=False, to_raise_exception=False)
                 if whether_skip_tan_cha_coords is not None:
                     print(f"动画结束, 退出!")
-                    click_region(self.xtd_coords_manager.exit())
+                    click_region(self.xtd_coords_manager.better_exit())
                     break
 
-            click_region(self.xtd_coords_manager.exit_2(), seconds=1)
+            click_region(self.xtd_coords_manager.better_exit(), seconds=1)
 
         self.check_skip_tan_cha()
 
-        self.get_auto_tiao_zhan_coords(wait_time=3, target_region="自动挑战", is_to_click=True, to_raise_exception=True)
+        self.get_auto_tiao_zhan_coords(wait_time=3, target_region="自动挑战", is_to_click=True, to_raise_exception=False)
 
         while True:
             open_coords = self.get_open_coords(wait_time=3, target_region="打开", is_to_click=True, to_raise_exception=False)
@@ -359,7 +365,7 @@ class XuTianDianExecutor(BaseExecutor):
         click_region(self.xtd_coords_manager.ri_cheng())
 
         self.get_xu_tian_dian_coords(
-            wait_time=3,
+            wait_time=20,
             target_region=self.event_name,
             is_to_click=True,
             to_raise_exception=True,
@@ -372,6 +378,6 @@ if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = XuTianDianCoordsManager(main_region_coords)
-    executor = XuTianDianExecutor(coords_manager, server_nums=2, use_si_bei=False)
+    executor = XuTianDianExecutor(coords_manager, use_si_bei=False)
 
     executor.execute()

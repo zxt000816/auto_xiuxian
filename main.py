@@ -31,6 +31,7 @@ from game_control import GameControlCoordsManager, GameControlExecutor
 from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
 from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
 from xu_tian_dian import XuTianDianCoordsManager, XuTianDianExecutor
+from yun_meng_shi_jian import YunMengShiJianCoordsManager, YunMengShiJianExecutor
 
 from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
 
@@ -63,9 +64,11 @@ def daily_task(
     shou_yuan_tan_mi: bool = False,
     mo_dao_ru_qing: bool = False,
     xu_tian_dian: bool = False,
+    yun_meng_shi_jian: bool = False,
     xian_meng_zheng_ba: bool = False,
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
+    # check_ri_chang: bool = False,
     check_ri_chang: bool = True,
     resolution: Tuple[int, int] = (1080, 1920),
 ):
@@ -94,12 +97,14 @@ def daily_task(
     dao_chang_level = account_task_info['dao_chang_level']
     shou_yuan_tan_mi_server_nums = account_task_info.get('shou_yuan_tan_mi_server_nums', 1)
     mo_dao_ru_qing_server_nums = account_task_info.get('mo_dao_ru_qing_server_nums', 1)
-    xu_tian_dian_server_nums = account_task_info.get('xu_tian_dian_server_nums', 1)
+    # xu_tian_dian_server_nums = account_task_info.get('xu_tian_dian_server_nums', 1)
+    yun_meng_shi_jian_server_nums = account_task_info.get('yun_meng_shi_jian_server_nums', 1)
     chou_jiang_event = account_task_info.get('chou_jiang_event', '灵缈探宝')
 
     shou_yuan_tan_mi_coords_manager = ShouYuanTanMiCoordsManager(main_region_coords, resolution=resolution) # 兽渊探秘
     mo_dao_ru_qing_coords_manager = MoDaoRuQingCoordsManager(main_region_coords, resolution=resolution) # 魔道入侵
-    xu_tian_dian_coords_manager = XuTianDianCoordsManager(main_region_coords, resolution=resolution) # 修炼
+    xu_tian_dian_coords_manager = XuTianDianCoordsManager(main_region_coords, resolution=resolution) # 虚天殿
+    yun_meng_shi_jian_coords_manager = YunMengShiJianCoordsManager(main_region_coords, resolution=resolution) # 云梦试剑
 
     xian_meng_zheng_ba_coords_manager = XianMengZhengBaCoordsManager(main_region_coords, resolution=resolution) # 仙盟争霸
 
@@ -125,7 +130,9 @@ def daily_task(
 
     shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=shou_yuan_tan_mi_server_nums, only_use_free_times=True) # 兽渊探秘
     mo_dao_ru_qing_executor = MoDaoRuQingExecutor(mo_dao_ru_qing_coords_manager, server_nums=mo_dao_ru_qing_server_nums) # 魔道入侵
-    xu_tian_dian_executor = XuTianDianExecutor(xu_tian_dian_coords_manager, server_nums=xu_tian_dian_server_nums) # 修炼
+    # xu_tian_dian_executor = XuTianDianExecutor(xu_tian_dian_coords_manager, server_nums=xu_tian_dian_server_nums) # 虚天殿
+    xu_tian_dian_executor = XuTianDianExecutor(xu_tian_dian_coords_manager) # 虚天殿
+    yun_meng_shi_jian_executor = YunMengShiJianExecutor(yun_meng_shi_jian_coords_manager, server_nums=yun_meng_shi_jian_server_nums) # 云梦试剑
 
     xian_meng_zheng_ba_executor = XianMengZhengBaExecutor(xian_meng_zheng_ba_coords_manager) # 仙盟争霸
 
@@ -161,9 +168,9 @@ def daily_task(
         '报名': (bao_ming_executor, bao_ming),
         '红包': (hong_bao_executor, hong_bao),
         '小助手': (assistant_executor, assistant),
-        '修炼': (xiu_lian_executor, xiu_lian),
         '拜谒': (bai_ye_executor, bai_ye),
         '百族供奉': (bai_zu_gong_feng_executor, bai_zu_gong_feng),
+        '修炼': (xiu_lian_executor, xiu_lian),
 
         '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
         '混沌灵塔_扫荡': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
@@ -178,6 +185,7 @@ def daily_task(
         '兽渊探秘': (shou_yuan_tan_mi_executor, shou_yuan_tan_mi),
         '魔道入侵': (mo_dao_ru_qing_executor, mo_dao_ru_qing),
         '虚天殿': (xu_tian_dian_executor, xu_tian_dian),
+        '云梦试剑': (yun_meng_shi_jian_executor, yun_meng_shi_jian),
 
         '仙盟争霸': (xian_meng_zheng_ba_executor, xian_meng_zheng_ba),
 
@@ -186,10 +194,13 @@ def daily_task(
         '检查日常': (check_ri_chang_executor, check_ri_chang),
     }
 
-    hide_yang_chong_tou(
-        main_region_coords=main_region_coords,
-        hidden_region_coords=hun_dun_ling_ta_coords_manager.yang_chong_tou_hidden()[:2]
-    )
+    # try:
+    #     hide_yang_chong_tou(
+    #         main_region_coords=main_region_coords,
+    #         hidden_region_coords=hun_dun_ling_ta_coords_manager.yang_chong_tou_hidden()[:2]
+    #     )
+    # except Exception as e:
+    #     print(f'隐藏洋葱头失败: {e}')
 
     for executor_name, if_execute in all_executor.items():
         executor, if_execute = if_execute
@@ -230,8 +241,11 @@ def daily_task(
 if __name__ == '__main__':
     
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+    # resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
 
     main_region_coords = get_game_page_coords(resolution = resolution)
+
+    pyautogui.screenshot(region=main_region_coords)
 
     game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
 

@@ -3,8 +3,8 @@ import pyautogui
 import numpy as np
 from typing import Tuple
 from utils import *
-from coords_manager import QiXiMoJieCoordsManager, BaseCoordsManager
-from event_executor import QiXiMoJieExecutor, BaseExecutor
+from coords_manager import BaseCoordsManager
+from event_executor import BaseExecutor
 from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01

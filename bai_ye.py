@@ -4,13 +4,12 @@ import pyautogui
 import numpy as np
 from typing import Tuple
 from utils import *
-from coords_manager import BaseCoordsManager, BaiYeCoordsManager
-from event_executor import BaseExecutor, BaiYeExecutor
+from coords_manager import BaseCoordsManager
+from event_executor import BaseExecutor
 from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-
 
 class BaiYeCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):

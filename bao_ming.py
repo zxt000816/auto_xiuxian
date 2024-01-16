@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple
 from utils import *
 from coords_manager import BaseCoordsManager
-from event_executor import BaoMingExecutor, BaseExecutor
+from event_executor import BaseExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True

@@ -105,17 +105,17 @@ class GameControlExecutor(BaseExecutor):
             cat_dir=self.cat_dir
         )
     
-    @wait_region
-    def get_start_game_successfully_coords(self, wait_time, target_region):
-        start_game_successfully_imgs = [
-            {'target_region_image': 'start_game_successfully1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-            {'target_region_image': 'start_game_successfully2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-            {'target_region_image': 'start_game_successfully3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-            {'target_region_image': 'start_game_successfully4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-            {'target_region_image': 'start_game_successfully5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-            {'target_region_image': 'start_game_successfully6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-        ]
-        return get_region_coords_by_multi_imgs(start_game_successfully_imgs)
+    # @wait_region
+    # def get_start_game_successfully_coords(self, wait_time, target_region):
+    #     start_game_successfully_imgs = [
+    #         {'target_region_image': 'start_game_successfully1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+    #         {'target_region_image': 'start_game_successfully2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+    #         {'target_region_image': 'start_game_successfully3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+    #         {'target_region_image': 'start_game_successfully4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+    #         {'target_region_image': 'start_game_successfully5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+    #         {'target_region_image': 'start_game_successfully6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
+    #     ]
+    #     return get_region_coords_by_multi_imgs(start_game_successfully_imgs)
 
     @wait_region
     def get_vip_fu_li_coords(self, wait_time, target_region, is_to_click, other_region_coords, wait_time_before_click, to_raise_exception):
@@ -134,6 +134,34 @@ class GameControlExecutor(BaseExecutor):
             confidence=0.7,
             cat_dir=self.cat_dir
         )
+    
+    def hide_yang_chong_tou(self):
+        
+        yang_chong_tou_imgs = [
+            {'target_region_image': 'yang_chong_tou1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False},
+            {'target_region_image': 'yang_chong_tou2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False},
+        ]
+
+        yang_chong_tou_coords = get_region_coords_by_multi_imgs(yang_chong_tou_imgs)
+        
+        if yang_chong_tou_coords is None:
+            return
+        
+        yang_chong_tou_center_coords = calculate_center_coords(yang_chong_tou_coords)
+
+        hidden_region_coords = self.cc_coords_manager.yang_chong_tou_hidden()[:2]
+
+        pyautogui.moveTo(yang_chong_tou_center_coords[0], yang_chong_tou_center_coords[1])
+        pyautogui.dragTo(hidden_region_coords, duration=2) 
+
+        time.sleep(2)
+
+        confirm_hide_yang_chong_tou_coords = get_region_coords(
+            'confirm_hide_yang_chong_tou',
+            self.main_region_coords,
+            confidence=0.7,
+        )
+        click_region(confirm_hide_yang_chong_tou_coords)
     
     def exit_current_account(self):
         self.go_to_world()
@@ -219,8 +247,8 @@ class GameControlExecutor(BaseExecutor):
             to_raise_exception=False
         )
 
-        # 等待开始游戏成功
-        # self.get_start_game_successfully_coords(wait_time=30, target_region="开始游戏成功")
+        # 隐藏洋葱头
+        self.hide_yang_chong_tou()
 
 if __name__ == "__main__":
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)

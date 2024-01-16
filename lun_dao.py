@@ -33,9 +33,10 @@ class LunDaoExecutor(BaseExecutor):
         self.dao_chang_name = self.dao_change_name_dict[dao_chang_level]
 
     @wait_region
-    def get_empty_place_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+    # def get_ru_zuo_coords(self, wait_time, target_region, is_to_click, other_region_coords, to_raise_exception):
+    def get_ru_zuo_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
         return get_region_coords(
-            'empty_place',
+            'ru_zuo',
             main_region_coords=self.main_region_coords,
             confidence=0.9,
             cat_dir=self.cat_dir,
@@ -140,11 +141,11 @@ class LunDaoExecutor(BaseExecutor):
             is_to_click=True,
         )
 
-        self.get_empty_place_coords(
+        self.get_ru_zuo_coords(
             wait_time=5,
             target_region='空座位',
             is_to_click=True,
-            other_region_coords=self.ld_coords_manager.ru_zuo_coords(),
+            # other_region_coords=self.ld_coords_manager.ru_zuo_coords(),
             to_raise_exception=True,
         )
 

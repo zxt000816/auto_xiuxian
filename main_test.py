@@ -89,7 +89,7 @@ args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.95,
-    'target_image_cat_dir': 'assistant',
+    'target_image_cat_dir': 'yun_meng_shi_jian',
 }
 
 get_diff_quickly = get_diff_quickly_2

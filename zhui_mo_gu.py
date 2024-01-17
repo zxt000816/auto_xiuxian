@@ -157,14 +157,6 @@ class ZhuiMoGuExecutor(BaseExecutor):
     
     @wait_region
     def get_shou_ling_page_indicator_coords(self, wait_time, target_region, to_raise_exception):
-        # shou_ling_page_indicator_coords = get_region_coords(
-        #     'shou_ling_page_indicator',
-        #     main_region_coords=self.main_region_coords,
-        #     confidence=0.7,
-        #     cat_dir=self.cat_dir,
-        # )
-        # return shou_ling_page_indicator_coords
-    
         shou_ling_icon_imgs = [
                 {'target_region_image': 'shou_ling_page_indicator1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
                 {'target_region_image': 'shou_ling_page_indicator3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},

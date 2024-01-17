@@ -194,14 +194,6 @@ def daily_task(
         '检查日常': (check_ri_chang_executor, check_ri_chang),
     }
 
-    # try:
-    #     hide_yang_chong_tou(
-    #         main_region_coords=main_region_coords,
-    #         hidden_region_coords=hun_dun_ling_ta_coords_manager.yang_chong_tou_hidden()[:2]
-    #     )
-    # except Exception as e:
-    #     print(f'隐藏洋葱头失败: {e}')
-
     for executor_name, if_execute in all_executor.items():
         executor, if_execute = if_execute
         if if_execute:

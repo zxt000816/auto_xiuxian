@@ -10,5 +10,11 @@ while True:
     if keyboard.is_pressed('1'):
         pyautogui.click(pyautogui.position())
         time.sleep(0.05)
+
+    if keyboard.is_pressed('2'):
+        pyautogui.mouseDown()
+
+    if keyboard.is_pressed('3'):
+        pyautogui.mouseUp()
     
-# pyautogui.mouseDown()
+# pyautogui.mouseDown()1

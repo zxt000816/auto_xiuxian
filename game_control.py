@@ -198,7 +198,7 @@ class GameControlExecutor(BaseExecutor):
                 direction='down',
                 other_target=self.account,
                 other_target_name=self.account_name,
-                confidence=0.7,
+                confidence=0.8,
                 cat_dir='users',
                 scroll_length=300,
                 scroll_seconds=3,

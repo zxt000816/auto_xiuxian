@@ -1,6 +1,9 @@
 task_name_dict = {
+    '检查日常': 'check_ri_chang',
+    '检查任务': 'check_all_tasks',
     '日常抽奖': 'ri_chang_chou_jiang',
-    '混沌灵塔': 'hun_dun_ling_ta', 
+    '混沌灵塔扫荡': 'hun_dun_ling_ta_sao_dang', 
+    '混沌灵塔爬塔': 'hun_dun_ling_ta_go_up',
     '小助手': 'assistant', 
     '报名': 'bao_ming', 
     '红包': 'hong_bao', 

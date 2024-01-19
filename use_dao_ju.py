@@ -370,9 +370,9 @@ class UseDaoJuExecutor(BaseExecutor):
         
         self.go_to_world()
 
-        # self.use_role()
+        self.use_role()
         
-        self.use_gong_fa()
+        # self.use_gong_fa()
 
 if __name__ == '__main__':
 

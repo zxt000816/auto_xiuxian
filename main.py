@@ -18,7 +18,9 @@ from lun_dao import LunDaoCoordsManager, LunDaoExecutor
 from qi_xi_mo_jie import QiXiMoJieCoordsManager, QiXiMoJieExecutor
 from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
 
+from check_all_tasks import CheckAllTasksCoordsManager, CheckAllTasksExecutor
 from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
+
 from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
 from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
 from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
@@ -40,8 +42,6 @@ pyautogui.FAILSAFE = True
 
 load_dotenv()
 
-# resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-
 def daily_task(
     main_region_coords: Tuple[int, int, int, int],
     account_name: str,
@@ -49,7 +49,9 @@ def daily_task(
     ri_chang_chou_jiang: bool = True,
     xiu_lian: bool = True,
     qi_xi_mo_jie: bool = True,
-    hun_dun_ling_ta: bool = True,
+    # hun_dun_ling_ta: bool = True,
+    hun_dun_ling_ta_sao_dang: bool = True, # 混沌灵塔扫荡
+    hun_dun_ling_ta_go_up: bool = True, # 混沌灵塔爬塔
     assistant: bool = True,
     bao_ming: bool = True,
     hong_bao: bool = True,
@@ -68,8 +70,8 @@ def daily_task(
     xian_meng_zheng_ba: bool = False,
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
-    # check_ri_chang: bool = False,
     check_ri_chang: bool = True,
+    check_all_tasks: bool = False,
     resolution: Tuple[int, int] = (1080, 1920),
 ):
     wei_mian = account_task_info['wei_mian']
@@ -97,7 +99,6 @@ def daily_task(
     dao_chang_level = account_task_info['dao_chang_level']
     shou_yuan_tan_mi_server_nums = account_task_info.get('shou_yuan_tan_mi_server_nums', 1)
     mo_dao_ru_qing_server_nums = account_task_info.get('mo_dao_ru_qing_server_nums', 1)
-    # xu_tian_dian_server_nums = account_task_info.get('xu_tian_dian_server_nums', 1)
     yun_meng_shi_jian_server_nums = account_task_info.get('yun_meng_shi_jian_server_nums', 1)
     chou_jiang_event = account_task_info.get('chou_jiang_event', '灵缈探宝')
 
@@ -119,6 +120,7 @@ def daily_task(
     bai_zu_gong_feng_coords_manager = BaiZuGongFengCoordsManager(main_region_coords, resolution=resolution) # 百族供奉
 
     check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords, resolution=resolution) # 检查日常
+    check_all_tasks_coords_manager = CheckAllTasksCoordsManager(main_region_coords, resolution=resolution) # 检查任务
 
     youli_corrds_manager = YouliCoordsManager(main_region_coords, resolution=resolution) # 游历
     shuangxiu_corrds_manager = ShuangXiuCoordsManager(main_region_coords, resolution=resolution) # 双修
@@ -130,7 +132,6 @@ def daily_task(
 
     shou_yuan_tan_mi_executor = ShouYuanTanMiExecutor(shou_yuan_tan_mi_coords_manager, server_nums=shou_yuan_tan_mi_server_nums, only_use_free_times=True) # 兽渊探秘
     mo_dao_ru_qing_executor = MoDaoRuQingExecutor(mo_dao_ru_qing_coords_manager, server_nums=mo_dao_ru_qing_server_nums) # 魔道入侵
-    # xu_tian_dian_executor = XuTianDianExecutor(xu_tian_dian_coords_manager, server_nums=xu_tian_dian_server_nums) # 虚天殿
     xu_tian_dian_executor = XuTianDianExecutor(xu_tian_dian_coords_manager) # 虚天殿
     yun_meng_shi_jian_executor = YunMengShiJianExecutor(yun_meng_shi_jian_coords_manager, server_nums=yun_meng_shi_jian_server_nums) # 云梦试剑
 
@@ -147,6 +148,7 @@ def daily_task(
     bai_zu_gong_feng_executor = BaiZuGongFengExecutor(bai_zu_gong_feng_coords_manager, buy_times=bai_zu_gong_feng_buy_times) # 百族供奉
 
     check_ri_chang_executor = CheckRiChangExecutor(check_ri_chang_coords_manager, account_name) # 检查日常
+    check_all_tasks_executor = CheckAllTasksExecutor(check_all_tasks_coords_manager) # 检查任务
 
     shuangxiu_executor = ShuangXiuExecutor(shuangxiu_corrds_manager, gongfashu_name=shuangxiu_gongfashu_name) # 双修
     tiao_zhan_xian_yuan_executor = TiaoZhanXianYuanExecutor(tiao_zhan_xian_yuan_coords_manager, xian_yuan_role_name=tiao_zhan_xian_yuan_role_name, wei_mian=xian_yuan_wei_mian) # 挑战仙缘
@@ -158,6 +160,24 @@ def daily_task(
 
     pa_tian_ti_coords_manager = PaTianTiCoordsManager(main_region_coords) # 爬天梯
     pa_tian_ti_executor = PaTianTiExecutor(pa_tian_ti_coords_manager) # 爬天梯
+
+    if check_all_tasks:
+        try:
+            finished_tasks = check_all_tasks_executor.execute()
+            print(f'完成的任务: {finished_tasks}')
+            # 用户设置为True, 任务检查为True时, 才会执行
+            ling_shou = all([ling_shou, finished_tasks.get('ling_shou', True)]) 
+            youli = all([youli, finished_tasks.get('youli', True)])
+            fuben = all([fuben, finished_tasks.get('fuben', True)])
+            bai_zu_gong_feng = all([bai_zu_gong_feng, finished_tasks.get('bai_zu_gong_feng', True)])
+            shuangxiu = all([shuangxiu, finished_tasks.get('shuangxiu', True)])
+            xiu_lian = all([xiu_lian, finished_tasks.get('xiu_lian', True)])
+            tiao_zhan_xian_yuan = all([tiao_zhan_xian_yuan, finished_tasks.get('tiao_zhan_xian_yuan', True)])
+            zhui_mo_gu = all([zhui_mo_gu, finished_tasks.get('zhui_mo_gu', True)])
+            lun_dao = all([lun_dao, finished_tasks.get('lun_dao', True)])
+            bai_ye = all([bai_ye, finished_tasks.get('bai_ye', True)])
+        except Exception as e:
+            print(f'检查任务失败: {e}')
 
     all_executor = {
 
@@ -172,8 +192,8 @@ def daily_task(
         '百族供奉': (bai_zu_gong_feng_executor, bai_zu_gong_feng),
         '修炼': (xiu_lian_executor, xiu_lian),
 
-        '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
-        '混沌灵塔_扫荡': (hun_dun_ling_ta_executor, hun_dun_ling_ta),
+        '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta_go_up),
+        '混沌灵塔_扫荡': (hun_dun_ling_ta_executor, hun_dun_ling_ta_sao_dang),
 
         '挑战仙缘': (tiao_zhan_xian_yuan_executor, tiao_zhan_xian_yuan),
         '游历': (youli_executor, youli),

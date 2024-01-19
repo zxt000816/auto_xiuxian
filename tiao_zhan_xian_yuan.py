@@ -44,14 +44,6 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
 
     @wait_region
     def get_tzxy_icon_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
-        # tzxy_icon_coords = get_region_coords(
-        #     'tzxy_icon',
-        #     main_region_coords=self.main_region_coords,
-        #     confidence=0.7,
-        #     cat_dir=self.cat_dir
-        # )
-        # return tzxy_icon_coords
-
         tzxy_icon_imgs = [
             {'target_region_image': 'tzxy_icon1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'tzxy_icon2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},

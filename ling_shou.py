@@ -103,6 +103,16 @@ class LingShouExecutor(BaseExecutor):
             {'target_region_image': 'buy_times_not_enough2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
         return get_region_coords_by_multi_imgs(buy_times_not_enough_indicator_imgs)
+    
+    @wait_region
+    def get_kuai_su_sao_dang_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        kuai_su_sao_dang_coords = get_region_coords(
+            'kuai_su_sao_dang',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir
+        )
+        return kuai_su_sao_dang_coords
 
     def execute(self):
         self.go_to_world()
@@ -126,6 +136,12 @@ class LingShouExecutor(BaseExecutor):
 
         self.get_buy_times_icon_coords(target_region='购买次数图标')
         actual_buy_times = self.buy_times_in_store(self.buy_times, 'buy_times_not_enough1')
+
+        kuai_su_sao_dang_coords = self.get_kuai_su_sao_dang_coords(wait_time=3, target_region='快速扫荡', is_to_click=False, to_raise_exception=False)
+        if kuai_su_sao_dang_coords is not None:
+            print("完成: 已经开启快速扫荡!")
+            self.get_qian_wang_jiao_mie_coords(wait_time=10, target_region='前往剿灭', is_to_click=True)
+
 
         # 如果不存储次数, 那么将购买的次数加到挑战次数上
         if self.to_save_times is False:

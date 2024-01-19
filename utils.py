@@ -206,28 +206,6 @@ def click_if_coords_exist(func):
             
     return wrapper
 
-# def wait_region(func):
-#     def wrapper(self, *args, **kwargs):
-#         start_time = time.time()
-#         wait_time = kwargs.get('wait_time', 3)
-#         target_region = kwargs.get('target_region', None)
-#         is_to_click = kwargs.get('is_to_click', False)
-#         click_wait_time = kwargs.get('click_wait_time', 2)
-#         print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
-#         while True:
-#             if time.time() - start_time > wait_time:
-#                 raise TargetRegionNotFoundException(f"完成: 等待超时, `{target_region}`未出现!")
-            
-#             result_coords = func(self, *args, **kwargs)
-#             if result_coords:
-#                 print(f"完成: `{target_region}`出现!")
-#                 if is_to_click:
-#                     click_region(result_coords, seconds=click_wait_time)
-#                     print(f"完成: 点击{target_region}!")
-#                 return result_coords
-
-#     return wrapper
-
 def wait_region(func):
     def wrapper(self, *args, **kwargs):
         start_time = time.time()

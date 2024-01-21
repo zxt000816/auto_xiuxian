@@ -53,15 +53,15 @@ class YouLiExecutor(BaseExecutor):
         self.youli_coords_manager = youli_coords_manager
         self.place_name = place_name
         self.buy_times = buy_times
-        self.place_name_dict = {
-            '南疆': 'nan_jiang',
-            '冰海': 'bing_hai',
-            '大晋': 'da_jin',
-            '镜州': 'jing_zhou',
-            '地渊冥河': 'di_yuan_ming_he',
-            '火瑚群岛': 'huo_hu_qun_dao',
-        }
-        self.place = self.place_name_dict[self.place_name]
+        # self.place_name_dict = {
+        #     '镜州': 'jing_zhou',
+        #     '冰海': 'bing_hai',
+        #     '大晋': 'da_jin',
+        #     '南疆': 'nan_jiang',
+        #     '地渊冥河': 'di_yuan_ming_he',
+        #     '火瑚群岛': 'huo_hu_qun_dao',
+        # }
+        # self.place = self.place_name_dict[self.place_name]
 
     @wait_region
     def get_xiu_xian_zhuan_you_li(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
@@ -72,14 +72,26 @@ class YouLiExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
 
+    # @wait_region
+    # def get_place_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+    #     return get_region_coords(
+    #         self.place,
+    #         main_region_coords=self.main_region_coords,
+    #         confidence=0.8,
+    #         cat_dir=self.cat_dir,
+    #     )
+    
     @wait_region
     def get_place_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
-        return get_region_coords(
-            self.place,
-            main_region_coords=self.main_region_coords,
-            confidence=0.8,
-            cat_dir=self.cat_dir,
-        )
+        place_imgs = [
+            {'target_region_image': 'huo_hu_qun_dao', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'di_yuan_ming_he', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'nan_jiang', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'da_jin', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'bing_hai', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'jing_zhou', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+        ]
+        return get_region_coords_by_multi_imgs(place_imgs)
     
     @wait_region
     def get_buy_icon_coords(self, wait_time, target_region, is_to_click, to_raise_exception):

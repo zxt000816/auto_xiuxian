@@ -1,33 +1,66 @@
 import pyautogui
 import time
 import numpy as np
-from utils import get_region_coords_by_multi_imgs, get_region_coords, get_game_page_coords, move_to_specific_coords, scroll_specific_length, extract_int_from_image
+from utils import get_region_coords_by_multi_imgs, get_region_coords, get_game_page_coords
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
-
+from typing import Tuple
 import adbutils
-adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
-d = adb.device(serial="emulator-5560")
-
-main_region_coords = get_game_page_coords()
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
-def scroll_specific_length(length: int, seconds: int = 3):
+adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+global device
+global main_region_coords
+
+device = adb.device(serial="emulator-5560")
+main_region_coords = get_game_page_coords()
+
+def scroll_specific_length(
+    start_x: float,
+    end_x: float,
+    start_y: float,
+    end_y: float,
+    seconds: int = 3, 
+    # main_region_coords: Tuple[int, int, int, int] = (0, 0, 1080, 1920)
+):
     # minus length means scroll down
     # plus length means scroll up
-    start_x, start_y = 540, 1280
-    end_x, end_y = 540, 640
-    d.swipe(start_x, start_y, end_x, end_y, duration=1.5)
+
+    print(main_region_coords)
+    
+    width = main_region_coords[2]
+    height = main_region_coords[3]
+
+    start_x = start_x * width
+    start_x = int(round(start_x))
+
+    end_x = end_x * width
+    end_x = int(round(end_x))
+
+    start_y = start_y * height
+    start_y = int(round(start_y))
+
+    end_y = end_y * height
+    end_y = int(round(end_y))
+
+    print(f"swipe: ({start_x}, {start_y}) -> ({end_x}, {end_y})")
+    device.swipe(start_x, start_y, end_x, end_y, duration=1.5)
     time.sleep(seconds)
 
-def click_region(region_coords, button='left', seconds=2):
+def click_region(
+    region_coords, 
+    button='left', 
+    seconds=2, 
+    # main_region_coords=(0, 0, 1080, 1920)
+):
     x, y = pyautogui.center(region_coords)
     x = x - main_region_coords[0]
     y = y - main_region_coords[1]
-    d.click(x, y)
+    device.click(x, y)
     time.sleep(seconds)
 
 def wait_region(func):
@@ -68,6 +101,7 @@ def wait_region(func):
 def wait_region(func):
     def wrapper(self, *args, **kwargs):
         start_time = time.time()
+        device = kwargs.get('device', None)
         wait_time = kwargs.get('wait_time', 3)
         target_region = kwargs.get('target_region', None)
         is_to_click = kwargs.get('is_to_click', False)
@@ -150,7 +184,7 @@ class BaseExecutor:
         self.cat_dir = self.cat_dirs.get(self.target, None)
 
     @wait_region
-    def get_general_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+    def get_general_coords(self, wait_time, target_region, is_to_click, to_raise_exception, device):
         return get_region_coords(
             'general',
             main_region_coords=self.main_region_coords,
@@ -346,7 +380,7 @@ class BaseExecutor:
                 scroll_start_point_coords = self.coords_manager.scroll_start_point()
                 scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
             
-            move_to_specific_coords(scroll_start_point_coords)
+            # move_to_specific_coords(scroll_start_point_coords)
             print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
         scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
@@ -354,7 +388,14 @@ class BaseExecutor:
 
         while target_coords is None and num_of_scroll > 0:
             print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
-            scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            # scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=scroll_seconds,
+            )
             
             target_coords = get_region_coords(
                 target, 
@@ -411,7 +452,7 @@ class BaseExecutor:
             scroll_start_point_coords = self.coords_manager.scroll_start_point()
             scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
             
-            move_to_specific_coords(scroll_start_point_coords)
+            # move_to_specific_coords(scroll_start_point_coords)
             print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
         scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
@@ -419,7 +460,14 @@ class BaseExecutor:
 
         while target_coords is None and num_of_scroll > 0:
             print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
-            scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            # scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=scroll_seconds,
+            )
             
             target_coords = get_region_coords_by_multi_imgs(targets_imgs_info)
             num_of_scroll -= 1

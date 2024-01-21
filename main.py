@@ -3,7 +3,7 @@ import pyautogui
 import pandas as pd
 from typing import Tuple
 from datetime import datetime
-from utils import get_game_page_coords, hide_yang_chong_tou, wait_for_evelen
+from utils import get_game_page_coords, wait_for_evelen
 from name_dict import task_name_dict, task_info_name_dict
 from dotenv import load_dotenv
 
@@ -256,8 +256,6 @@ if __name__ == '__main__':
     # resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
 
     main_region_coords = get_game_page_coords(resolution = resolution)
-
-    pyautogui.screenshot(region=main_region_coords)
 
     game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
 

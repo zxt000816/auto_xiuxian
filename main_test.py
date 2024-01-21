@@ -89,7 +89,7 @@ args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.95,
-    'target_image_cat_dir': 'use_dao_ju',
+    'target_image_cat_dir': None,
 }
 
 get_diff_quickly = get_diff_quickly_2

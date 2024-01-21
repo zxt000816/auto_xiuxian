@@ -123,13 +123,6 @@ class XianMengZhengBaExecutor(BaseExecutor):
         ]
 
         return get_region_coords_by_multi_imgs(meng_ling_imgs)
-
-        # return get_region_coords(
-        #     'meng_ling',
-        #     main_region_coords=self.main_region_coords,
-        #     confidence=0.7,
-        #     cat_dir=self.cat_dir ,
-        # )
     
     @wait_region
     def get_qian_wang_da_zhen_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
@@ -253,51 +246,51 @@ class XianMengZhengBaExecutor(BaseExecutor):
 
     def execute(self):
 
-        self.go_to_world()
+        # self.go_to_world()
 
-        click_region(self.xmzb_cm.ri_cheng())
+        # click_region(self.xmzb_cm.ri_cheng())
 
-        self.get_xian_meng_zheng_ba_coords(
-            wait_time=3,
-            target_region=self.event_name,
-            is_to_click=True,
-            to_raise_exception=True,
-        )
+        # self.get_xian_meng_zheng_ba_coords(
+        #     wait_time=3,
+        #     target_region=self.event_name,
+        #     is_to_click=True,
+        #     to_raise_exception=True,
+        # )
 
-        self.get_alert_before_qian_wang_zhan_chang_coords(wait_time=2, target_region="消息提醒", is_to_click=True, other_region_coords=self.xmzb_cm.exit(), to_raise_exception=False)
+        # self.get_alert_before_qian_wang_zhan_chang_coords(wait_time=2, target_region="消息提醒", is_to_click=True, other_region_coords=self.xmzb_cm.exit(), to_raise_exception=False)
 
-        # 超过60秒, 就退出
-        start_time = time.time()
-        while True:
-            if time.time() - start_time > 60:
-                print(f"已超过60秒, 退出!")
-                break
+        # # 超过60秒, 就退出
+        # start_time = time.time()
+        # while True:
+        #     if time.time() - start_time > 60:
+        #         print(f"已超过60秒, 退出!")
+        #         break
 
-            ke_ling_qu_coords = self.get_ke_ling_qu_coords(
-                search_region_coords=self.xmzb_cm.xian_meng_zheng_ba_menus(),
-                wait_time=3,
-                target_region="底部菜单-可领取",
-                is_to_click=True,
-                to_raise_exception=False,
-            )
+        #     ke_ling_qu_coords = self.get_ke_ling_qu_coords(
+        #         search_region_coords=self.xmzb_cm.xian_meng_zheng_ba_menus(),
+        #         wait_time=3,
+        #         target_region="底部菜单-可领取",
+        #         is_to_click=True,
+        #         to_raise_exception=False,
+        #     )
 
-            if ke_ling_qu_coords is None:
-                print(f"已领取完毕!")
-                break
+        #     if ke_ling_qu_coords is None:
+        #         print(f"已领取完毕!")
+        #         break
 
-            self.ling_qu()
+        #     self.ling_qu()
 
-        self.get_main_page_coords(wait_time=2, target_region="主界面", is_to_click=True, to_raise_exception=False)
+        # self.get_main_page_coords(wait_time=2, target_region="主界面", is_to_click=True, to_raise_exception=False)
 
-        self.get_qian_wang_zhan_chang_coords(wait_time=2, target_region="前往战场", is_to_click=True, wait_time_before_click=1, to_raise_exception=True)
+        # self.get_qian_wang_zhan_chang_coords(wait_time=2, target_region="前往战场", is_to_click=True, wait_time_before_click=1, to_raise_exception=True)
 
-        self.get_skip_dong_hua_coords(wait_time=10, target_region="跳过动画", is_to_click=True, wait_time_before_click=2, to_raise_exception=False)
+        # self.get_skip_dong_hua_coords(wait_time=10, target_region="跳过动画", is_to_click=True, wait_time_before_click=2, to_raise_exception=False)
 
-        time.sleep(10)
+        # time.sleep(10)
 
-        self.get_meng_ling_coords(wait_time=30, target_region="盟令", is_to_click=True, wait_time_before_click=2, to_raise_exception=True)
+        # self.get_meng_ling_coords(wait_time=30, target_region="盟令", is_to_click=True, wait_time_before_click=2, to_raise_exception=True)
 
-        self.get_qian_wang_da_zhen_coords(wait_time=2, target_region="前往大阵", is_to_click=True, to_raise_exception=True)
+        # self.get_qian_wang_da_zhen_coords(wait_time=2, target_region="前往大阵", is_to_click=True, to_raise_exception=True)
 
         gong_ji_coords = self.get_gong_ji_coords(wait_time=10, target_region="攻击", is_to_click=False, to_raise_exception=True)
 

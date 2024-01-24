@@ -2,7 +2,7 @@ import time
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -122,9 +122,6 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
     def execute(self, index=0):
         self.go_to_world()
         
-        # self.click_ri_chang()
-        # self.scroll_and_click(direction='down')
-
         click_region(self.tzxy_coords_manager.menu_arrow())
 
         self.get_tzxy_icon_coords(wait_time=3, target_region='挑战仙缘图标', is_to_click=True, click_wait_time=3, to_raise_exception=True)
@@ -152,7 +149,6 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
                 other_target_name=self.xian_yuan_role_name, 
                 confidence=0.8,
                 num_of_scroll=10,
-                scroll_length=400, 
                 scroll_seconds=4
             )
         except Exception as e:

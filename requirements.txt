@@ -5,3 +5,7 @@ python-dotenv
 pytesseract
 pandas
 openpyxl
+adbutils
+ipykernel
+matplotlib
+keyboard

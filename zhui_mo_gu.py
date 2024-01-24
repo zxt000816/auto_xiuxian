@@ -3,7 +3,7 @@ import pyautogui
 import numpy as np
 import pandas as pd
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -64,10 +64,17 @@ class ZhuiMoGuExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
 
-        move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-        scroll_length = self.calculate_scroll_length(-1000)
+        # move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
+        # scroll_length = self.calculate_scroll_length(-1000)
         # scroll_specific_length(-1000 * self.coords_manager.y_ratio, seconds=3)
-        scroll_specific_length(scroll_length, seconds=3)
+        # scroll_specific_length(scroll_length, seconds=3)
+        scroll_specific_length(
+            start_x=0.5,
+            end_x=0.5,
+            start_y=0.66,
+            end_y=0.33,
+            seconds=3,
+        )
 
         return scroll_end_indicator_coords
     
@@ -92,10 +99,17 @@ class ZhuiMoGuExecutor(BaseExecutor):
             ]
 
         any_available_coords = get_region_coords_by_multi_imgs(any_available_imgs)
-        scroll_length = self.calculate_scroll_length(500)
+        # scroll_length = self.calculate_scroll_length(500)
         if any_available_coords is None:
-            move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-            scroll_specific_length(scroll_length, seconds=3)
+            # move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
+            # scroll_specific_length(scroll_length, seconds=3)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=3,
+            )
         
         return any_available_coords
     
@@ -202,7 +216,6 @@ class ZhuiMoGuExecutor(BaseExecutor):
         
         if method == '日常图标':
             self.click_ri_chang()
-            # self.scroll_and_click(direction='down')
             self.scroll_and_click_by_multiple_imgs(
                 direction='down',
                 targets_imgs_info=[

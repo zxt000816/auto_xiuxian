@@ -3,7 +3,7 @@ from datetime import datetime
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -308,7 +308,7 @@ class XianMengZhengBaExecutor(BaseExecutor):
         while True:
             if cnt % 10 == 0 and multiple_tiao_zhan_enabled is False:
                 click_region(self.xmzb_cm.multiple_tiao_zhan_region())
-                pyautogui.moveTo(self.xmzb_cm.exit()[:2])
+                # pyautogui.moveTo(self.xmzb_cm.exit()[:2])
 
                 multiple_tiao_zhan_enabled_coords = self.get_multiple_tiao_zhan_enabled_coords(
                     wait_time=2, target_region="多次挑战-可用", is_to_click=False, to_raise_exception=False
@@ -317,7 +317,7 @@ class XianMengZhengBaExecutor(BaseExecutor):
 
             if cnt % 3 == 0 and skip_tiao_zhan_enabled is False:
                 click_region(self.xmzb_cm.skip_zhan_dou_region())
-                pyautogui.moveTo(self.xmzb_cm.exit()[:2])
+                # pyautogui.moveTo(self.xmzb_cm.exit()[:2])
 
                 skip_tiao_zhan_enabled_coords = self.get_skip_tiao_zhan_enabled_coords(
                     wait_time=2, target_region="跳过战斗-可用", is_to_click=False, to_raise_exception=False

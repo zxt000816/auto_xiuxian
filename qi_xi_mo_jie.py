@@ -2,7 +2,7 @@ import time
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -110,7 +110,7 @@ class QiXiMoJieExecutor(BaseExecutor):
 
         self.get_can_yu_jin_gong(wait_time=5, target_region='参与进攻', is_to_click=True, other_region_coords=None, to_raise_exception=True)
 
-        self.get_kun_nan(wait_time=3, target_region='困难', is_to_click=True, other_region_coords=None, to_raise_exception=True)
+        self.get_kun_nan(wait_time=5, target_region='困难', is_to_click=True, other_region_coords=None, to_raise_exception=True)
 
         self.get_chuang_jian_dui_wu_coords(wait_time=3, target_region='创建队伍', is_to_click=True, other_region_coords=None, to_raise_exception=True)
 
@@ -123,6 +123,7 @@ if __name__ == "__main__":
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
     main_region_coords = get_game_page_coords(resolution = resolution)
+    # main_region_coords = (0, 0, 1080, 1920)
 
     coords_manager = QiXiMoJieCoordsManager(main_region_coords)
 

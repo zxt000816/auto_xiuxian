@@ -3,7 +3,7 @@ from datetime import datetime
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -163,10 +163,17 @@ class UseDaoJuExecutor(BaseExecutor):
         )
     
     def scroll_to_top(self, scroll_start_point_coords, scroll_length, scroll_seconds, scroll_times=5):
-        pyautogui.moveTo(scroll_start_point_coords)
-        scroll_length = self.calculate_scroll_length(scroll_length)
+        # pyautogui.moveTo(scroll_start_point_coords)
+        # scroll_length = self.calculate_scroll_length(scroll_length)
         for _ in range(scroll_times):
-            scroll_specific_length(scroll_length, scroll_seconds)
+            # scroll_specific_length(scroll_length, scroll_seconds)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.33,
+                end_y=0.66,
+                seconds=scroll_seconds,
+            )
 
     @wait_region
     def get_rong_he_coords(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):

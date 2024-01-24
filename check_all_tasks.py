@@ -2,7 +2,7 @@ import time
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -77,8 +77,15 @@ class CheckAllTasksExecutor(BaseExecutor):
         for scroll_idx in range(1, num_of_scroll):
             
             if scroll_idx != 1:
-                pyautogui.moveTo(self.cat_coords_manager.scroll_start_point()[:2])
-                scroll_specific_length(self.calculate_scroll_length(-300))
+                # pyautogui.moveTo(self.cat_coords_manager.scroll_start_point()[:2])
+                # scroll_specific_length(self.calculate_scroll_length(-300))
+                scroll_specific_length(
+                    start_x=0.5,
+                    end_x=0.5,
+                    start_y=0.66,
+                    end_y=0.33,
+                    seconds=2,
+                )
 
             for task in self.all_tasks:
                 if all_tasks_check_state[task] is True:

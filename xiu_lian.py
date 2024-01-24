@@ -3,7 +3,7 @@ import pyautogui
 import numpy as np
 import pandas as pd
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -334,7 +334,6 @@ class XiuLianExecutor(BaseExecutor):
                     other_target_name='潜修真悟',
                     confidence=0.7,
                     num_of_scroll=4,
-                    scroll_length=300,
                     scroll_seconds=3,
                     grayscale=False,
                     scroll_start_point_coords=self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2],
@@ -367,7 +366,14 @@ class XiuLianExecutor(BaseExecutor):
         for _ in range(3):
             print("滚动到顶部!")
             pyautogui.moveTo(self.xl_coords_manager.jing_yan_store_scroll_start_point()[:2])
-            scroll_specific_length(scroll_length, seconds=1)
+            # scroll_specific_length(scroll_length, seconds=1)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.33,
+                end_y=0.66,
+                seconds=1,
+            )
 
         self.xiu_lian_xin_de_level_up()
         pyautogui.mouseDown()

@@ -2,7 +2,7 @@ import pyautogui
 import numpy as np
 from typing import Tuple
 import time
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -139,9 +139,16 @@ class ShuangXiuExecutor(BaseExecutor):
             'cat_dir': 'shuangxiu'
         }
 
-        scroll_length = self.calculate_scroll_length(600)
+        # scroll_length = self.calculate_scroll_length(600)
         while get_region_coords(**args) is None:
-            scroll_specific_length(length=scroll_length)
+            # scroll_specific_length(length=scroll_length)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=3,
+            )
 
         yaoqing_coords = get_region_coords(**args)
         click_region(yaoqing_coords, seconds=3)
@@ -201,7 +208,6 @@ class ShuangXiuExecutor(BaseExecutor):
             direction='down', 
             other_target=self.gongfashu, 
             other_target_name=self.gongfashu_name,
-            scroll_length=400,
             scroll_seconds=3
         )
         self.click_yaoqing_daoyou()

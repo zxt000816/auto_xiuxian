@@ -2,7 +2,7 @@ import time
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from swy_coords_manager import BaseCoordsManager
 from swy_event_executor import BaseExecutor
 from xiuxian_exception import *

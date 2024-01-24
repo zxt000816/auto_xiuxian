@@ -3,7 +3,7 @@ from datetime import datetime
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from swy_coords_manager import BaseCoordsManager
 from swy_event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -245,7 +245,6 @@ class MoDaoRuQingExecutor(BaseExecutor):
             other_target_name=target_name,
             confidence=0.7,
             num_of_scroll=5,
-            scroll_length=300,
             scroll_seconds=3,
             cat_dir=self.cat_dir,
             in_ri_chang_page=False,
@@ -307,7 +306,7 @@ class MoDaoRuQingExecutor(BaseExecutor):
         click_region(self.mdrq_coords_manager.ri_cheng())
 
         self.get_mo_dao_ru_qing_coords(
-            wait_time=3,
+            wait_time=10,
             target_region=self.event_name,
             is_to_click=True,
             to_raise_exception=True,
@@ -350,7 +349,6 @@ class MoDaoRuQingExecutor(BaseExecutor):
         self.get_qian_wang_da_di_tu_coords(wait_time=2, target_region="进入活动", is_to_click=True, to_raise_exception=True)
         
         self.process_others()
-
 
         while True:
             self.get_tan_cha_coords(wait_time=2, target_region="探查", is_to_click=True, to_raise_exception=True)
@@ -407,7 +405,7 @@ class MoDaoRuQingExecutor(BaseExecutor):
         click_region(self.mdrq_coords_manager.ri_cheng())
 
         self.get_mo_dao_ru_qing_coords(
-            wait_time=3,
+            wait_time=10,
             target_region=self.event_name,
             is_to_click=True,
             to_raise_exception=True,

@@ -1,5 +1,5 @@
 from coords_manager import *
-from utils import *
+from utils_adb import *
 import pyautogui
 import time
 import numpy as np
@@ -214,7 +214,10 @@ class BaseExecutor:
         other_target_name=None,
         confidence=0.8,
         num_of_scroll=12, 
-        scroll_length=300,
+        start_x=0.5,
+        end_x=0.5,
+        start_y=0.66,
+        end_y=0.33,
         scroll_seconds=3,
         grayscale=False,
         scroll_start_point_coords=None,
@@ -247,20 +250,28 @@ class BaseExecutor:
         )
         print(f"完成: 识别一次{target_name}位置")
 
-        if target_coords is None:
-            if scroll_start_point_coords is None:
-                scroll_start_point_coords = self.coords_manager.scroll_start_point()
-                scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
+        # if target_coords is None:
+            # if scroll_start_point_coords is None:
+            #     scroll_start_point_coords = self.coords_manager.scroll_start_point()
+            #     scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
             
-            move_to_specific_coords(scroll_start_point_coords)
-            print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
+            # move_to_specific_coords(scroll_start_point_coords)
+            # print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
-        scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
-        scroll_length = self.calculate_scroll_length(scroll_length)
+        # scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
+        # scroll_length = self.calculate_scroll_length(scroll_length)
 
         while target_coords is None and num_of_scroll > 0:
-            print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
-            scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            print(f"完成: 未找到{target_name}位置!")
+            # print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
+            # scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            scroll_specific_length(
+                start_x=start_x,
+                end_x=end_x,
+                start_y=start_y,
+                end_y=end_y,
+                seconds=scroll_seconds,
+            )
             
             target_coords = get_region_coords(
                 target, 
@@ -302,6 +313,10 @@ class BaseExecutor:
         targets_imgs_info, 
         target_name,
         num_of_scroll=12, 
+        start_x=0.5,
+        end_x=0.5,
+        start_y=0.66,
+        end_y=0.33,
         scroll_length=300,
         scroll_seconds=3,
         in_ri_chang_page=True,
@@ -317,15 +332,22 @@ class BaseExecutor:
             scroll_start_point_coords = self.coords_manager.scroll_start_point()
             scroll_start_point_coords = (scroll_start_point_coords[0], scroll_start_point_coords[1])
             
-            move_to_specific_coords(scroll_start_point_coords)
-            print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
+        #     move_to_specific_coords(scroll_start_point_coords)
+        #     print(f"完成: 未找到{target_name}位置, 将鼠标移动到指定位置")
         
-        scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
-        scroll_length = self.calculate_scroll_length(scroll_length)
+        # scroll_length = -1 * scroll_length if direction == 'down' else scroll_length
+        # scroll_length = self.calculate_scroll_length(scroll_length)
 
         while target_coords is None and num_of_scroll > 0:
             print(f"完成: 未找到{target_name}位置, 向下滚动距离{scroll_length}")
-            scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            # scroll_specific_length(scroll_length, seconds=scroll_seconds)
+            scroll_specific_length(
+                start_x=start_x,
+                end_x=end_x,
+                start_y=start_y,
+                end_y=end_y,
+                seconds=scroll_seconds,
+            )
             
             target_coords = get_region_coords_by_multi_imgs(targets_imgs_info)
             num_of_scroll -= 1
@@ -479,8 +501,8 @@ class BaoMingExecutor(BaseExecutor):
     def click_huo_dong_bao_ming(self):
         click_region(self.coords_manager.huo_dong_bao_ming(), seconds=3)
         print("完成: 点击报名按钮")
-        x, y = list(self.coords_manager.scroll_start_point())[:2]
-        move_to_specific_coords((x, y), seconds=1)
+        # x, y = list(self.coords_manager.scroll_start_point())[:2]
+        # move_to_specific_coords((x, y), seconds=1)
     
     def start_baoming(self):
         baoming_region_coords = self.baoming_coords_manager.baoming_region()
@@ -504,7 +526,14 @@ class BaoMingExecutor(BaseExecutor):
                     break
                 num_to_scroll -= 1
 
-                scroll_specific_length(scroll_length, seconds=4)
+                # scroll_specific_length(scroll_length, seconds=4)
+                scroll_specific_length(
+                    start_x=0.5,
+                    end_x=0.5,
+                    start_y=0.66,
+                    end_y=0.33,
+                    seconds=3,
+                )
                 continue
                 
             click_region(baoming_coords, seconds=2)
@@ -842,7 +871,14 @@ class ShuangXiuExecutor(BaseExecutor):
         while get_region_coords(**args) is None:
             # scroll_length = 600 * self.shuangxiu_coords_manager.y_ratio
             # scroll_length = int(round(scroll_length))
-            scroll_specific_length(length=scroll_length)
+            # scroll_specific_length(length=scroll_length)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=3,
+            )
 
         yaoqing_coords = get_region_coords(**args)
         click_region(yaoqing_coords, seconds=3)
@@ -904,7 +940,6 @@ class ShuangXiuExecutor(BaseExecutor):
                 direction='down', 
                 other_target=self.gongfashu, 
                 other_target_name=self.gongfashu_name,
-                scroll_length=400,
                 scroll_seconds=3
             )
             self.click_yaoqing_daoyou()
@@ -1478,7 +1513,6 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
                 other_target_name=self.xian_yuan_role_name, 
                 confidence=0.7,
                 num_of_scroll=20,
-                scroll_length=400, 
                 scroll_seconds=4
             )
             click_region(self.tzxy_coords_manager.qian_wang())
@@ -1745,11 +1779,18 @@ class ZhuiMoGuExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
 
-        move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
+        # move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
         # scroll_length = int(1000 * self.coords_manager.y_ratio)
         # scroll_specific_length(-1000 * self.coords_manager.y_ratio, seconds=3)
-        scroll_length = self.calculate_scroll_length(-1000)
-        scroll_specific_length(scroll_length, seconds=3)
+        # scroll_length = self.calculate_scroll_length(-1000)
+        # scroll_specific_length(scroll_length, seconds=3)
+        scroll_specific_length(
+            start_x=0.5,
+            end_x=0.5,
+            start_y=0.66,
+            end_y=0.33,
+            seconds=3,
+        )
 
         return scroll_end_indicator_coords
     
@@ -1769,8 +1810,15 @@ class ZhuiMoGuExecutor(BaseExecutor):
         scroll_length = self.calculate_scroll_length(500)
 
         if any_available_coords is None:
-            move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
-            scroll_specific_length(scroll_length, seconds=3)
+            # move_to_specific_coords(self.zmg_coords_manager.shou_ling_scroll_start_point()[:2], seconds=1)
+            # scroll_specific_length(scroll_length, seconds=3)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=3,
+            )
         
         return any_available_coords
     
@@ -2094,7 +2142,6 @@ class GameControlExecutor(BaseExecutor):
                 other_target_name=self.account_name,
                 confidence=0.7,
                 cat_dir='users',
-                scroll_length=300,
                 scroll_seconds=3,
                 scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
                 is_to_click=True,

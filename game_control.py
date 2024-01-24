@@ -1,6 +1,6 @@
 import time
 import pyautogui
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -81,11 +81,18 @@ class GameControlExecutor(BaseExecutor):
         )
 
     def scroll_to_top(self, scroll_start_point_coords, scroll_length, scroll_seconds, scroll_times=5):
-        pyautogui.moveTo(scroll_start_point_coords)
-        scroll_length = self.calculate_scroll_length(scroll_length)
+        # pyautogui.moveTo(scroll_start_point_coords)
+        # scroll_length = self.calculate_scroll_length(scroll_length)
         for _ in range(scroll_times):
             # scroll_specific_length(scroll_length * self.coords_manager.y_ratio, scroll_seconds)
-            scroll_specific_length(scroll_length, scroll_seconds)
+            # scroll_specific_length(scroll_length, scroll_seconds)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.6,
+                end_y=0.8,
+                seconds=scroll_seconds,
+            )
 
     @wait_region
     def get_login_successfully_coords(self, wait_time, target_region, is_to_click, other_region_coords):
@@ -104,18 +111,6 @@ class GameControlExecutor(BaseExecutor):
             confidence=0.7,
             cat_dir=self.cat_dir
         )
-    
-    # @wait_region
-    # def get_start_game_successfully_coords(self, wait_time, target_region):
-    #     start_game_successfully_imgs = [
-    #         {'target_region_image': 'start_game_successfully1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-    #         {'target_region_image': 'start_game_successfully2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-    #         {'target_region_image': 'start_game_successfully3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-    #         {'target_region_image': 'start_game_successfully4', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-    #         {'target_region_image': 'start_game_successfully5', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-    #         {'target_region_image': 'start_game_successfully6', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': 'game_control'},
-    #     ]
-    #     return get_region_coords_by_multi_imgs(start_game_successfully_imgs)
 
     @wait_region
     def get_vip_fu_li_coords(self, wait_time, target_region, is_to_click, other_region_coords, wait_time_before_click, to_raise_exception):
@@ -191,7 +186,7 @@ class GameControlExecutor(BaseExecutor):
             self.scroll_to_top(
                 scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
                 scroll_length=1000,
-                scroll_seconds=1,
+                scroll_seconds=2,
             )
             # 滚动账户列表, 点击指定账户
             self.scroll_and_click(
@@ -200,7 +195,10 @@ class GameControlExecutor(BaseExecutor):
                 other_target_name=self.account_name,
                 confidence=0.9,
                 cat_dir='users',
-                scroll_length=300,
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.6,
+                end_y=0.5,
                 scroll_seconds=3,
                 scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
                 is_to_click=True,
@@ -248,7 +246,7 @@ class GameControlExecutor(BaseExecutor):
         )
 
         # 隐藏洋葱头
-        self.hide_yang_chong_tou()
+        # self.hide_yang_chong_tou()
 
 if __name__ == "__main__":
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
@@ -256,8 +254,6 @@ if __name__ == "__main__":
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = GameControlCoordsManager(main_region_coords)
-    account_name_ls = ['野菜花', '白起(仙山)', '白起(黄河)', '晴雪']
 
-    for account_name in account_name_ls:
-        executor = GameControlExecutor(coords_manager, account_name=account_name)
-        executor.execute()
+    executor = GameControlExecutor(coords_manager, account_name='初心', account='37zd1300qpqnpp5')
+    executor.execute()

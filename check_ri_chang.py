@@ -1,5 +1,5 @@
 import pyautogui
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -60,13 +60,19 @@ class CheckRiChangExecutor(BaseExecutor):
 
         self.click_ri_chang()
 
-        scroll_length = self.calculate_scroll_length(-300)
+        # scroll_length = self.calculate_scroll_length(-300)
         for index in range(1, 4+1):
             self.save_img(img_coords=self.main_region_coords, img_path=self.create_image_path('日常', index))
             # pyautogui.moveTo(self.cm.scroll_start_point()[:2])
-            pyautogui.moveTo(self.cm.bei_bao_scroll_start_point()[:2])
+            # pyautogui.moveTo(self.cm.bei_bao_scroll_start_point()[:2])
             # pyautogui.scroll(-300 * self.coords_manager.y_ratio)
-            pyautogui.scroll(scroll_length)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=2,
+            )
             time.sleep(3)
 
         self.go_to_world()
@@ -74,8 +80,15 @@ class CheckRiChangExecutor(BaseExecutor):
         click_region(self.cm.chu_wu_dai_coords()) 
         for index in range(1, 14+1):
             self.save_img(img_coords=self.main_region_coords, img_path=self.create_image_path('背包', index))
-            pyautogui.moveTo(self.cm.bei_bao_scroll_start_point()[:2])
-            pyautogui.scroll(scroll_length)
+            # pyautogui.moveTo(self.cm.bei_bao_scroll_start_point()[:2])
+            # pyautogui.scroll(scroll_length)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.66,
+                end_y=0.33,
+                seconds=2,
+            )
             time.sleep(3)
 
         self.go_to_world()

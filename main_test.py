@@ -1,5 +1,5 @@
 import pyautogui
-from utils import *
+from utils_adb import *
 from coords_manager import *
 
 pyautogui.PAUSE = 0.01

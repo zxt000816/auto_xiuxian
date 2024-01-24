@@ -1,7 +1,7 @@
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 
@@ -27,9 +27,9 @@ class BaoMingExecutor(BaseExecutor):
 
     def click_huo_dong_bao_ming(self):
         click_region(self.coords_manager.huo_dong_bao_ming(), seconds=3)
-        print("完成: 点击报名按钮")
-        x, y = list(self.coords_manager.scroll_start_point())[:2]
-        move_to_specific_coords((x, y), seconds=1)
+        # print("完成: 点击报名按钮")
+        # x, y = list(self.coords_manager.scroll_start_point())[:2]
+        # move_to_specific_coords((x, y), seconds=1)
     
     def start_baoming(self):
         baoming_region_coords = self.baoming_coords_manager.baoming_region()
@@ -51,7 +51,14 @@ class BaoMingExecutor(BaseExecutor):
                     break
                 num_to_scroll -= 1
 
-                scroll_specific_length(scroll_length, seconds=4)
+                # scroll_specific_length(scroll_length, seconds=4)
+                scroll_specific_length(
+                    start_x=0.5,
+                    end_x=0.5,
+                    start_y=0.66,
+                    end_y=0.33,
+                    seconds=2,
+                )
                 continue
                 
             click_region(baoming_coords, seconds=2)

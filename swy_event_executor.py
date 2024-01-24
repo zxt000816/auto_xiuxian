@@ -1,6 +1,6 @@
 from event_executor import BaseExecutor
 from swy_coords_manager import *
-from utils import *
+from utils_adb import *
 from xiuxian_exception import *
 
 class ShouYuanTanMiExecutor(BaseExecutor):

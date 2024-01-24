@@ -3,7 +3,7 @@ from datetime import datetime
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -137,7 +137,7 @@ class RiChangChouJiangExecutor(BaseExecutor):
             lmtb_qi_zhen_next_coords = self.get_lmtb_qi_zhen_next_coords(wait_time=5, target_region="切换下一个", is_to_click=True, 
                                                                          click_wait_time=1, to_raise_exception=False)
             
-            pyautogui.moveTo(self.rccj_coords_manager.avoid_hide_next()[:2])
+            # pyautogui.moveTo(self.rccj_coords_manager.avoid_hide_next()[:2])
             if lmtb_qi_zhen_next_coords is None:
                 print("领取灵石完成!")
                 break

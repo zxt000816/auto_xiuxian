@@ -1,7 +1,7 @@
 import pyautogui
 import time
 import numpy as np
-from utils import get_region_coords_by_multi_imgs, get_region_coords, get_game_page_coords
+from utils_adb import get_region_coords_by_multi_imgs, get_region_coords, get_game_page_coords, extract_int_from_image
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *

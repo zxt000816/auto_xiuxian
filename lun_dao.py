@@ -3,7 +3,7 @@ import pyautogui
 import numpy as np
 import pandas as pd
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -133,7 +133,6 @@ class LunDaoExecutor(BaseExecutor):
             other_target_name=self.dao_chang_name,
             confidence=0.9,
             num_of_scroll=2,
-            scroll_length=300,
             scroll_seconds=3,
             grayscale=False,
             cat_dir=self.cat_dir,

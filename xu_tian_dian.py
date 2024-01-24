@@ -3,7 +3,7 @@ from datetime import datetime
 import pyautogui
 import numpy as np
 from typing import Tuple
-from utils import *
+from utils_adb import *
 from swy_coords_manager import BaseCoordsManager
 from swy_event_executor import BaseExecutor
 from xiuxian_exception import *
@@ -268,7 +268,6 @@ class XuTianDianExecutor(BaseExecutor):
             other_target_name=target_name,
             confidence=0.7,
             num_of_scroll=5,
-            scroll_length=300,
             scroll_seconds=3,
             cat_dir=self.cat_dir,
             in_ri_chang_page=False,

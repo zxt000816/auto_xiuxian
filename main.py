@@ -3,7 +3,8 @@ import pyautogui
 import pandas as pd
 from typing import Tuple
 from datetime import datetime
-from utils import get_game_page_coords, wait_for_evelen
+# from utils_adb import get_game_page_coords, wait_for_evelen
+from utils_adb import get_game_page_coords, wait_for_evelen
 from name_dict import task_name_dict, task_info_name_dict
 from dotenv import load_dotenv
 
@@ -174,7 +175,7 @@ def daily_task(
             xiu_lian = all([xiu_lian, finished_tasks.get('xiu_lian', True)])
             tiao_zhan_xian_yuan = all([tiao_zhan_xian_yuan, finished_tasks.get('tiao_zhan_xian_yuan', True)])
             zhui_mo_gu = all([zhui_mo_gu, finished_tasks.get('zhui_mo_gu', True)])
-            lun_dao = all([lun_dao, finished_tasks.get('lun_dao', True)])
+            # lun_dao = all([lun_dao, finished_tasks.get('lun_dao', True)])
             bai_ye = all([bai_ye, finished_tasks.get('bai_ye', True)])
         except Exception as e:
             print(f'检查任务失败: {e}')
@@ -256,6 +257,7 @@ if __name__ == '__main__':
     # resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
 
     main_region_coords = get_game_page_coords(resolution = resolution)
+    # main_region_coords = (0, 0, resolution[0], resolution[1])
 
     game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
 

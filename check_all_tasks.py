@@ -133,5 +133,6 @@ if __name__ == '__main__':
 
     coords_manager = CheckAllTasksCoordsManager(main_region_coords)
     executor = CheckAllTasksExecutor(coords_manager)
+    
     executor.execute()
 

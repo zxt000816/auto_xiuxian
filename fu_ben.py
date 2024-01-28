@@ -1,7 +1,7 @@
+import time
 import pyautogui
-import numpy as np
-from typing import Tuple
-from utils_adb import *
+from utils_adb import get_region_coords, get_region_coords_by_multi_imgs, wait_region, click_region, \
+                      click_if_coords_exist, get_game_page_coords
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 
@@ -75,7 +75,7 @@ class FuBenExecutor(BaseExecutor):
         multi_challenge_auth_coords = get_region_coords(
             'multi_challenge_auth',
             main_region_coords=self.main_region_coords,
-            confidence=0.8,
+            confidence=0.9,
             cat_dir=self.cat_dir
         )
         return multi_challenge_auth_coords
@@ -160,8 +160,8 @@ class FuBenExecutor(BaseExecutor):
 
         click_region(self.fb_coords_manager.fen_shen_page(), seconds=2)
 
-        start_time = time.time()
         # 等待20秒
+        start_time = time.time()
         while True:
             if time.time() - start_time > 20:
                 break
@@ -173,8 +173,8 @@ class FuBenExecutor(BaseExecutor):
                 print("完成: 队伍人满!")
                 break
         
-        start_time = time.time()
         # 等待10秒
+        start_time = time.time()
         while self.get_tiao_zhan_coords() is None:
             click_region(self.fb_coords_manager.exit(), seconds=2)
 
@@ -232,8 +232,9 @@ class FuBenExecutor(BaseExecutor):
             confidence=0.7,
             cat_dir=self.cat_dir
         )
-        
-    def get_times_not_enough(self):
+    
+    @wait_region
+    def get_times_not_enough(self, wait_time, target_region, is_to_click, to_raise_exception):
         return get_region_coords(
             'wu_ci_shu_alert',
             self.main_region_coords,
@@ -241,79 +242,141 @@ class FuBenExecutor(BaseExecutor):
             cat_dir=self.cat_dir
         )
 
-    def execute(self):
+    # def execute(self):
+
+    #     self.go_to_world()
+        
+    #     self.click_ri_chang()
+    #     self.scroll_and_click(direction='down')
+    #     self.scroll_and_click(
+    #         direction='up', 
+    #         other_target=self.fuben,
+    #         other_target_name=self.fuben_name,
+    #     )
+
+    #     self.get_fu_ben_page_indicator_coords(wait_time=120, target_region='副本页面', is_to_click=False)
+
+    #     multi_challenge_auth_coords = self.get_multi_challenge_auth_coords()
+    #     if self.to_save_times:
+    #         if multi_challenge_auth_coords is not None:
+    #             self.open_or_close_checkbox(
+    #                 operation='close',
+    #                 target_region=self.fb_coords_manager.region_for_check_multi_challenge()
+    #             )
+    #         else:
+    #             print("完成: 该账号没有多次挑战权限!")
+
+    #     self.get_buy_times_icon_coords(target_region='购买次数图标')
+    #     actual_buy_times = self.buy_times_in_store(self.buy_times, 'buy_times_not_enough')
+
+    #     # 如果不存储次数, 那么将购买的次数加到实际挑战次数中
+    #     if self.to_save_times is False:
+    #         self.challenge_times += actual_buy_times
+
+    #     # 如果有多次挑战权限, 则挑战次数为1
+    #     if self.get_multi_challenge_auth_coords() is not None:
+    #         self.challenge_times = 1
+
+    #     print(f'完成: 总共挑战次数为{self.challenge_times}次!')
+    #     self.zu_dui()
+    #     for i in range(self.challenge_times):
+    #         print(f'开始第{i+1}次挑战!')
+    #         # 点击挑战, 进入副本
+    #         tiao_zhan_coords = self.get_tiao_zhan_coords()
+    #         click_region(tiao_zhan_coords, seconds=0)
+            
+    #         self.get_tiao_zhan_alert_coords(wait_time=2, target_region='挑战提示框', is_to_click=True, 
+    #                                         wait_time_before_click=1, to_raise_exception=False)
+
+    #         # 检查2秒内是否弹出挑战次数不足的提示框
+    #         start_time = time.time()
+    #         while True:
+    #             if time.time() - start_time > 2:
+    #                 break
+                
+    #             times_not_enough_coords = self.get_times_not_enough()
+    #             if times_not_enough_coords is not None:
+    #                 raise Exception("挑战次数不足, 退出挑战!")
+
+    #         # 如果弹出购买次数不足提示框, 则挑战结束
+    #         if self.get_buy_times_not_enough() is not None:
+    #             print("完成: 挑战次数不足!")
+    #             break
+            
+    #         self.get_tiao_zhan_over_coords(wait_time=480, target_region='挑战结束', is_to_click=True)
+
+    #         # 如果是最后一次挑战, 则不需要再次进入副本
+    #         if i == self.challenge_times - 1:
+    #             print('完成: 所有次数已用完!')
+    #             break
+            
+    #         # 获取进入副本的坐标点, 点击进入
+    #         self.get_fu_ben_enter_coords(wait_time=120, target_region='进入副本', is_to_click=True)
+    #         self.zu_dui()
+            
+    #     print('挑战结束!')
+
+    def execute(self, i=0):
 
         self.go_to_world()
         
         self.click_ri_chang()
-        self.scroll_and_click(direction='down')
-        self.scroll_and_click(
-            direction='up', 
-            other_target=self.fuben,
-            other_target_name=self.fuben_name,
-        )
+        self.scroll_and_click(direction='down', confidence=0.95)
+
+        if self.if_buy_store_pop_up():
+            print("完成: 今日副本挑战已完成!")
+            return
+
+        self.scroll_and_click(direction='up', other_target=self.fuben, other_target_name=self.fuben_name, num_of_scroll=3)
 
         self.get_fu_ben_page_indicator_coords(wait_time=120, target_region='副本页面', is_to_click=False)
 
         multi_challenge_auth_coords = self.get_multi_challenge_auth_coords()
-        if self.to_save_times:
-            if multi_challenge_auth_coords is not None:
-                self.open_or_close_checkbox(
-                    operation='close',
-                    target_region=self.fb_coords_manager.region_for_check_multi_challenge()
-                )
-            else:
-                print("完成: 该账号没有多次挑战权限!")
+        if multi_challenge_auth_coords is not None:
+            self.open_or_close_checkbox(
+                operation='open',
+                target_region=self.fb_coords_manager.region_for_check_multi_challenge()
+            )
+        else:
+            print("完成: 该账号没有多次挑战权限!")
 
-        self.get_buy_times_icon_coords(target_region='购买次数图标')
-        actual_buy_times = self.buy_times_in_store(self.buy_times, 'buy_times_not_enough')
+        if self.finish_buying_times is False:
+            self.get_buy_times_icon_coords(target_region='购买次数图标')
+            actual_buy_times = self.buy_times_in_store(self.buy_times, 'buy_times_not_enough')
 
-        # 如果不存储次数, 那么将购买的次数加到实际挑战次数中
-        if self.to_save_times is False:
             self.challenge_times += actual_buy_times
-
-        # 如果有多次挑战权限, 则挑战次数为1
-        if self.get_multi_challenge_auth_coords() is not None:
-            self.challenge_times = 1
+            self.finish_buying_times = True
 
         print(f'完成: 总共挑战次数为{self.challenge_times}次!')
         self.zu_dui()
-        for i in range(self.challenge_times):
-            print(f'开始第{i+1}次挑战!')
-            # 点击挑战, 进入副本
-            tiao_zhan_coords = self.get_tiao_zhan_coords()
-            click_region(tiao_zhan_coords, seconds=0)
-            
-            self.get_tiao_zhan_alert_coords(wait_time=2, target_region='挑战提示框', is_to_click=True, 
-                                            wait_time_before_click=1, to_raise_exception=False)
 
-            # 检查2秒内是否弹出挑战次数不足的提示框
-            start_time = time.time()
-            while True:
-                if time.time() - start_time > 2:
-                    break
-                
-                times_not_enough_coords = self.get_times_not_enough()
-                if times_not_enough_coords is not None:
-                    raise Exception("挑战次数不足, 退出挑战!")
+        # 点击挑战, 进入副本
+        print(f'开始第{i+1}次挑战!')
+        tiao_zhan_coords = self.get_tiao_zhan_coords()
+        click_region(tiao_zhan_coords, seconds=0)
+        
+        self.get_tiao_zhan_alert_coords(wait_time=2, target_region='挑战提示框', is_to_click=True, 
+                                        wait_time_before_click=1, to_raise_exception=False)
+            
+        times_not_enough_coords = self.get_times_not_enough(wait_time=2, target_region='挑战次数不足', is_to_click=True, to_raise_exception=False)
+        if times_not_enough_coords is not None:
+            print("完成: 挑战次数不足!")
+            return
 
-            # 如果弹出购买次数不足提示框, 则挑战结束
-            if self.get_buy_times_not_enough() is not None:
-                print("完成: 挑战次数不足!")
-                break
+        # 如果弹出购买次数不足提示框, 则挑战结束
+        if self.get_buy_times_not_enough() is not None:
+            print("完成: 购买次数不足!")
+            return
             
-            self.get_tiao_zhan_over_coords(wait_time=480, target_region='挑战结束', is_to_click=True)
+        self.get_tiao_zhan_over_coords(wait_time=480, target_region='挑战结束', is_to_click=True)
 
-            # 如果是最后一次挑战, 则不需要再次进入副本
-            if i == self.challenge_times - 1:
-                print('完成: 所有次数已用完!')
-                break
-            
-            # 获取进入副本的坐标点, 点击进入
-            self.get_fu_ben_enter_coords(wait_time=120, target_region='进入副本', is_to_click=True)
-            self.zu_dui()
-            
-        print('挑战结束!')
+        print(f"{i+1}/{self.challenge_times}")
+        if i+1 == self.challenge_times:
+            print('完成: 所有次数已用完!')
+            return
+        
+        time.sleep(4)
+        return self.execute(i+1)
 
 if __name__ == '__main__':
 
@@ -322,11 +385,9 @@ if __name__ == '__main__':
     main_region_coords = get_game_page_coords(resolution = resolution)
 
     coords_manager = FuBenCoordsManager(main_region_coords)
-    main_region_coords = coords_manager.main_region_coords
 
-    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=0)
+    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=4)
 
-    fuben_executor.get_multi_challenge_auth_coords()
     fuben_executor.execute()
 
 

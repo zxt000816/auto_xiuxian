@@ -1,7 +1,5 @@
 import pyautogui
 import time
-import numpy as np
-from typing import Tuple
 from utils_adb import get_game_page_coords, get_region_coords, get_region_coords_by_multi_imgs, click_region
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor

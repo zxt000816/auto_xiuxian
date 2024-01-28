@@ -192,6 +192,20 @@ class ShuangXiuExecutor(BaseExecutor):
         
         time.sleep(4)
 
+    def scroll_to_top(self, scroll_seconds, scroll_times=5):
+        # pyautogui.moveTo(scroll_start_point_coords)
+        # scroll_length = self.calculate_scroll_length(scroll_length)
+        for _ in range(scroll_times):
+            # scroll_specific_length(scroll_length * self.coords_manager.y_ratio, scroll_seconds)
+            # scroll_specific_length(scroll_length, scroll_seconds)
+            scroll_specific_length(
+                start_x=0.5,
+                end_x=0.5,
+                start_y=0.6,
+                end_y=0.8,
+                seconds=scroll_seconds,
+            )
+
     def execute(self):
         self.go_to_world()
 
@@ -203,6 +217,8 @@ class ShuangXiuExecutor(BaseExecutor):
         self.get_mi_shu_coords(wait_time=3, target_region='秘术', is_to_click=True, click_wait_time=3, to_raise_exception=True)
 
         self.get_shuang_ren_coords(wait_time=3, target_region='双人', is_to_click=True, click_wait_time=3, to_raise_exception=True)
+
+        self.scroll_to_top(scroll_seconds=3, scroll_times=5)
 
         self.scroll_and_click(
             direction='down', 

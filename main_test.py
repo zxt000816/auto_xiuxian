@@ -1,12 +1,14 @@
 import pyautogui
 from utils_adb import *
-from coords_manager import *
+from coords_manager import BaseCoordsManager
+from event_executor import BaseExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
 main_region_coords = get_game_page_coords()
 coor_manager = BaseCoordsManager(main_region_coords)
+executor = BaseExecutor(coor_manager)
 
 def get_diff_quickly_2(
     target_image_name: str,
@@ -88,7 +90,7 @@ args3 = {
 args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
-    'confidence': 0.95,
+    'confidence': 0.9,
     'target_image_cat_dir': None,
 }
 
@@ -96,8 +98,16 @@ get_diff_quickly = get_diff_quickly_2
 
 diffs = get_diff_quickly(**args2)
 
+target_image_coords = diffs['target_image_coords']
+# change all elements in target_image_coords to int
+target_image_coords = tuple(map(int, target_image_coords))
+
+target_image_center_coords = calculate_center_coords(target_image_coords)
+
+executor.cal_x_y_ratio(target_image_center_coords[0], target_image_center_coords[1])
+
 # %% 
-pyautogui.screenshot(region=diffs['target_image_coords'])
+pyautogui.screenshot(region=target_image_coords)
 # %% 
 
 diff_between_target_and_main = diffs['diff_between_target_and_main']

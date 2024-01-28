@@ -277,23 +277,13 @@ def click_region(
 def click_region_by_x_y(x, y, button='left'):
     pyautogui.click(x, y, button=button)
 
-# def move_to_specific_coords(coords: Tuple[int, int], seconds: int = 1):
-#     x, y = coords
-#     pyautogui.moveTo(x, y)
-#     time.sleep(seconds)
-
-# def scroll_specific_length(length: int, seconds: int = 5):
-#     # minus length means scroll down
-#     # plus length means scroll up
-#     pyautogui.scroll(length)
-#     time.sleep(seconds)
-
 def scroll_specific_length(
     start_x: float,
     end_x: float,
     start_y: float,
     end_y: float,
     seconds: int = 3, 
+    duration: float = 1.5,
     # main_region_coords: Tuple[int, int, int, int] = (0, 0, 1080, 1920)
 ):
     # minus length means scroll down
@@ -314,7 +304,7 @@ def scroll_specific_length(
     end_y = end_y * height
     end_y = int(round(end_y))
 
-    device.swipe(start_x, start_y, end_x, end_y, duration=1.5)
+    device.swipe(start_x, start_y, end_x, end_y, duration=duration)
     time.sleep(seconds)
 
 def display_region(region_coords):
@@ -433,8 +423,8 @@ def drag_region(func):
         wait_time = kwargs.get('wait_time', 3)
         target_region = kwargs.get('target_region', None)
         is_to_click = kwargs.get('is_to_click', False)
-        drag_from_coords = kwargs.get('drag_from_coords', None)
-        drag_to_coords = kwargs.get('drag_to_coords', None)
+        # drag_from_coords = kwargs.get('drag_from_coords', None)
+        # drag_to_coords = kwargs.get('drag_to_coords', None)
 
         print(f"完成: 等待{wait_time}秒, 等待`{target_region}`出现...")
         while True:
@@ -449,7 +439,14 @@ def drag_region(func):
                     print(f"完成: 点击`{target_region}`!")
                 break
             else:
-                drag_to_specific_coords(drag_from_coords, drag_to_coords, duration=2)
+                # drag_to_specific_coords(drag_from_coords, drag_to_coords, duration=2)
+                scroll_specific_length(
+                    start_x=0.3,
+                    end_x=0.7,
+                    start_y=0.7,
+                    end_y=0.7,
+                    seconds=2
+                )
 
     return wrapper
 

@@ -50,6 +50,7 @@ class CheckRiChangExecutor(BaseExecutor):
         return os.path.join(_root_dir, img_name)
 
     def save_img(self, img_coords, img_path):
+        img_coords = tuple([int(x) for x in img_coords])
         img = pyautogui.screenshot(region=img_coords)
         print(f'save img to {img_path}')
         img.save(img_path)

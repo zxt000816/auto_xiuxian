@@ -194,13 +194,32 @@ class BaseExecutor:
                 self.get_close_chao_zhi_fan_li_coords(wait_time=2, target_region='关闭超值返利', is_to_click=True, 
                                                       wait_time_before_click=1, to_raise_exception=False)
 
-            click_region(self.coords_manager.exit(), seconds=3)
+            # click_region(self.coords_manager.exit(), seconds=3)
+            click_region(self.coords_manager.better_exit(), seconds=3)
     
+    def cal_x_y_ratio(self, x, y):
+        x = x - self.main_region_coords[0]
+        y = y - self.main_region_coords[1]
+        return x / self.coords_manager.resolution[0], y / self.coords_manager.resolution[1]
+
+    # 计算滚动的长度
     def calculate_scroll_length(self, length: int):
-        # 计算滚动的长度
         scroll_length = length * self.coords_manager.y_ratio
         scroll_length = int(round(scroll_length))
         return scroll_length
+    
+    def press(self, region_coords, seconds, duration):
+        x, y = calculate_center_coords(region_coords)
+        start_x, start_y = self.cal_x_y_ratio(x, y)
+
+        scroll_specific_length(
+            start_x=start_x,
+            end_x=start_x,
+            start_y=start_y,
+            end_y=start_y,
+            seconds=seconds,
+            duration=duration
+        )
 
     def click_ri_chang(self):
         time.sleep(1)
@@ -455,6 +474,7 @@ class BaseExecutor:
                 print("完成: 购买一次")
             
             if self.if_buy_store_pop_up(): # 如果购买完以后购买界面还在, 说明还可以购买
+                time.sleep(2)
                 click_region(self.exit_coords)
                 print("完成: 还有剩余购买次数, 但是不买了, 退出商店界面")
 

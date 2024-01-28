@@ -235,13 +235,80 @@ class ShouYuanTanMiExecutor(BaseExecutor):
         self.get_skip(wait_time=4, target_region="跳过", is_to_click=True, to_raise_exception=False)
         self.get_confirm_skip(wait_time=4, target_region="确认跳过", is_to_click=True, to_raise_exception=False)
 
+    @wait_region
+    def get_dui_huan_bao_ge_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'dui_huan_bao_ge',
+            main_region_coords=self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_plus_ten_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'plus_ten',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_dui_huan_max_num_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'dui_huan_max_num',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    @wait_region
+    def get_dui_huan_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            'dui_huan',
+            main_region_coords=self.main_region_coords,
+            confidence=0.8,
+            cat_dir=self.cat_dir ,
+        )
+    
+    def dui_huan_cai_liao(self, target='yao_chi_yu_lian', target_name='瑶池玉莲'):
+        self.get_dui_huan_bao_ge_coords(wait_time=2, target_region="兑换宝阁", is_to_click=True, to_raise_exception=False)
+
+        self.scroll_and_click(
+            direction='down',
+            other_target=target,
+            other_target_name=target_name,
+            confidence=0.7,
+            num_of_scroll=5,
+            scroll_seconds=3,
+            cat_dir=self.cat_dir,
+            in_ri_chang_page=False,
+            is_to_click=True,
+        )
+
+        start_time = time.time()
+        while True:
+            if time.time() - start_time > 60:
+                print(f"已超过60秒, 退出!")
+                break
+
+            self.get_plus_ten_coords(wait_time=1, target_region="加10", is_to_click=True, to_raise_exception=False)
+            dui_huan_max_num_coords = self.get_dui_huan_max_num_coords(wait_time=2, target_region="最大购买", is_to_click=False, 
+                                                                       to_raise_exception=False)
+            
+            if dui_huan_max_num_coords is not None:
+                print(f"已达到最大兑换数量!")
+                break
+        
+        self.get_dui_huan_coords(wait_time=2, target_region="兑换", is_to_click=True, to_raise_exception=True)
+
     def execute(self):
         self.go_to_world()
 
         click_region(self.sytm_coords_manager.ri_cheng())
 
         self.get_shou_yuan_tan_mi_coords(
-            wait_time=3,
+            wait_time=10,
             target_region=self.event_name,
             is_to_click=True,
             to_raise_exception=True,
@@ -285,7 +352,7 @@ class ShouYuanTanMiExecutor(BaseExecutor):
         
         operation = 'open' if self.only_use_free_times is False else 'close'
         self.open_or_close_checkbox(operation, self.sytm_coords_manager.if_only_use_free_times())
-        self.open_or_close_checkbox('open', self.sytm_coords_manager.do_not_stop())
+        # self.open_or_close_checkbox('open', self.sytm_coords_manager.do_not_stop())
 
         self.get_start_auto_tan_cha(wait_time=2, target_region="开始自动探查", is_to_click=True, to_raise_exception=True)
         self.get_stop_zi_dong(wait_time=5, target_region="停止自动探查", is_to_click=False, to_raise_exception=True)
@@ -296,6 +363,17 @@ class ShouYuanTanMiExecutor(BaseExecutor):
         )
 
         self.go_to_world()
+
+        click_region(self.sytm_coords_manager.ri_cheng())
+
+        self.get_shou_yuan_tan_mi_coords(
+            wait_time=10,
+            target_region=self.event_name,
+            is_to_click=True,
+            to_raise_exception=True,
+        )
+
+        self.dui_huan_cai_liao(target='yao_chi_yu_lian', target_name='瑶池玉莲')
 
 if __name__ == '__main__':
 

@@ -309,113 +309,8 @@ class XiuLianExecutor(BaseExecutor):
             confidence=0.7,
             cat_dir=self.cat_dir,
         )
-    
+
     def execute(self):
-
-        self.go_to_world()
-
-        # 进入修炼
-        click_region(self.xl_coords_manager.xiu_lian_small(), seconds=5)
-        # 寻找并点击修炼图标
-        self.get_xiu_lian_icon_coords(wait_time=15, target_region='修炼图标', is_to_click=True)
-        # 检查是否弹出了丹药服用结束的窗口
-        fu_yong_over_coords = self.get_fu_yong_over_coords(wait_time=2, target_region='服用结束', is_to_click=False, to_raise_exception=False)
-        if fu_yong_over_coords is not None:
-            print('完成: 弹出了丹药服用结束的窗口，点击退出!')
-            click_region(self.xl_coords_manager.exit())
-        
-        # 点击提升按钮
-        self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
-
-        if self.buy_times > 0:
-            try:
-                self.scroll_and_click(
-                    direction='down',
-                    other_target='buy_qian_xiu_zhen_wu',
-                    other_target_name='潜修真悟',
-                    confidence=0.7,
-                    start_x=0.5,
-                    end_x=0.5,
-                    start_y=0.75,
-                    end_y=0.6,
-                    num_of_scroll=4,
-                    scroll_seconds=3,
-                    cat_dir='xiu_lian',
-                    in_ri_chang_page=False,
-                    is_to_click=True,
-                )
-
-                store_open_indicator_args = { 'wait_time': 3, 'target_region': '商店打开标志', 'is_to_click': False, 'to_raise_exception': False }
-                if self.get_store_open_indicator_coords(**store_open_indicator_args) is not None:
-                    actual_buy_times = self.buy_times_in_store(self.buy_times)
-                    print(f"实际购买次数: {actual_buy_times}")
-                    if self.get_store_open_indicator_coords(**store_open_indicator_args) is None:
-                        self.get_ti_sheng_coords(target_region='提升', to_raise_exception=True)
-                    else:
-                        click_region(self.xl_coords_manager.exit())
-                else:
-                    print("商店未打开, 无法购买!")
-
-            except ScrollException:
-                print("未找到可购买的潜修真悟!")
-
-        xiu_lian_xin_de_coords = self.get_xiu_lian_xin_de_coords(wait_time=2, target_region='修炼心得', is_to_click=False, to_raise_exception=False)
-        if xiu_lian_xin_de_coords is None:
-            click_region(self.xl_coords_manager.ti_sheng_icon())
-
-        start_time = time.time()
-        while True:
-            # 检查是否到达120秒
-            if time.time() - start_time > 120:
-                print("到达120秒,退出!")
-                break
-
-            xiu_lian_xin_de_coords = self.get_xiu_lian_xin_de_coords(
-                wait_time=2, 
-                target_region='修炼心得', 
-                is_to_click=False, 
-                to_raise_exception=False
-            )
-            if xiu_lian_xin_de_coords is not None:
-                self.press(xiu_lian_xin_de_coords, seconds=2, duration=10)
-
-            alert_is_existed = self.process_alert_in_level_up()
-            if alert_is_existed is False:
-                print("未检测到弹窗, 修炼心得使用完毕!")
-                break
-        
-        xiu_lian_xin_de_coords = self.get_xiu_lian_xin_de_coords(wait_time=2, target_region='修炼心得', is_to_click=False, to_raise_exception=False)
-        if xiu_lian_xin_de_coords is None:
-            click_region(self.xl_coords_manager.ti_sheng_icon())
-
-        start_time = time.time()
-        while True:
-            # 检查是否到达240秒
-            if time.time() - start_time > 240:
-                print("到达240秒,退出!")
-                break
-
-            jing_yan_shu_coords = self.get_jing_yan_shu_coords(
-                wait_time=2, 
-                target_region='经验书',
-                is_to_click=False, 
-                to_raise_exception=False
-            )
-            if jing_yan_shu_coords is not None:
-                self.press(jing_yan_shu_coords, seconds=2, duration=10)
-            else:
-                print("没有经验书!")
-                break
-
-            alert_is_existed = self.process_alert_in_level_up()
-        
-        # 使用小绿瓶
-        self.get_xiao_lv_ping_coords(wait_time=2, target_region='小绿瓶', is_to_click=True, to_raise_exception=False)
-
-        time.sleep(3)
-        click_region(self.xl_coords_manager.better_exit(), seconds=2)
-
-    def old_execute(self):
         self.go_to_world()
 
         # 进入修炼
@@ -543,9 +438,12 @@ if __name__ == '__main__':
     
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    main_region_coords = get_game_page_coords(resolution = resolution)
+    try:
+        main_region_coords = get_game_page_coords(resolution = resolution)
+    except Exception as e:
+        print(f"未定位到游戏界面!")
 
     coords_manager = XiuLianCoordsManager(main_region_coords)
-    executor = XiuLianExecutor(coords_manager, buy_times=2)
+    executor = XiuLianExecutor(coords_manager, buy_times=0)
 
     executor.execute()

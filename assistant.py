@@ -45,26 +45,13 @@ class AssistantExecutor(BaseExecutor):
     def __init__(self, assistant_coords_manager: AssistantCoordsManager):
         super().__init__(assistant_coords_manager, 'assistant')
         self.assistant_coords_manager = assistant_coords_manager
-        self.task_order = ['zongmen', 'shenwuyuan', 'daoyi']
+        self.task_order = ['shenwuyuan', 'zongmen', 'daoyi']
         self.task_name_dict = {
             'zongmen': '宗门助手',
             'shenwuyuan': '神物园助手',
             'daoyi': '道义秘库助手',
             'baiye': '拜谒'
         }
-
-    def _check_is_in_assistant(self) -> bool:
-        assistant_image_coords = get_region_coords(
-            'assistant_list',
-            main_region_coords=self.main_region_coords,
-            confidence=0.9,
-            cat_dir=self.cat_dir,
-        )
-
-        if assistant_image_coords is not None:
-            return True
-        else:
-            return False
 
     def click_assistant(self):
         click_region(self.coords_manager.assistant(), seconds=3)
@@ -170,12 +157,6 @@ class AssistantExecutor(BaseExecutor):
                     task_coords = self.assistant_coords_manager.dao_yi_region()
                 else:
                     raise Exception("未知任务")
-                
-                # task_coords = self.get_task_coords(task, wait_time=3, target_region=self.task_name_dict[task],
-                #                                     is_to_click=False, to_raise_exception=False)
-                # if task_coords is None:
-                #     print(f"未找到{self.task_name_dict[task]}位置")
-                #     continue
                 
                 self.search_run_button_and_click(task_coords)
 

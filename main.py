@@ -50,7 +50,6 @@ def daily_task(
     ri_chang_chou_jiang: bool = True,
     xiu_lian: bool = True,
     qi_xi_mo_jie: bool = True,
-    # hun_dun_ling_ta: bool = True,
     hun_dun_ling_ta_sao_dang: bool = True, # 混沌灵塔扫荡
     hun_dun_ling_ta_go_up: bool = True, # 混沌灵塔爬塔
     assistant: bool = True,
@@ -257,7 +256,6 @@ if __name__ == '__main__':
     # resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
 
     main_region_coords = get_game_page_coords(resolution = resolution)
-    # main_region_coords = (0, 0, resolution[0], resolution[1])
 
     game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
 
@@ -286,9 +284,11 @@ if __name__ == '__main__':
         account = account_task_info['users']
 
         execute_info = task_execute_df.loc[account_name].to_dict()
+
+        server = accounts[accounts['account_names'] == account_name]['服务器'].item()
         
         try:
-            game_executor = GameControlExecutor(game_coords_manager, account_name=account_name, account=account)
+            game_executor = GameControlExecutor(game_coords_manager, account_name=account_name, account=account, server=server)
             game_executor.execute()
         except Exception as e:
             print(f'{account_name}执行失败: {e}')

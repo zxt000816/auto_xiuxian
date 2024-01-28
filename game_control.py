@@ -27,13 +27,23 @@ class GameControlCoordsManager(BaseCoordsManager):
     def scroll_account_ls(self):
         diff = (534, 1044, 0, 0)
         return self.calculate_relative_coords(diff)
+    
+    def wei_mian(self):
+        diff = (401, 1373, 175, 55)
+        return self.calculate_relative_coords(diff)
 
 class GameControlExecutor(BaseExecutor):
-    def __init__(self, cc_coords_manager: GameControlCoordsManager, account_name: str, account: str):
+    def __init__(self, cc_coords_manager: GameControlCoordsManager, account_name: str, account: str, server: str):
         super().__init__(cc_coords_manager, 'game_control')
         self.cc_coords_manager = cc_coords_manager
         self.account_name = account_name
         self.account = account
+        self.server_name_dict = {
+            '破界飞升': 'po_jie_fei_sheng',
+            '黄河入海': 'huang_he_ru_hai',
+            '仙山古峪': 'xian_shan_gu_yu',
+        }
+        self.server = self.server_name_dict[server]
 
     @wait_region
     def get_menu_expansion_coords(self, wait_time, target_region, is_to_click, click_wait_time):
@@ -81,11 +91,7 @@ class GameControlExecutor(BaseExecutor):
         )
 
     def scroll_to_top(self, scroll_start_point_coords, scroll_length, scroll_seconds, scroll_times=5):
-        # pyautogui.moveTo(scroll_start_point_coords)
-        # scroll_length = self.calculate_scroll_length(scroll_length)
         for _ in range(scroll_times):
-            # scroll_specific_length(scroll_length * self.coords_manager.y_ratio, scroll_seconds)
-            # scroll_specific_length(scroll_length, scroll_seconds)
             scroll_specific_length(
                 start_x=0.5,
                 end_x=0.5,
@@ -107,6 +113,24 @@ class GameControlExecutor(BaseExecutor):
     def get_start_game_coords(self, wait_time, target_region, is_to_click):
         return get_region_coords(
             'start_game',
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_wei_mian_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            self.server,
+            self.main_region_coords,
+            confidence=0.7,
+            cat_dir=self.cat_dir
+        )
+    
+    @wait_region
+    def get_select_wei_mian_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
+        return get_region_coords(
+            f'select_{self.server}',
             self.main_region_coords,
             confidence=0.7,
             cat_dir=self.cat_dir
@@ -138,18 +162,21 @@ class GameControlExecutor(BaseExecutor):
         ]
 
         yang_chong_tou_coords = get_region_coords_by_multi_imgs(yang_chong_tou_imgs)
-        
         if yang_chong_tou_coords is None:
             return
         
-        yang_chong_tou_center_coords = calculate_center_coords(yang_chong_tou_coords)
+        drag_from_coords = calculate_center_coords(yang_chong_tou_coords)
+        drag_to_coords = self.cc_coords_manager.yang_chong_tou_hidden()[:2]
 
-        hidden_region_coords = self.cc_coords_manager.yang_chong_tou_hidden()[:2]
+        # pyautogui.moveTo(yang_chong_tou_center_coords[0], yang_chong_tou_center_coords[1])
+        # pyautogui.dragTo(hidden_region_coords, duration=2) 
+        # time.sleep(2)
 
-        pyautogui.moveTo(yang_chong_tou_center_coords[0], yang_chong_tou_center_coords[1])
-        pyautogui.dragTo(hidden_region_coords, duration=2) 
-
-        time.sleep(2)
+        (start_x, start_y) = self.cal_x_y_ratio(drag_from_coords[0], drag_from_coords[1])
+        (end_x, end_y) = self.cal_x_y_ratio(drag_to_coords[0], drag_to_coords[1])
+        
+        scroll_specific_length(start_x, start_x, start_y, start_y, seconds=1)
+        scroll_specific_length(start_x, end_x, start_y, end_y, seconds=2)
 
         confirm_hide_yang_chong_tou_coords = get_region_coords(
             'confirm_hide_yang_chong_tou',
@@ -173,8 +200,8 @@ class GameControlExecutor(BaseExecutor):
         )
 
     def execute(self, restart_game=False):
+
         if restart_game is False:
-            
             self.exit_current_account()
 
             # 如果检测到登录按钮, 则点击账户区域
@@ -224,6 +251,20 @@ class GameControlExecutor(BaseExecutor):
             other_region_coords=self.cc_coords_manager.exit()
         )
 
+        # 检查是否是指定的位面
+        wei_mian_coords = self.get_wei_mian_coords(
+            wait_time=10, 
+            target_region=self.server, 
+            is_to_click=False, 
+            to_raise_exception=False
+        )
+
+        # 如果不是指定的位面, 则点击选择位面
+        if wei_mian_coords is None:
+            click_region(self.cc_coords_manager.wei_mian(), seconds=5)
+            # 点击选择位面
+            self.get_select_wei_mian_coords(wait_time=10, target_region=f"选择{self.server}", is_to_click=True, to_raise_exception=True)
+
         # 点击开始游戏
         self.get_start_game_coords(wait_time=15, target_region="开始游戏", is_to_click=True)
 
@@ -246,7 +287,7 @@ class GameControlExecutor(BaseExecutor):
         )
 
         # 隐藏洋葱头
-        # self.hide_yang_chong_tou()
+        self.hide_yang_chong_tou()
 
 if __name__ == "__main__":
     resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
@@ -255,5 +296,10 @@ if __name__ == "__main__":
 
     coords_manager = GameControlCoordsManager(main_region_coords)
 
-    executor = GameControlExecutor(coords_manager, account_name='初心', account='37zd1300qpqnpp5')
+    executor = GameControlExecutor(
+        coords_manager, 
+        account_name='白起(仙山)', 
+        account='17633025505',
+        server='仙山古峪'
+    )
     executor.execute()

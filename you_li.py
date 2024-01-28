@@ -53,15 +53,6 @@ class YouLiExecutor(BaseExecutor):
         self.youli_coords_manager = youli_coords_manager
         self.place_name = place_name
         self.buy_times = buy_times
-        # self.place_name_dict = {
-        #     '镜州': 'jing_zhou',
-        #     '冰海': 'bing_hai',
-        #     '大晋': 'da_jin',
-        #     '南疆': 'nan_jiang',
-        #     '地渊冥河': 'di_yuan_ming_he',
-        #     '火瑚群岛': 'huo_hu_qun_dao',
-        # }
-        # self.place = self.place_name_dict[self.place_name]
 
     @wait_region
     def get_xiu_xian_zhuan_you_li(self, wait_time, target_region, is_to_click, click_wait_time, to_raise_exception):
@@ -72,15 +63,6 @@ class YouLiExecutor(BaseExecutor):
             cat_dir=self.cat_dir,
         )
 
-    # @wait_region
-    # def get_place_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
-    #     return get_region_coords(
-    #         self.place,
-    #         main_region_coords=self.main_region_coords,
-    #         confidence=0.8,
-    #         cat_dir=self.cat_dir,
-    #     )
-    
     @wait_region
     def get_place_coords(self, wait_time, target_region, is_to_click, to_raise_exception):
         place_imgs = [
@@ -178,10 +160,6 @@ if __name__ == '__main__':
 
     coords_manager = YouliCoordsManager(main_region_coords)
     
-    youli_executor = YouLiExecutor(
-        youli_coords_manager=coords_manager,
-        place_name='地渊冥河', # 冰海 or 南疆 or 地渊冥河
-        buy_times=0
-    )
+    youli_executor = YouLiExecutor(coords_manager, '火瑚群岛', 4)
 
     youli_executor.execute()

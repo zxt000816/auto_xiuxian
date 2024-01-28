@@ -149,7 +149,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
                 other_target_name=self.xian_yuan_role_name, 
                 confidence=0.8,
                 num_of_scroll=10,
-                scroll_seconds=4
+                scroll_seconds=2
             )
         except Exception as e:
             print(f"没有{self.xian_yuan_role_name}!")

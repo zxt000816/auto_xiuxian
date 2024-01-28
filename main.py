@@ -3,45 +3,14 @@ import pyautogui
 import pandas as pd
 from typing import Tuple
 from datetime import datetime
-# from utils_adb import get_game_page_coords, wait_for_evelen
-from utils_adb import get_game_page_coords, wait_for_evelen
+import time
 from name_dict import task_name_dict, task_info_name_dict
-from dotenv import load_dotenv
-
-from assistant import AssistantCoordsManager, AssistantExecutor
-from bao_ming import BaoMingCoordsManager, BaoMingExecutor
-from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
-from bai_ye import BaiYeCoordsManager, BaiYeExecutor
-from you_li import YouliCoordsManager, YouLiExecutor
-from fu_ben import FuBenCoordsManager, FuBenExecutor
-from ling_shou import LingShouCoordsManager, LingShouExecutor
-from lun_dao import LunDaoCoordsManager, LunDaoExecutor
-from qi_xi_mo_jie import QiXiMoJieCoordsManager, QiXiMoJieExecutor
-from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
-
-from check_all_tasks import CheckAllTasksCoordsManager, CheckAllTasksExecutor
-from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
-
-from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
-from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
-from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
-from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
-from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
-from hong_bao import HongBaoCoordsManager, HongBaoExecutor
-from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
-from game_control import GameControlCoordsManager, GameControlExecutor
-
-from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
-from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
-from xu_tian_dian import XuTianDianCoordsManager, XuTianDianExecutor
-from yun_meng_shi_jian import YunMengShiJianCoordsManager, YunMengShiJianExecutor
-
-from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
+# from dotenv import load_dotenv
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
-load_dotenv()
+# load_dotenv()
 
 def daily_task(
     main_region_coords: Tuple[int, int, int, int],
@@ -221,7 +190,7 @@ def daily_task(
 
             start_time = datetime.now()
             try:
-                if executor_name in ['论道', '兽渊探秘', '魔道入侵', '虚天殿']:
+                if executor_name in ['论道', '兽渊探秘', '魔道入侵', '虚天殿', '云梦试剑', '仙盟争霸', ]:
                     if datetime.now().hour < 11: #  11点之前不执行
                         print(f'{executor_name}未到执行时间')
                         continue
@@ -252,10 +221,61 @@ def daily_task(
 
 if __name__ == '__main__':
     
-    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-    # resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
+    # resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+    resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
+    device_serial = 'emulator-5566' # '都有3'
+    # device_serial = 'emulator-5568' # '都有4'
+    # device_serial = 'emulator-5570' # '都有5'
 
-    main_region_coords = get_game_page_coords(resolution = resolution)
+    main_region_coords_dt = {
+        'emulator-5566': '3087,422,720,1280',
+        'emulator-5568': '2351,421,720,1280',
+        'emulator-5570': '1612,418,720,1280',
+    }
+
+    # 添加环境变量
+    # os.environ['RESOLUTION'] = f'{resolution[0]}x{resolution[1]}'
+    os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+    os.environ['DEVICE_SERIAL'] = device_serial
+    os.environ['MAIN_REGION_COORDS'] = main_region_coords_dt[device_serial]
+
+    from utils_adb import get_game_page_coords, wait_for_evelen
+    from assistant import AssistantCoordsManager, AssistantExecutor
+    from bao_ming import BaoMingCoordsManager, BaoMingExecutor
+    from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
+    from bai_ye import BaiYeCoordsManager, BaiYeExecutor
+    from you_li import YouliCoordsManager, YouLiExecutor
+    from fu_ben import FuBenCoordsManager, FuBenExecutor
+    from ling_shou import LingShouCoordsManager, LingShouExecutor
+    from lun_dao import LunDaoCoordsManager, LunDaoExecutor
+    from qi_xi_mo_jie import QiXiMoJieCoordsManager, QiXiMoJieExecutor
+    from zhui_mo_gu import ZhuiMoGuCoordsManager, ZhuiMoGuExecutor
+
+    from check_all_tasks import CheckAllTasksCoordsManager, CheckAllTasksExecutor
+    from check_ri_chang import CheckRiChangCoordsManager, CheckRiChangExecutor
+
+    from shuang_xiu import ShuangXiuCoordsManager, ShuangXiuExecutor
+    from hun_dun_ling_ta import HunDunLingTaCoordsManager, HunDunLingTaExecutor
+    from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
+    from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
+    from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
+    from hong_bao import HongBaoCoordsManager, HongBaoExecutor
+    from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
+    from game_control import GameControlCoordsManager, GameControlExecutor
+
+    from shou_yuan_tan_mi import ShouYuanTanMiCoordsManager, ShouYuanTanMiExecutor
+    from mo_dao_ru_qing import MoDaoRuQingCoordsManager, MoDaoRuQingExecutor
+    from xu_tian_dian import XuTianDianCoordsManager, XuTianDianExecutor
+    from yun_meng_shi_jian import YunMengShiJianCoordsManager, YunMengShiJianExecutor
+
+    from xian_meng_zheng_ba import XianMengZhengBaCoordsManager, XianMengZhengBaExecutor
+
+    # main_region_coords = get_game_page_coords(resolution = resolution)
+    main_region_coords = tuple(map(int, main_region_coords_dt[device_serial].split(',')))
+    # print(f'游戏区域坐标: {main_region_coords}')
+
+    # print("等待60秒, 用于等候定位其他模拟器窗口!")
+    # time.sleep(60)
 
     game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
 
@@ -264,8 +284,13 @@ if __name__ == '__main__':
     # accounts
     accounts = pd.read_excel(file_path, sheet_name='accounts')
 
-    accounts = accounts[accounts['execute'] == 1]
+    accounts = accounts[(accounts['execute'] == 1) & (accounts['模拟器'] == device_serial)]
+    if len(accounts) == 0:
+        print('没有需要执行的账号')
+        exit()
+
     account_name_ls = accounts['account_names'].tolist()
+    print(f'需要执行的账号: {account_name_ls}')
     
     # users_info
     account_task_info_df = pd.read_excel(file_path, sheet_name='users_info')
@@ -293,6 +318,6 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'{account_name}执行失败: {e}')
 
-        daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, **execute_info)
+        daily_task(main_region_coords, account_name=account_name, account_task_info=account_task_info, resolution=resolution, **execute_info)
 
     # os.system('shutdown -s -t 10') # 关机

@@ -339,7 +339,7 @@ class XiuLianExecutor(BaseExecutor):
                     start_y=0.75,
                     end_y=0.6,
                     num_of_scroll=4,
-                    scroll_seconds=3,
+                    scroll_seconds=2,
                     cat_dir='xiu_lian',
                     in_ri_chang_page=False,
                     is_to_click=True,

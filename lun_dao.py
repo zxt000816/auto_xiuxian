@@ -133,7 +133,7 @@ class LunDaoExecutor(BaseExecutor):
             other_target_name=self.dao_chang_name,
             confidence=0.9,
             num_of_scroll=2,
-            scroll_seconds=3,
+            scroll_seconds=2,
             grayscale=False,
             cat_dir=self.cat_dir,
             in_ri_chang_page=False,

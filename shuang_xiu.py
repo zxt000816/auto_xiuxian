@@ -218,13 +218,13 @@ class ShuangXiuExecutor(BaseExecutor):
 
         self.get_shuang_ren_coords(wait_time=3, target_region='双人', is_to_click=True, click_wait_time=3, to_raise_exception=True)
 
-        self.scroll_to_top(scroll_seconds=3, scroll_times=5)
+        self.scroll_to_top(scroll_seconds=2, scroll_times=5)
 
         self.scroll_and_click(
             direction='down', 
             other_target=self.gongfashu, 
             other_target_name=self.gongfashu_name,
-            scroll_seconds=3
+            scroll_seconds=2
         )
         self.click_yaoqing_daoyou()
         self.go_to_xianyuan_page()

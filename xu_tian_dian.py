@@ -268,7 +268,7 @@ class XuTianDianExecutor(BaseExecutor):
             other_target_name=target_name,
             confidence=0.7,
             num_of_scroll=5,
-            scroll_seconds=3,
+            scroll_seconds=2,
             cat_dir=self.cat_dir,
             in_ri_chang_page=False,
             is_to_click=True,

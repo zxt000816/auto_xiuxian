@@ -180,7 +180,8 @@ class BaseExecutor:
             if self.click_if_coords_exist(back_arrow_coords, "点击返回按钮") is True:
                 continue
 
-            world_coords = self.get_world_coords(self.coords_manager.region_for_check_world())
+            # world_coords = self.get_world_coords(self.coords_manager.region_for_check_world())
+            world_coords = self.get_world_coords()
             if self.click_if_coords_exist(world_coords, "点击世界图标", seconds=5):
                 continue
 
@@ -237,7 +238,7 @@ class BaseExecutor:
         end_x=0.5,
         start_y=0.66,
         end_y=0.33,
-        scroll_seconds=3,
+        scroll_seconds=2,
         grayscale=False,
         scroll_start_point_coords=None,
         cat_dir=None,

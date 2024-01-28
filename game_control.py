@@ -226,7 +226,7 @@ class GameControlExecutor(BaseExecutor):
                 end_x=0.5,
                 start_y=0.6,
                 end_y=0.5,
-                scroll_seconds=3,
+                scroll_seconds=2,
                 scroll_start_point_coords=self.cc_coords_manager.scroll_account_ls()[:2],
                 is_to_click=True,
                 in_ri_chang_page=False,

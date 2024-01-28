@@ -15,26 +15,19 @@ import adbutils
 
 load_dotenv()
 
-# pyautogui.PAUSE = 0.01
-# pyautogui.FAILSAFE = True
-
 adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
 
-global device
-# global main_region_coords
-
-# serial_idx = input('请输入设备序号(emulator-5560: 0, emulator-5562: 1): ')
-# serial_idx = int(serial_idx)
-
-# if serial_idx == 0:
-#     serial = 'emulator-5560'
-# elif serial_idx == 1:
-#     serial = 'emulator-5562'
-# else:
-#     raise Exception('输入错误')
-
-serial = 'emulator-5560'
+serial = os.getenv('DEVICE_SERIAL')
 device = adb.device(serial=serial)
+
+# resolution = os.getenv('RESOLUTION')
+# resolution = resolution.split('x')
+# resolution = (int(resolution[0]), int(resolution[1]))
+# main_region_coords = get_game_page_coords(resolution)
+main_region_coords = os.getenv('MAIN_REGION_COORDS')
+main_region_coords = tuple(map(int, main_region_coords.split(',')))
+print(f"获取游戏界面坐标: {main_region_coords}")
+print(f"设备: {device}")
 
 def get_region_coords(
     target_region_image, 
@@ -129,11 +122,6 @@ def get_game_page_coords(resolution=(1080, 1920)):
             return game_page_coords
     
     raise Exception('未定位到游戏界面')
-
-main_region_coords = get_game_page_coords()
-# main_region_coords = (0, 0, 1080, 1920)
-print(f"获取游戏界面坐标: {main_region_coords}")
-print(f"设备: {device}")
 
 def wait_for_evelen():
     hour = datetime.now().hour

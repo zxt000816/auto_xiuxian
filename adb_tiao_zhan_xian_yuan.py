@@ -438,7 +438,7 @@ class BaseExecutor:
         target_name,
         num_of_scroll=12, 
         scroll_length=300,
-        scroll_seconds=3,
+        scroll_seconds=2,
         in_ri_chang_page=True,
         is_to_click=True,
     ):
@@ -756,7 +756,7 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
                 confidence=0.8,
                 num_of_scroll=10,
                 scroll_length=400, 
-                scroll_seconds=4
+                scroll_seconds=2
             )
         except Exception as e:
             print(f"没有{self.xian_yuan_role_name}!")

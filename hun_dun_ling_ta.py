@@ -10,7 +10,6 @@ pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-
 class HunDunLingTaCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
@@ -123,7 +122,7 @@ class HunDunLingTaExecutor(BaseExecutor):
         self.go_to_world()
 
         self.click_ri_chang()
-        self.scroll_and_click(direction='down', in_ri_chang_page=False)
+        self.scroll_and_click(direction='down', in_ri_chang_page=False, scroll_seconds=2)
 
         # 确认`混沌灵塔`是否打开
         self.get_open_indicator_coords(wait_time=120, target_region='混沌灵塔')
@@ -134,7 +133,7 @@ class HunDunLingTaExecutor(BaseExecutor):
             other_target_name=self.ling_ta_name,
             confidence=0.7,
             num_of_scroll=3,
-            scroll_seconds=3,
+            scroll_seconds=2,
             cat_dir=self.cat_dir,
         )
 
@@ -196,4 +195,4 @@ if __name__ == '__main__':
     executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='鸿古之塔')
     
     executor.go_up()
-    executor.sao_dang()
+    # executor.sao_dang()

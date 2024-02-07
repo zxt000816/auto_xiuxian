@@ -1,11 +1,11 @@
-pyautogui
-pillow
-opencv-python
-python-dotenv
-pytesseract
+pyautogui==0.9.54
+pillow==10.2.0
+opencv-python==4.9.0.80
+python-dotenv==1.0.1
+pytesseract==0.3.10
 pandas
 openpyxl
-adbutils
+adbutils==2.2.1
 ipykernel
 matplotlib
 keyboard

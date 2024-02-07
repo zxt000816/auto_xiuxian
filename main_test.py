@@ -1,34 +1,26 @@
-# import pyautogui, os
+import os
+import adbutils
 
-# resolution = (540, 960) # (width, height): (554, 984) or (1080, 1920)
+adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
 
-# device_idx = input('请输入模拟器序号(1: 都有3, 2: 都有4, 3: 都有5): ')
-# if device_idx == '1':
-#     device_serial = 'emulator-5566' # '都有3'
-# elif device_idx == '2':
-#     device_serial = 'emulator-5568' # '都有4'
-# elif device_idx == '3':
-#     device_serial = 'emulator-5570' # '都有5'
+serial = "emulator-5566"
+device = adb.device(serial=serial)
 
-# main_region_coords_dt = {
-#     'emulator-5566': '1344,46,540,960',
-# }
+resolution = (540, 960)
+os.environ['DEVICE_SERIAL'] = serial
+os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
 
-# # 添加环境变量
-# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
-# os.environ['DEVICE_SERIAL'] = device_serial
-# os.environ['MAIN_REGION_COORDS'] = main_region_coords_dt[device_serial]
+main_region_coords = (1364, 47, 540, 960)
 
-from utils_adb import *
+os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
+import pyautogui
+from utils_adb import get_region_coords, wait_region, click_region, cal_diff_between_regions, calculate_center_coords
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-
-# resolution = (540, 960)
-# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
-# main_region_coords = get_game_page_coords(resolution)
 
 coor_manager = BaseCoordsManager(main_region_coords)
 executor = BaseExecutor(coor_manager)
@@ -114,7 +106,7 @@ args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.9,
-    'target_image_cat_dir': 'bai_zu_gong_feng',
+    'target_image_cat_dir': 'wan_ling_qie_cuo',
 }
 
 get_diff_quickly = get_diff_quickly_2

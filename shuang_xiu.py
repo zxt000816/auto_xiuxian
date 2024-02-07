@@ -71,10 +71,12 @@ class ShuangXiuExecutor(BaseExecutor):
             '缠玉绵情': 'chan_yu_mian_qing',
             '七星舞月': 'qi_xing_wu_yue',
             '琅华照烟': 'lang_hua_zhao_yan',
+            '霓裳天舞': 'ni_chang_tian_wu',
             '魂牵梦萦': 'hun_qian_meng_ying',
             '缘梦七夕': 'yuan_meng_qi_xi',
             '百花烟雨': 'bai_hua_yan_yu',
             '刹那芳华': 'cha_na_fang_hua',
+            '姹女天月': 'cha_nv_tian_yue',
         }
         self.gongfashu = self.gongfashu_name_dict[self.gongfashu_name]
         # self.main_region_coords = self.shuangxiu_coords_manager.main_region_coords

@@ -140,10 +140,11 @@ class YouLiExecutor(BaseExecutor):
 
         self.get_xiu_xian_zhuan_you_li(wait_time=3, target_region='修仙传_游历', is_to_click=True, click_wait_time=5, to_raise_exception=True)
 
-        self.get_buy_icon_coords(wait_time=2, target_region='购买图标', is_to_click=True, to_raise_exception=True)
-
-        self.buy_times_in_store(self.buy_times, 'buy_times_is_not_enough')
-        
+        if self.buy_times > 0:
+            self.get_buy_icon_coords(wait_time=2, target_region='购买图标', is_to_click=True, to_raise_exception=True)
+            self.buy_times_in_store(self.buy_times, 'buy_times_is_not_enough')
+            click_region(self.youli_coords_manager.better_exit())
+            
         self.get_place_coords(wait_time=5, target_region=self.place_name, is_to_click=True, to_raise_exception=True)
 
         # 超过30秒就退出

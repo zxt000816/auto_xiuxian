@@ -356,7 +356,7 @@ class FuBenExecutor(BaseExecutor):
         # else:
         #     print("完成: 该账号没有多次挑战权限!")
 
-        if self.finish_buying_times is False:
+        if (self.finish_buying_times is False) and (self.buy_times > 0):
             self.get_buy_times_icon_coords(target_region='购买次数图标')
             actual_buy_times = self.buy_times_in_store(self.buy_times, 'buy_times_not_enough')
 

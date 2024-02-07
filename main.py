@@ -191,12 +191,10 @@ def daily_task(
     for executor_name, if_execute in all_executor.items():
         executor, if_execute = if_execute
         if if_execute:
-            wait_for_evelen()
-
             start_time = datetime.now()
             try:
                 if executor_name in ['论道', '兽渊探秘', '魔道入侵', '虚天殿', '云梦试剑', '仙盟争霸', ]:
-                    if datetime.now().hour < 11: #  11点之前不执行
+                    if datetime.now().hour < 10: #  11点之前不执行
                         print(f'{executor_name}未到执行时间')
                         continue
                 

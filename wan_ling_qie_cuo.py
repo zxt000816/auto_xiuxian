@@ -1,18 +1,18 @@
-# import os
-# import adbutils
+import os
+import adbutils
 
-# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
 
-# serial = "emulator-5566"
-# device = adb.device(serial=serial)
+serial = "emulator-5566"
+device = adb.device(serial=serial)
 
-# resolution = (540, 960)
-# os.environ['DEVICE_SERIAL'] = serial
-# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+resolution = (540, 960)
+os.environ['DEVICE_SERIAL'] = serial
+os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
 
-# main_region_coords = (1364, 47, 540, 960)
+main_region_coords = (1364, 47, 540, 960)
 
-# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
 
 import time
 import pyautogui
@@ -26,6 +26,9 @@ pyautogui.FAILSAFE = True
 class WanLingQieCuoCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
         super().__init__(main_region_coords, resolution)
+
+    def ling_ti_page(self):
+        return (162, 205, 63, 27)
 
 class WanLingQieCuoExecutor(BaseExecutor):
     def __init__(self, wlqc_coords_manager: WanLingQieCuoCoordsManager):

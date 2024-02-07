@@ -32,6 +32,7 @@ class BaseExecutor:
             'lun_dao': 'lun_dao',  # 论道
             'bai_zu_gong_feng': 'bai_zu_gong_feng',  # 百族供奉
             'ling_zu_tiao_zhan': 'ling_zu_tiao_zhan',  # 灵祖挑战
+            'wan_ling_qie_cuo': 'wan_ling_qie_cuo',  # 万灵切磋
         }
         self.taget_name_dict = {
             'youli': '游历',
@@ -52,6 +53,7 @@ class BaseExecutor:
             'lun_dao': '论道',
             'bai_zu_gong_feng': '百族供奉',
             'ling_zu_tiao_zhan': '灵祖挑战',
+            'wan_ling_qie_cuo': '万灵切磋',
         }
         self.target = target
         self.target_name = self.taget_name_dict.get(self.target, None)

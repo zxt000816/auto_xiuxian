@@ -8,6 +8,9 @@ task_name_dict = {
     '报名': 'bao_ming', 
     '红包': 'hong_bao', 
     '拜谒': 'bai_ye',
+    '百族供奉': 'bai_zu_gong_feng',
+    '灵祖挑战': 'ling_zu_tiao_zhan',
+    '万灵切磋': 'wan_ling_qie_cuo',
     '游历': 'youli', 
     '双修': 'shuangxiu', 
     '挑战仙缘': 'tiao_zhan_xian_yuan', 
@@ -23,8 +26,6 @@ task_name_dict = {
     '仙盟争霸': 'xian_meng_zheng_ba', 
     '云梦试剑': 'yun_meng_shi_jian',
     '爬天梯': 'pa_tian_ti',
-    '百族供奉': 'bai_zu_gong_feng',
-    '灵祖挑战': 'ling_zu_tiao_zhan',
 }
 
 task_info_name_dict = {

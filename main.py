@@ -6,10 +6,8 @@ from datetime import datetime
 import time
 from name_dict import task_name_dict, task_info_name_dict
 
-
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-
 
 def daily_task(
     main_region_coords: Tuple[int, int, int, int],
@@ -39,6 +37,7 @@ def daily_task(
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
     ling_zu_tiao_zhan: bool = False,
+    wan_ling_qie_cuo: bool = False,
     check_ri_chang: bool = True,
     check_all_tasks: bool = False,
     resolution: Tuple[int, int] = (1080, 1920),
@@ -88,6 +87,7 @@ def daily_task(
     bai_ye_coords_manager = BaiYeCoordsManager(main_region_coords, resolution=resolution) # 拜谒
     bai_zu_gong_feng_coords_manager = BaiZuGongFengCoordsManager(main_region_coords, resolution=resolution) # 百族供奉
     ling_zu_tiao_zhan_coords_manager = LingZuTiaoZhanCoordsManager(main_region_coords, resolution=resolution) # 灵祖挑战
+    wan_ling_qie_cuo_coords_manager = WanLingQieCuoCoordsManager(main_region_coords, resolution=resolution) # 万灵切磋
 
     check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords, resolution=resolution) # 检查日常
     check_all_tasks_coords_manager = CheckAllTasksCoordsManager(main_region_coords, resolution=resolution) # 检查任务
@@ -117,6 +117,7 @@ def daily_task(
     bai_ye_executor = BaiYeExecutor(bai_ye_coords_manager, event_name=bai_ye_event_name, fa_ze_level=bai_ye_fa_ze_level) # 拜谒
     bai_zu_gong_feng_executor = BaiZuGongFengExecutor(bai_zu_gong_feng_coords_manager, buy_times=bai_zu_gong_feng_buy_times) # 百族供奉
     ling_zu_tiao_zhan_executor = LingZuTiaoZhanExecutor(ling_zu_tiao_zhan_coords_manager) # 灵祖挑战
+    wan_ling_qie_cuo_executor = WanLingQieCuoExecutor(wan_ling_qie_cuo_coords_manager) # 万灵切磋
 
     check_ri_chang_executor = CheckRiChangExecutor(check_ri_chang_coords_manager, account_name) # 检查日常
     check_all_tasks_executor = CheckAllTasksExecutor(check_all_tasks_coords_manager) # 检查任务
@@ -162,6 +163,7 @@ def daily_task(
         '拜谒': (bai_ye_executor, bai_ye),
         '百族供奉': (bai_zu_gong_feng_executor, bai_zu_gong_feng),
         '灵祖挑战': (ling_zu_tiao_zhan_executor, ling_zu_tiao_zhan),
+        '万灵切磋': (wan_ling_qie_cuo_executor, wan_ling_qie_cuo), # 万灵切磋
         '修炼': (xiu_lian_executor, xiu_lian),
 
         '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta_go_up),
@@ -267,6 +269,7 @@ if __name__ == '__main__':
     from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
     from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
     from ling_zu_tiao_zhan import LingZuTiaoZhanCoordsManager, LingZuTiaoZhanExecutor
+    from wan_ling_qie_cuo import WanLingQieCuoCoordsManager, WanLingQieCuoExecutor
     from hong_bao import HongBaoCoordsManager, HongBaoExecutor
     from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
     from game_control import GameControlCoordsManager, GameControlExecutor

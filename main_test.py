@@ -1,4 +1,24 @@
-import pyautogui
+# import pyautogui, os
+
+# resolution = (540, 960) # (width, height): (554, 984) or (1080, 1920)
+
+# device_idx = input('请输入模拟器序号(1: 都有3, 2: 都有4, 3: 都有5): ')
+# if device_idx == '1':
+#     device_serial = 'emulator-5566' # '都有3'
+# elif device_idx == '2':
+#     device_serial = 'emulator-5568' # '都有4'
+# elif device_idx == '3':
+#     device_serial = 'emulator-5570' # '都有5'
+
+# main_region_coords_dt = {
+#     'emulator-5566': '1344,46,540,960',
+# }
+
+# # 添加环境变量
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+# os.environ['DEVICE_SERIAL'] = device_serial
+# os.environ['MAIN_REGION_COORDS'] = main_region_coords_dt[device_serial]
+
 from utils_adb import *
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
@@ -6,7 +26,10 @@ from event_executor import BaseExecutor
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
-main_region_coords = get_game_page_coords()
+# resolution = (540, 960)
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+# main_region_coords = get_game_page_coords(resolution)
+
 coor_manager = BaseCoordsManager(main_region_coords)
 executor = BaseExecutor(coor_manager)
 
@@ -91,7 +114,7 @@ args2 = {
     'target_image_name': 'temp_test',
     'main_region_coords': main_region_coords,
     'confidence': 0.9,
-    'target_image_cat_dir': None,
+    'target_image_cat_dir': 'bai_zu_gong_feng',
 }
 
 get_diff_quickly = get_diff_quickly_2

@@ -1,3 +1,19 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import pyautogui
 import time
 from utils_adb import get_game_page_coords, get_region_coords, get_region_coords_by_multi_imgs, click_region
@@ -49,6 +65,7 @@ class HongBaoExecutor(BaseExecutor):
     
     def get_ling_shi_hong_bao_coords(self):
         ling_shi_hong_bao_imgs = [
+            {'target_region_image': 'ling_shi_hong_bao3', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'ling_shi_hong_bao2', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
             {'target_region_image': 'ling_shi_hong_bao1', 'main_region_coords': self.main_region_coords, 'confidence': 0.7, 'grayscale': False, 'cat_dir': self.cat_dir},
         ]
@@ -100,9 +117,9 @@ class HongBaoExecutor(BaseExecutor):
 
 if __name__ == '__main__':
 
-    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+    # resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    main_region_coords = get_game_page_coords(resolution = resolution)
+    # main_region_coords = get_game_page_coords(resolution = resolution)
 
     hong_bao_coords_manager = HongBaoCoordsManager(main_region_coords, resolution=resolution)
     hong_bao_executor = HongBaoExecutor(hong_bao_coords_manager)

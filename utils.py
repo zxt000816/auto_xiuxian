@@ -78,9 +78,12 @@ def get_region_coords(
     main_region_coords=None, 
     confidence=0.7,
     grayscale=False,
-    root_dir=os.getenv('ROOT_DIR'),
+    root_dir=None,
     cat_dir=None
 ):
+    if root_dir is None:
+        root_dir = os.getenv('ROOT_DIR')
+
     if cat_dir is not None:
         root_dir = os.path.join(root_dir, cat_dir)
 

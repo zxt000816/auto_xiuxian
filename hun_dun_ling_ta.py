@@ -1,14 +1,27 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import pyautogui
-import numpy as np
-from typing import Tuple
-from utils_adb import *
+from utils_adb import get_game_page_coords, get_region_coords, click_region, wait_region, get_region_coords_by_multi_imgs
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 import time
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
-resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
 class HunDunLingTaCoordsManager(BaseCoordsManager):
     def __init__(self, main_region_coords, resolution=(1080, 1920)):
@@ -189,9 +202,9 @@ class HunDunLingTaExecutor(BaseExecutor):
 
 if __name__ == '__main__':
     
-    main_region_coords = get_game_page_coords(resolution = resolution)
+    # main_region_coords = get_game_page_coords(resolution = resolution)
 
-    corrds_manager = HunDunLingTaCoordsManager(main_region_coords)
+    corrds_manager = HunDunLingTaCoordsManager(main_region_coords, resolution=resolution)
     executor = HunDunLingTaExecutor(corrds_manager, ling_ta_name='鸿古之塔')
     
     executor.go_up()

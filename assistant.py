@@ -1,8 +1,22 @@
-import pyautogui
-import numpy as np
-from typing import Tuple
+# import os
+# import adbutils
 
-from utils_adb import *
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
+import pyautogui
+
+from utils_adb import get_game_page_coords, get_region_coords, click_region, wait_region, get_region_coords_by_multi_imgs
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
 
@@ -45,7 +59,7 @@ class AssistantExecutor(BaseExecutor):
     def __init__(self, assistant_coords_manager: AssistantCoordsManager):
         super().__init__(assistant_coords_manager, 'assistant')
         self.assistant_coords_manager = assistant_coords_manager
-        self.task_order = ['shenwuyuan', 'zongmen', 'daoyi']
+        self.task_order = ['zongmen', 'shenwuyuan', 'daoyi']
         self.task_name_dict = {
             'zongmen': '宗门助手',
             'shenwuyuan': '神物园助手',
@@ -179,9 +193,9 @@ class AssistantExecutor(BaseExecutor):
 
 if __name__ == '__main__':
 
-    main_region_coords = get_game_page_coords()
+    # main_region_coords = get_game_page_coords()
 
-    corrds_manager = AssistantCoordsManager(main_region_coords)
+    corrds_manager = AssistantCoordsManager(main_region_coords, resolution=resolution)
     
     executor = AssistantExecutor(corrds_manager)
 

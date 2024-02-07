@@ -1,11 +1,24 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import pyautogui
-import numpy as np
-from typing import Tuple
 import time
-from utils_adb import *
+from utils_adb import get_region_coords, click_region, wait_region, get_region_coords_by_multi_imgs
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
-from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -69,8 +82,8 @@ class YouLiExecutor(BaseExecutor):
             {'target_region_image': 'huo_hu_qun_dao', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
             {'target_region_image': 'di_yuan_ming_he', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
             {'target_region_image': 'nan_jiang', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
-            {'target_region_image': 'da_jin', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
             {'target_region_image': 'bing_hai', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
+            {'target_region_image': 'da_jin', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
             {'target_region_image': 'jing_zhou', 'main_region_coords': self.main_region_coords, 'confidence': 0.8, 'cat_dir': self.cat_dir},
         ]
         return get_region_coords_by_multi_imgs(place_imgs)
@@ -156,10 +169,8 @@ class YouLiExecutor(BaseExecutor):
 
 if __name__ == '__main__':
 
-    main_region_coords = get_game_page_coords() # (x, y, width, height)
-
-    coords_manager = YouliCoordsManager(main_region_coords)
+    coords_manager = YouliCoordsManager(main_region_coords, resolution=resolution)
     
-    youli_executor = YouLiExecutor(coords_manager, '火瑚群岛', 4)
+    youli_executor = YouLiExecutor(coords_manager, '火瑚群岛', 0)
 
     youli_executor.execute()

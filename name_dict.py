@@ -24,6 +24,7 @@ task_name_dict = {
     '云梦试剑': 'yun_meng_shi_jian',
     '爬天梯': 'pa_tian_ti',
     '百族供奉': 'bai_zu_gong_feng',
+    '灵祖挑战': 'ling_zu_tiao_zhan',
 }
 
 task_info_name_dict = {

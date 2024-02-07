@@ -5,12 +5,11 @@ from typing import Tuple
 from datetime import datetime
 import time
 from name_dict import task_name_dict, task_info_name_dict
-# from dotenv import load_dotenv
+
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
 
-# load_dotenv()
 
 def daily_task(
     main_region_coords: Tuple[int, int, int, int],
@@ -39,6 +38,7 @@ def daily_task(
     xian_meng_zheng_ba: bool = False,
     pa_tian_ti: bool = False,
     bai_zu_gong_feng: bool = False,
+    ling_zu_tiao_zhan: bool = False,
     check_ri_chang: bool = True,
     check_all_tasks: bool = False,
     resolution: Tuple[int, int] = (1080, 1920),
@@ -87,6 +87,7 @@ def daily_task(
     hong_bao_coords_manager = HongBaoCoordsManager(main_region_coords, resolution=resolution)# 红包
     bai_ye_coords_manager = BaiYeCoordsManager(main_region_coords, resolution=resolution) # 拜谒
     bai_zu_gong_feng_coords_manager = BaiZuGongFengCoordsManager(main_region_coords, resolution=resolution) # 百族供奉
+    ling_zu_tiao_zhan_coords_manager = LingZuTiaoZhanCoordsManager(main_region_coords, resolution=resolution) # 灵祖挑战
 
     check_ri_chang_coords_manager = CheckRiChangCoordsManager(main_region_coords, resolution=resolution) # 检查日常
     check_all_tasks_coords_manager = CheckAllTasksCoordsManager(main_region_coords, resolution=resolution) # 检查任务
@@ -115,6 +116,7 @@ def daily_task(
     hong_bao_executor = HongBaoExecutor(hong_bao_coords_manager) # 红包
     bai_ye_executor = BaiYeExecutor(bai_ye_coords_manager, event_name=bai_ye_event_name, fa_ze_level=bai_ye_fa_ze_level) # 拜谒
     bai_zu_gong_feng_executor = BaiZuGongFengExecutor(bai_zu_gong_feng_coords_manager, buy_times=bai_zu_gong_feng_buy_times) # 百族供奉
+    ling_zu_tiao_zhan_executor = LingZuTiaoZhanExecutor(ling_zu_tiao_zhan_coords_manager) # 灵祖挑战
 
     check_ri_chang_executor = CheckRiChangExecutor(check_ri_chang_coords_manager, account_name) # 检查日常
     check_all_tasks_executor = CheckAllTasksExecutor(check_all_tasks_coords_manager) # 检查任务
@@ -159,6 +161,7 @@ def daily_task(
         '小助手': (assistant_executor, assistant),
         '拜谒': (bai_ye_executor, bai_ye),
         '百族供奉': (bai_zu_gong_feng_executor, bai_zu_gong_feng),
+        '灵祖挑战': (ling_zu_tiao_zhan_executor, ling_zu_tiao_zhan),
         '修炼': (xiu_lian_executor, xiu_lian),
 
         '混沌灵塔_爬塔': (hun_dun_ling_ta_executor, hun_dun_ling_ta_go_up),
@@ -222,24 +225,28 @@ def daily_task(
 if __name__ == '__main__':
     
     # resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
-    resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
-    device_serial = 'emulator-5566' # '都有3'
-    # device_serial = 'emulator-5568' # '都有4'
-    # device_serial = 'emulator-5570' # '都有5'
+    # resolution = (720, 1280) # (width, height): (554, 984) or (1080, 1920)
+    resolution = (540, 960) # (width, height): (554, 984) or (1080, 1920)
+
+    device_idx = input('请输入模拟器序号(1: 都有3, 2: 都有4, 3: 都有5): ')
+    if device_idx == '1':
+        device_serial = 'emulator-5566' # '都有3'
+    elif device_idx == '2':
+        device_serial = 'emulator-5568' # '都有4'
+    elif device_idx == '3':
+        device_serial = 'emulator-5570' # '都有5'
 
     main_region_coords_dt = {
-        'emulator-5566': '3087,422,720,1280',
-        'emulator-5568': '2351,421,720,1280',
-        'emulator-5570': '1612,418,720,1280',
+        'emulator-5566': '1364,47,540,960',
+        'emulator-5568': '793,45,540,960',
     }
 
     # 添加环境变量
-    # os.environ['RESOLUTION'] = f'{resolution[0]}x{resolution[1]}'
     os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
     os.environ['DEVICE_SERIAL'] = device_serial
     os.environ['MAIN_REGION_COORDS'] = main_region_coords_dt[device_serial]
 
-    from utils_adb import get_game_page_coords, wait_for_evelen
+    from utils_adb import wait_for_evelen
     from assistant import AssistantCoordsManager, AssistantExecutor
     from bao_ming import BaoMingCoordsManager, BaoMingExecutor
     from xiu_lian import XiuLianCoordsManager, XiuLianExecutor
@@ -259,6 +266,7 @@ if __name__ == '__main__':
     from tiao_zhan_xian_yuan import TiaoZhanXianYuanCoordsManager, TiaoZhanXianYuanExecutor
     from pa_tian_ti import PaTianTiCoordsManager, PaTianTiExecutor
     from bai_zu_gong_feng import BaiZuGongFengCoordsManager, BaiZuGongFengExecutor
+    from ling_zu_tiao_zhan import LingZuTiaoZhanCoordsManager, LingZuTiaoZhanExecutor
     from hong_bao import HongBaoCoordsManager, HongBaoExecutor
     from ri_chang_chou_jiang import RiChangChouJiangCoordsManager, RiChangChouJiangExecutor
     from game_control import GameControlCoordsManager, GameControlExecutor
@@ -272,10 +280,6 @@ if __name__ == '__main__':
 
     # main_region_coords = get_game_page_coords(resolution = resolution)
     main_region_coords = tuple(map(int, main_region_coords_dt[device_serial].split(',')))
-    # print(f'游戏区域坐标: {main_region_coords}')
-
-    # print("等待60秒, 用于等候定位其他模拟器窗口!")
-    # time.sleep(60)
 
     game_coords_manager = GameControlCoordsManager(main_region_coords, resolution=resolution)
 

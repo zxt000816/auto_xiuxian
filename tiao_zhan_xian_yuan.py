@@ -1,11 +1,24 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import time
 import pyautogui
-import numpy as np
-from typing import Tuple
-from utils_adb import *
+from utils_adb import get_game_page_coords, get_region_coords, click_region, wait_region, get_region_coords_by_multi_imgs, drag_region
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
-from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -169,12 +182,14 @@ class TiaoZhanXianYuanExecutor(BaseExecutor):
         # 确认`战斗结束`是否出现
         self.get_battle_over_coords(wait_time=60, target_region='战斗结束', is_to_click=True, wait_time_before_click=5)
 
+        time.sleep(10)
+
 if __name__ == '__main__':
 
-    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+    # resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    main_region_coords = get_game_page_coords(resolution = resolution)
+    # main_region_coords = get_game_page_coords(resolution = resolution)
 
-    tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords)
-    executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='势不两立', wei_mian='灵界')
+    tzxy_coords_manager = TiaoZhanXianYuanCoordsManager(main_region_coords, resolution=resolution)
+    executor = TiaoZhanXianYuanExecutor(tzxy_coords_manager, xian_yuan_role_name='势不两立', wei_mian='人界')
     executor.execute()

@@ -1,11 +1,24 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import time
 import pyautogui
-import numpy as np
-from typing import Tuple
-from utils_adb import *
+from utils_adb import get_game_page_coords, get_region_coords, click_region, wait_region, get_region_coords_by_multi_imgs
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
-from xiuxian_exception import *
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -120,12 +133,10 @@ class QiXiMoJieExecutor(BaseExecutor):
 
 if __name__ == "__main__":
     
-    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    main_region_coords = get_game_page_coords(resolution = resolution)
-    # main_region_coords = (0, 0, 1080, 1920)
+    # main_region_coords = get_game_page_coords(resolution = resolution)
 
-    coords_manager = QiXiMoJieCoordsManager(main_region_coords)
+    coords_manager = QiXiMoJieCoordsManager(main_region_coords, resolution=resolution)
 
     executor = QiXiMoJieExecutor(coords_manager)
 

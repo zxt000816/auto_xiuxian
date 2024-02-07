@@ -1,3 +1,19 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import time
 import pyautogui
 from utils_adb import get_region_coords, get_region_coords_by_multi_imgs, wait_region, click_region, \
@@ -331,14 +347,14 @@ class FuBenExecutor(BaseExecutor):
 
         self.get_fu_ben_page_indicator_coords(wait_time=120, target_region='副本页面', is_to_click=False)
 
-        multi_challenge_auth_coords = self.get_multi_challenge_auth_coords()
-        if multi_challenge_auth_coords is not None:
-            self.open_or_close_checkbox(
-                operation='open',
-                target_region=self.fb_coords_manager.region_for_check_multi_challenge()
-            )
-        else:
-            print("完成: 该账号没有多次挑战权限!")
+        # multi_challenge_auth_coords = self.get_multi_challenge_auth_coords()
+        # if multi_challenge_auth_coords is not None:
+        #     self.open_or_close_checkbox(
+        #         operation='open',
+        #         target_region=self.fb_coords_manager.region_for_check_multi_challenge()
+        #     )
+        # else:
+        #     print("完成: 该账号没有多次挑战权限!")
 
         if self.finish_buying_times is False:
             self.get_buy_times_icon_coords(target_region='购买次数图标')
@@ -380,13 +396,13 @@ class FuBenExecutor(BaseExecutor):
 
 if __name__ == '__main__':
 
-    resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
+    # resolution = (1080, 1920) # (width, height): (554, 984) or (1080, 1920)
 
-    main_region_coords = get_game_page_coords(resolution = resolution)
+    # main_region_coords = get_game_page_coords(resolution = resolution)
 
-    coords_manager = FuBenCoordsManager(main_region_coords)
+    coords_manager = FuBenCoordsManager(main_region_coords, resolution=resolution)
 
-    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=4)
+    fuben_executor = FuBenExecutor(coords_manager, '广寒界', buy_times=0)
 
     fuben_executor.execute()
 

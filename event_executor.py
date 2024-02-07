@@ -31,6 +31,7 @@ class BaseExecutor:
             'game_control': 'game_control',  # 游戏控制
             'lun_dao': 'lun_dao',  # 论道
             'bai_zu_gong_feng': 'bai_zu_gong_feng',  # 百族供奉
+            'ling_zu_tiao_zhan': 'ling_zu_tiao_zhan',  # 灵祖挑战
         }
         self.taget_name_dict = {
             'youli': '游历',
@@ -50,6 +51,7 @@ class BaseExecutor:
             'qi_xi_mo_jie': '奇袭魔界',
             'lun_dao': '论道',
             'bai_zu_gong_feng': '百族供奉',
+            'ling_zu_tiao_zhan': '灵祖挑战',
         }
         self.target = target
         self.target_name = self.taget_name_dict.get(self.target, None)
@@ -397,11 +399,11 @@ class BaseExecutor:
             click_region(target_coords, seconds=3)
             print(f"完成: 点击{target_name}按钮")
 
-    def if_buy_store_pop_up(self):
+    def if_buy_store_pop_up(self, confidence=0.9):
         buy_store_coords_is_in_main_region = get_region_coords(
             'buy_store', 
             main_region_coords=self.main_region_coords, 
-            confidence=0.9, 
+            confidence=confidence, 
         )
         if buy_store_coords_is_in_main_region:
             return True

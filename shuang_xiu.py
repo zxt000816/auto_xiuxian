@@ -1,11 +1,25 @@
+# import os
+# import adbutils
+
+# adb = adbutils.AdbClient(host="127.0.0.1", port=5037)
+
+# serial = "emulator-5566"
+# device = adb.device(serial=serial)
+
+# resolution = (540, 960)
+# os.environ['DEVICE_SERIAL'] = serial
+# os.environ['ROOT_DIR'] = f'FanRenXiuXianIcon_{resolution[0]}_{resolution[1]}'
+
+# main_region_coords = (1364, 47, 540, 960)
+
+# os.environ['MAIN_REGION_COORDS'] = ','.join(map(str, main_region_coords))
+
 import pyautogui
-import numpy as np
-from typing import Tuple
 import time
-from utils_adb import *
+from utils_adb import get_game_page_coords, get_region_coords, click_region, wait_region, scroll_specific_length
 from coords_manager import BaseCoordsManager
 from event_executor import BaseExecutor
-from xiuxian_exception import *
+from xiuxian_exception import ShuangXiuException
 
 pyautogui.PAUSE = 0.01
 pyautogui.FAILSAFE = True
@@ -224,7 +238,8 @@ class ShuangXiuExecutor(BaseExecutor):
             direction='down', 
             other_target=self.gongfashu, 
             other_target_name=self.gongfashu_name,
-            scroll_seconds=2
+            scroll_seconds=2,
+            confidence=0.7
         )
         self.click_yaoqing_daoyou()
         self.go_to_xianyuan_page()
@@ -252,13 +267,10 @@ class ShuangXiuExecutor(BaseExecutor):
 
 if __name__ == '__main__':
 
-    main_region_coords = get_game_page_coords()
+    # main_region_coords = get_game_page_coords()
     
-    coords_manager = ShuangXiuCoordsManager(main_region_coords)
+    coords_manager = ShuangXiuCoordsManager(main_region_coords, resolution=resolution)
     
     sx_executor = ShuangXiuExecutor(coords_manager, gongfashu_name='阴阳合欢')
 
     sx_executor.execute()
-
-    click_region(coords_manager.better_exit())
-
